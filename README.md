@@ -1,4 +1,4 @@
-# genaro-omni
+# genaro-eden
 
 > An electron-vue uploader, downloader, and dashboard for the Genaro network
 
