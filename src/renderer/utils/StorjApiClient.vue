@@ -3,7 +3,11 @@ import iView from 'iview';
 import store from '../store'
 
 const {Environment} = require('storj');
+// production environment
 const storjApiUrl = 'http://101.132.159.197:8080';
+
+// test environment
+// const storjApiUrl = 'http://47.100.33.60:8080';
 
 /* 创建Bucket */
 function createBucket(bucketName, bridgeUser, bridgePass, errorCallback, successCallback) {
@@ -119,7 +123,20 @@ function getInfo(bridgeUser, bridgePass, errorCallback, successCallback) {
             console.error(err);
         } else {
             successCallback(result)
-            console.error(result);
+            console.log(result);
+        }
+    })
+}
+
+function register(email, passwd, errorCallback, successCallback) {
+    var _storj = getEmptyStorj();
+    _storj.register(email, passwd, function(err, result) {
+        if(err) {
+            errorCallback(err)
+            console.error(err);
+        } else {
+            successCallback(result)
+            console.log(result);
         }
     })
 }
@@ -135,6 +152,14 @@ function getStorj(bridgeUser, bridgePass) {
     });
     return _storj;
 }
+function getEmptyStorj() {
+    var _storj = new Environment({
+        bridgeUrl: storjApiUrl,
+        encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+        logLevel: 0
+    });
+    return _storj;
+}
 
 export default {
     createBucket,
@@ -145,6 +170,7 @@ export default {
     getFileList,
     downloadFile,
     deleteFile,
-    getInfo
+    getInfo,
+    register
 }
 </script>

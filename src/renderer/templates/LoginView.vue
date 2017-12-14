@@ -47,42 +47,64 @@
                 },
                 ruleInline: {
                     username: [
-                        { required: true, message: 'please input username', trigger: 'blur' }
+                        { required: true, message: 'Please input username', trigger: 'blur' },
+                        { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
                     ],
                     password: [
-                        { required: true, message: 'please input password', trigger: 'blur' },
-                        { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }                    ]
+                        { required: true, message: 'Please input password', trigger: 'blur' },
+                        { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    ]
                 }
             }
         },
         methods:{
             submitLogin() {
-                if(this.login.username.length != 0 && this.login.password.length != 0) { 
-                    this.$Spin.show();
-                    var bridgeUser = this.login.username
-                    var bridgePass = this.login.password
-                    STROJ_CLIENT.getBucketList(bridgeUser, bridgePass, function(err) {
-                        iView.Spin.hide()
-                        iView.Modal.error({
-                            title : 'Login Error',
-                            content: 'Username Or Password Error',
-                            okText: 'OK'
+                this.$refs['login'].validate((valid) => {
+                    if(valid) {
+                        this.$Spin.show()
+                        var bridgeUser = this.login.username
+                        var bridgePass = this.login.password
+                        STROJ_CLIENT.getBucketList(bridgeUser, bridgePass, (err) => {
+                            iView.Spin.hide()
+                            iView.Modal.error({
+                                title : 'Login Error',
+                                content: 'Username Or Password Error',
+                                okText: 'OK'
+                            })
+                        }, function(result) {
+                            iView.Spin.hide()
+                            store.commit('updateUsername', bridgeUser)
+                            store.commit('updatePassword', bridgePass)
+                            router.push({ path: '/index'})
                         });
-                    }, function(result) {
-                        iView.Spin.hide()
-                        store.commit('updateUsername', bridgeUser)
-                        store.commit('updatePassword', bridgePass)
-                        router.push({ path: '/index'})
-                    });
-
-                }
+                    }
+                })
             },
             submitSignup() {
-                iView.Modal.info({
-                    title : 'Genaro Eden',
-                    content: 'Genaro Eden is not open to public sign up now, please apply Genaro Eden account',
-                    okText: 'OK'
-                });
+                var this2 = this
+                this.$refs['login'].validate((valid) => {
+                    if(valid) {
+                        this2.$Spin.show()
+                        var bridgeUser = this2.login.username
+                        var bridgePass = this2.login.password
+                        STROJ_CLIENT.register(bridgeUser, bridgePass, function(err){
+                            this2.$Spin.hide()
+                            this2.$Modal.info({
+                                title : 'Register Error',
+                                content: 'User already exists',
+                                okText: 'OK'
+                            })
+                        }, function(result){
+                            this2.$Spin.hide()
+                            this2.$Modal.success({
+                                title : 'Register Success',
+                                content: 'A mail has been sent to &lt;' + bridgeUser + '&gt;, please follow the instructions in the email to activate your account before login.',
+                                okText: 'OK'
+                            })
+                            console.log(result)
+                        })
+                    }
+                })
             }
         }
     }
