@@ -13,9 +13,10 @@
     <div class="layout-header">
         <Row>
             <Col span="22">
-                <Input style="width: 300px" placeholder="Find Everything">
+                <!-- <Input style="width: 300px" placeholder="Find Everything">
                     <span slot="prepend"><Icon type="search" /></span>
-                </Input>
+                </Input> -->
+                <span>&nbsp;</span>
             </Col>
             <Col span="2">
                 <div class="demo-avatar-badge">

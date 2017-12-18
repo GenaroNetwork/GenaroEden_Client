@@ -55,7 +55,8 @@
     export default {
         data() {
             return {
-                iconSize: 20
+                iconSize: 20,
+                routerIndex: 'index'
             }
         },
         computed: {
@@ -66,7 +67,10 @@
         methods: {
             routeTo(e) {
                 //console.log(e);
-                this.$router.push(e);
+                if(this.routerIndex != e) {
+                    this.routerIndex = e;
+                    this.$router.push(e);
+                }
             }
         }
     }

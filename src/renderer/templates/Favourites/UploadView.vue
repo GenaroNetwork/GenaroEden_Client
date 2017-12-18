@@ -58,7 +58,7 @@
                 <Upload
                     ref="upload"
                     :show-upload-list="false"
-                    :max-size="4096"
+                    :max-size="40960000000000"
                     :on-exceeded-size="handleMaxSize"
                     :before-upload="handleBeforeUpload"
                     type="drag"
@@ -135,8 +135,8 @@
             },
             handleMaxSize(file) {
                 this.$Notice.warning({
-                    title: '超出文件大小限制',
-                    desc: '文件 ' + file.name + ' 太大，不能超过 2M。'
+                    title: 'File Too Large',
+                    desc: 'File ' + file.name + ' Too Big'
                 });
             },
             handleBeforeUpload(file) {

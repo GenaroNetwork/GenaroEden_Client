@@ -26,7 +26,7 @@
                 <MenuGroup title="FAVOURITES">
                     <MenuItem name="file-index"><Icon type="android-document"></Icon>My Files</Icon></MenuItem>
                     <MenuItem name="file-upload"><Icon type="android-arrow-up"></Icon>Upload</MenuItem>
-                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon>Download</MenuItem>
+                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon>Download History</MenuItem>
                     <MenuItem name="share-my-storage"><Icon type="android-upload"></Icon>Share My Storage</MenuItem>
                     <!-- <MenuItem name="4"><Icon type="android-delete"></Icon>Delete</MenuItem>
                     <MenuItem name="5"><Icon type="android-time"></Icon>History</MenuItem>

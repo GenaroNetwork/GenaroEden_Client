@@ -5,13 +5,17 @@
         width: 170px;
     }
 
+    .ivu-card-head p, .ivu-card-head-inner {
+        height: 25px;
+    }
+
 </style>
 
 <template>
     <div id="list">
          <div id="bucket-list" style="background:#eee">
             <Card :bordered="false" dis-hover>
-                <p slot="title">Buckets</p>
+                <p slot="title" id="add-bucket-title">Buckets  <Button type="primary" shape="circle" size="small" @click="add_bucket_modal=true">Add</Button></p> 
                 <Row type="flex" justify="start">
                     <Col span="8" style="padding-top:3px" v-for="item in showBucketList">
                         <Button type="ghost" style="width:195px" @click="bucketBtnClick({label: item.name, value: item.id})">{{ item.name }}</Button>
@@ -21,9 +25,9 @@
                             <Option v-for="item in moreBucketList" :value="item.id" :label="item.name">{{ item.name }}</Option>
                         </Select>
                     </Col>
-                    <Col span="8" style="padding-top:3px">
+                    <!-- <Col span="8" style="padding-top:3px">
                         <Button type="dashed" style="width:195px" @click="add_bucket_modal=true">Add Bucket</Button>
-                    </Col>
+                    </Col> -->
                 </Row>
             </Card>
         </div>
@@ -49,11 +53,15 @@
                     v-model="add_bucket_modal" title="Add Bucket" 
                     @on-ok="addBucketOk" @on-cancel="addBucketCancel"
                     ok-text="OK" cancel-text="Cancel" :closable="false">
-                    <Form :model="addBucketItem" :label-width="100">
+                    <!-- <Form :model="addBucketItem" :label-width="100">
                         <FormItem label="Bucket Name">
-                            <Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name"></Input>
+                            <Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name" v-on:on-enter="addBucketOk"></Input>
                         </FormItem>
-                    </Form>
+                    </Form> -->
+                    <Row>
+                            <Col span="5"><h4>Bucket Name:</h4></Col>
+                            <Col span="19"><Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name" v-on:on-enter="addBucketOk"></Input></Col>
+                        </Row>
                 </Modal>
 
                 <!-- 显示receipt的modal -->
@@ -264,7 +272,7 @@
                     var bridgeUser = this.username
                     var bridgePass = this.password
 
-                    iView.Message.info('Add Bucket Waiting');
+                    // iView.Message.info('Add Bucket Waiting');
 
                     // 调用创建Bucket Api
                     STROJ_CLIENT.createBucket(bucketName, bridgeUser, bridgePass,
@@ -285,6 +293,7 @@
                         }
                     )
                     this.addBucketItem.bucketName = ''
+                    this.add_bucket_modal=false
                 }
             },
             // 添加Bucket 取消按钮事件
