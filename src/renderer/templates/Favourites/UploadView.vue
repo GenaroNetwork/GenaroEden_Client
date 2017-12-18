@@ -47,14 +47,14 @@
                 <Dropdown @on-click="bucketSelect">
                     <a href="javascript:void(0)">{{ bucketName == null? 'Choose Bucket' : bucketName }}<Icon type="arrow-down-b"></Icon></a>
                     <DropdownMenu slot="list">
-                        <DropdownItem v-for="bucket in bucketList" :name="bucket">
+                        <DropdownItem v-for="(bucket, index) in bucketList" :name="index">
                             {{ bucket.name }}
                         </DropdownItem> 
                     </DropdownMenu>
                 </Dropdown>
                 </Col>
             </Row>
-            <Row>
+            <Row v-if="bucketName != null">
                 <Upload
                     ref="upload"
                     :show-upload-list="false"
@@ -168,9 +168,9 @@
                     })
                 }
             },
-            bucketSelect(bucket) {
-                this.bucketName = bucket.name
-                this.bucketId = bucket.id
+            bucketSelect(bucketIndex) {
+                this.bucketName = this.bucketList[bucketIndex].name
+                this.bucketId = this.bucketList[bucketIndex].id
             }
         }
     }

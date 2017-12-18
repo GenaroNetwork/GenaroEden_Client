@@ -86,6 +86,7 @@ function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCal
 function downloadFile(bucketId, fileId, downloadFilePath, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback) {
     var _storj = getStorj(bridgeUser, bridgePass);
     _storj.resolveFile(bucketId, fileId, downloadFilePath, {
+        overwrite: true,
         progressCallback: function (progress, downloadedBytes, totalBytes) {
             progressCallback(progress, downloadedBytes, totalBytes)
             console.log('Progress: %d, downloadedBytes: %d, totalBytes: %d', progress, downloadedBytes, totalBytes)
@@ -94,9 +95,10 @@ function downloadFile(bucketId, fileId, downloadFilePath, bridgeUser, bridgePass
             if (err) {
                 errorCallback(err)
                 console.error(err);
+            } else {
+                console.log('File download complete');
+                successCallback()
             }
-            console.log('File download complete');
-            successCallback()
         }
     })
 }

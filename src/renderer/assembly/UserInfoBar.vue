@@ -14,7 +14,12 @@
     margin-top: 25px;
     margin-left: -10px;
 }
-
+.username {
+    float:right
+}
+.progress {
+    width:120px
+}
 </style>
 
 <template>
@@ -28,13 +33,13 @@
                 </Col>
                 <Col span="23">
                     <div class="layout-user-processor">
-                        <span style="float:right">{{ username }}</span>
-                        <Progress :percent="45"  status="active" hide-info :stroke-width="3" style="width:120px"></Progress>
-                        <span>8.00GB/40.00GB</span>
+                        <span class="username">{{ username }}</span>
+                        <Progress class="progress" :percent="45"  status="active" hide-info :stroke-width="3" ></Progress>
+                        <span>8.00GB/100 MB</span>
                     </div>
                 </Col>
             </Row>
-            <Row type="flex">
+            <!-- <Row type="flex">
                 <div class="layout-user-wallet">
                     <Menu theme="light" :open-names="['1']" accordion width="230px">
                         <Submenu name="1">
@@ -49,7 +54,7 @@
                         </Submenu>
                     </Menu>
                 </div>
-            </Row>
+            </Row> -->
         </div>
     </div>
 </template>

@@ -6,7 +6,10 @@
         padding-top: 16px;
         padding-right: 15px;
         padding-left: 25px;
-    } 
+    }
+    .dropItem {
+        margin-left: 20px
+    }
 </style>
 
 <template>
@@ -20,10 +23,10 @@
             </Col>
             <Col span="2">
                 <div class="demo-avatar-badge">
-                    <Badge count="1">
+                    <Badge count="">
                         <img shape="circle" src="~@/assets/genaro_logo.png" size="large" >
                     </Badge>
-                    <Dropdown trigger="click" @on-click="bucketAction" transfer placement="left-start" style="margin-left: 20px">
+                    <Dropdown class="dropItem" trigger="click" @on-click="bucketAction" transfer placement="left-start">
                         <a href="javascript:void(0)">
                             <Icon type="arrow-down-b"></Icon>
                         </a>

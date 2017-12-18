@@ -15,7 +15,7 @@
     <div id="list">
          <div id="bucket-list" style="background:#eee">
             <Card :bordered="false" dis-hover>
-                <p slot="title" id="add-bucket-title">Buckets  <Button type="primary" shape="circle" size="small" @click="add_bucket_modal=true">Add</Button></p> 
+                <p slot="title" id="add-bucket-title">Buckets</p> 
                 <Row type="flex" justify="start">
                     <Col span="8" style="padding-top:3px" v-for="item in showBucketList">
                         <Button type="ghost" style="width:195px" @click="bucketBtnClick({label: item.name, value: item.id})">{{ item.name }}</Button>
@@ -25,9 +25,9 @@
                             <Option v-for="item in moreBucketList" :value="item.id" :label="item.name">{{ item.name }}</Option>
                         </Select>
                     </Col>
-                    <!-- <Col span="8" style="padding-top:3px">
+                    <Col span="8" style="padding-top:3px">
                         <Button type="dashed" style="width:195px" @click="add_bucket_modal=true">Add Bucket</Button>
-                    </Col> -->
+                    </Col>
                 </Row>
             </Card>
         </div>
@@ -76,14 +76,18 @@
                             <Col span="20">{{ selected.selectFileId }}</Col>
                         </Row>
                         <Row>
+                            <Col span="4"><h4>GNX Paid:</h4></Col>
+                            <Col span="20">0</Col>
+                        </Row>
+                        <Row>
                             <Col span="4"><h4>QR Code:</h4></Col>
                             <Col span="20"><img :src="fileQrCode"></Col>
                         </Row>
                     </div>
                     <div slot="footer">
                         <input id="fileDialog" type="file" nwsaveas hidden/>
-                        <Button v-if="!fileDownloadFlag" type="primary" size="large"  @click="downloadFile">Download</Button>
-                        <Button type="error" size="large"  @click="show_del_file_modal = true">Delete</Button>
+                        <Button v-if="!fileDownloadFlag" type="primary" size="large"  @click="downloadFile">Download File</Button>
+                        <Button type="error" size="large"  @click="show_del_file_modal = true">Delete File</Button>
                     </div>
                 </Modal>
 

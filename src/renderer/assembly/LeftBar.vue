@@ -20,9 +20,9 @@
 <template>
     <Menu active-name="index" theme="primary" width="auto" @on-select="routeTo">
         <div class="layout-logo-left"><img id="logo" src="~@/assets/logo_small.png"></div>
-            <MenuItem name="index">
+            <!-- <MenuItem name="index">
                 <Icon type="ios-navigate" :size="iconSize"></Icon>
-            </MenuItem>
+            </MenuItem> -->
             <!-- <MenuItem name="form">
                 <Icon type="document" :size="iconSize"></Icon>
             </MenuItem>

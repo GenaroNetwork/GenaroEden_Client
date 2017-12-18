@@ -19,7 +19,7 @@
                 <div class='login_center'>
                     <FormItem>
                         <Button type="primary" @click="submitLogin()">Sign In</Button>
-                        <Button type="ghost" @click="submitSignup()" style="margin-left: 8px">Sign Up</Button>
+                        <Button type="ghost" class="signup" @click="submitSignup()" style="margin-left: 8px">Sign Up</Button>
                     </FormItem>
                 </div>
                 <!-- <a id="a_forget">Redister Now!</a> -->

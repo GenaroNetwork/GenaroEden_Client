@@ -22,7 +22,7 @@
 <template>
     <div>
         <div class="layout-favourites-enum">
-            <Menu theme="light" :active-name="activeName" @on-select="routerTo">
+            <Menu theme="light" :active-name="activePath" @on-select="routerTo">
                 <MenuGroup title="FAVOURITES">
                     <MenuItem name="file-index"><Icon type="android-document"></Icon>My Files</Icon></MenuItem>
                     <MenuItem name="file-upload"><Icon type="android-arrow-up"></Icon>Upload</MenuItem>
@@ -53,6 +53,11 @@
         },
         created: function () {
             this.$router.push({ path: '/file-index'});
+        },
+        computed: {
+            activePath() {
+              return this.$route.path.replace('/','');
+            }
         },
         methods: {
             routerTo(e) {
