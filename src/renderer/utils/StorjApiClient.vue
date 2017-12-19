@@ -1,13 +1,11 @@
 <script type="text/javascript">
 import iView from 'iview';
 import store from '../store'
+import config from '../../config'
 
 const {Environment} = require('storj');
-// production environment
-const storjApiUrl = 'http://101.132.159.197:8080';
 
-// test environment
-// const storjApiUrl = 'http://47.100.33.60:8080';
+const storjApiUrl = config.bridgeApiUrl;
 
 /* 创建Bucket */
 function createBucket(bucketName, bridgeUser, bridgePass, errorCallback, successCallback) {

@@ -11,6 +11,16 @@ export default new Router({
       component: require('@/templates/LoginView').default
     },
     {
+      path: '/register',
+      name: 'register',
+      component: require('@/templates/RegisterView').default
+    },
+    {
+      path: '/password-reset',
+      name: 'password-reset',
+      component: require('@/templates/PasswordResetView').default
+    },
+    {
       path: '/index',
       name: 'index-view',
       component: require('@/templates/IndexView').default,

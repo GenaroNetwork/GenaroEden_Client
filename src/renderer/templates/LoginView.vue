@@ -19,10 +19,11 @@
                 <div class='login_center'>
                     <FormItem>
                         <Button type="primary" @click="submitLogin()">Sign In</Button>
-                        <Button type="ghost" class="signup" @click="submitSignup()" style="margin-left: 8px">Sign Up</Button>
                     </FormItem>
+
+                    <router-link to="register">Sign Up</router-link>
+                    <router-link to="password-reset">Reset Passowrd</router-link>
                 </div>
-                <!-- <a id="a_forget">Redister Now!</a> -->
             </Form>
         </Card>
     </div>
@@ -33,11 +34,11 @@
     import router from '../router'
     import store from '../store'
     import iView from 'iview'
+    import { resetPassword } from '../../bridge/users'
 
     export default {
         name : 'login-view',
         created: function () {
-            console.log('login-view init')
         },
         data: function() {
             return {
@@ -110,7 +111,7 @@
     }
 </script>
 
-<style>
+<style scoped>
   .text {
     font-size: 14px;
   }
