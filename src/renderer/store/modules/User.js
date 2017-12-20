@@ -1,13 +1,15 @@
 const state = {
-    username: 'gencodettt@gmail.com',
-    password: 'lab@12345',
-    bucketId: '{bucketId}'
+    username: 'un',
+    password: 'pwd',
+    bucketId: '{bucketId}',
+    totalUploadSize: 0
 }
 
 const getters = {
-    username: state=> state.username,
-    password: state=> state.password,
-    bucketId: state=> state.bucketId
+    username: state => state.username,
+    password: state => state.password,
+    bucketId: state => state.bucketId,
+    totalUploadSize: state => state.totalUploadSize
 }
 
 const mutations = {
@@ -19,6 +21,9 @@ const mutations = {
     },
     updateBucketId(state, bucketId) {
         state.bucketId = bucketId
+    },
+    updateTotalUploadSize(state, sizeByte) {
+        state.totalUploadSize = sizeByte
     }
 }
 

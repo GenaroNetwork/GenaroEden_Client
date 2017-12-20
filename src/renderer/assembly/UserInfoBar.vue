@@ -35,7 +35,7 @@
                     <div class="layout-user-processor">
                         <span class="username">{{ username }}</span>
                         <Progress class="progress" :percent="45"  status="active" hide-info :stroke-width="3" ></Progress>
-                        <span>8.00GB/100 MB</span>
+                        <span>{{totalUploadSize}}</span>/<span>{{totalMaxSizeHuman}}</span>
                     </div>
                 </Col>
             </Row>
@@ -60,11 +60,31 @@
 </template>
 
 <script>
-    export default {
-        computed: {
-            username() {
-                return this.$store.state.User.username
-            }
+import DB_UTIL from '../utils/DbUtil'
+import store from '../store'
+var humanSize = require('human-size');
+export default {
+    mounted: function () {
+        // `this` points to the vm instance
+        debugger
+        const newTotalSize = DB_UTIL.getUploadSize()
+        store.commit('updateTotalUploadSize', newTotalSize)
+    },
+    data: function() {
+        return {
+            totalMaxSize: 100 * 1024 * 1024
+        }
+    },
+    computed: {
+        username() {
+            return this.$store.state.User.username
         },
-    }
+        totalUploadSize() {
+            return humanSize(this.$store.state.User.totalUploadSize)
+        },
+        totalMaxSizeHuman() {
+            return humanSize(this.totalMaxSize)
+        }
+    },
+}
 </script>

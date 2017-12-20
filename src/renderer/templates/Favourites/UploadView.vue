@@ -86,6 +86,7 @@
     import STROJ_CLIENT from '../../utils/StorjApiClient'
     import iView from 'iview';
     import store from '../../store'
+    import DB_UTIL from '../../utils/DbUtil'
 
     export default {
         data() {
@@ -164,6 +165,9 @@
                         });
 
                         store.commit('addFile', {filename: file.path, bucket: uploadBucketName})
+                        DB_UTIL.addUploadSize(file.size)
+                        const newTotalSize = DB_UTIL.getUploadSize()
+                        store.commit('updateTotalUploadSize', newTotalSize)
                     }, function(progress, uploadedBytes, totalBytes) {
                     })
                 }

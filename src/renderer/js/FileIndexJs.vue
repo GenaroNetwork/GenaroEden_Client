@@ -50,7 +50,7 @@ function deleteFile(username, password, bucketId, fileId) {
     STROJ_CLIENT.deleteFile(bucketId, fileId, username, password, function(err) {
         iView.Modal.error({
                 title : 'Delete File Error',
-                content: 'Delete File Error :' + err
+                content: 'Delete File Error:' + err
         });
     }, function(result) {
         initFileList(username, password, bucketId)

@@ -7,7 +7,7 @@ const dbPath = path.join(os.homedir(), "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ t_down_files: [] }).write()
+db.defaults({ t_down_files: [], uploadSize: 0 }).write()
 
 /* 插入数据 */
 function save(tableName, data) {
@@ -19,8 +19,19 @@ function query(tableName, queryVal) {
     return db.get(tableName).filter(queryVal).value()
 }
 
+function addUploadSize(sizeByte) {
+    db.set('uploadSize', getUploadSize() + sizeByte).write()
+}
+
+function getUploadSize() {
+    debugger
+    return db.get('uploadSize').value()
+}
+
 export default {
     save,
-    query
+    query,
+    addUploadSize,
+    getUploadSize
 }
 </script>
