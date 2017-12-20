@@ -1,8 +1,6 @@
 <style scoped>
     .layout_title {
-        float: left;
         min-height: 60px;
-        width: 78%;
         margin-left: 15px;
         padding-top: 20px;
         padding-left: 10px;

@@ -1,26 +1,27 @@
 <style scoped>
     .layout-favourites-enum {
-        margin-top: 0;
-        float: left;
         min-height: 520px;
         width: 200px;
         background: #fff;
         overflow: hidden;
         border-radius: 8px;
+        flex-shrink: 0;
     }
     .layout-favourites-content {
-        margin-top: 0;
-        float: left;
+        flex-grow: 1;
         margin-left: 20px;
         min-height: 520px;
-        width: 630px;
         background: #fff;
         border-radius: 8px;
+    }
+    .colcontainer {
+        display: flex;
+        width: 100%;
     }
 </style>
 
 <template>
-    <div>
+    <div class="colcontainer">
         <div class="layout-favourites-enum">
             <Menu theme="light" :active-name="activePath" @on-select="routerTo">
                 <MenuGroup title="FAVOURITES">

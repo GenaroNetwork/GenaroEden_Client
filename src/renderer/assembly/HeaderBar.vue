@@ -3,52 +3,59 @@
         height: 60px;
         background: #fff;
         box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-        padding-top: 16px;
-        padding-right: 15px;
-        padding-left: 25px;
+        display: flex;
+        align-items: center;
     }
     .dropItem {
         margin-left: 20px
+    }
+    .logo {
+        flex-grow: 1;
+        padding: 0 0 0 12px;
+        height: 44px;
+    }
+    .logo img {
+        height: 100%;
+    }
+    .demo-avatar-badge {
+        padding-right: 12px
+    }
+    .logout {
+        text-align: right;
     }
 </style>
 
 <template>
     <div class="layout-header">
-        <Row>
-            <Col span="22">
-                <!-- <Input style="width: 300px" placeholder="Find Everything">
-                    <span slot="prepend"><Icon type="search" /></span>
-                </Input> -->
-                <span>&nbsp;</span>
-            </Col>
-            <Col span="2">
-                <div class="demo-avatar-badge">
-                    <Badge count="">
-                        <img shape="circle" src="~@/assets/genaro_logo.png" size="large" >
-                    </Badge>
-                    <Dropdown class="dropItem" trigger="click" @on-click="bucketAction" transfer placement="left-start">
-                        <a href="javascript:void(0)">
-                            <Icon type="arrow-down-b"></Icon>
-                        </a>
-                        <DropdownMenu slot="list">
-                            <DropdownItem name="logout">logout</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
+        <div class="logo">
+            <img shape="circle" src="~@/assets/logo_big@2x.png" >
+        </div>
+        <div class="demo-avatar-badge">
+            <Badge count="">
+                <img shape="circle" src="~@/assets/genaro_logo.png" size="large" >
+            </Badge>
+            <Poptip placement="bottom-end" width="">
+                <Icon type="arrow-down-b"></Icon>
+                <div class="api" slot="content">
+                    <storage-usage></storage-usage>
+                    <div class="logout"><a href="" @click="logout">logout</a></div>
                 </div>
-            </Col>
-        </Row>
+            </Poptip>
+        </div>
     </div>
 </template>
 
 <script>
     import router from '../router'
+    import StorageUsage from '@/assembly/StorageUsage'
     export default {
         methods: {
-            bucketAction(name) {
-                if (name === 'logout') {
-                    router.push({path: '/'})
-                }
+            logout() {
+                router.push({path: '/'})
             }
+        },
+        components:{
+            StorageUsage
         }
     }
 </script>

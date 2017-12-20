@@ -1,6 +1,6 @@
 const state = {
-    username: 'un',
-    password: 'pwd',
+    username: '',
+    password: '',
     bucketId: '{bucketId}',
     totalUploadSize: 0
 }

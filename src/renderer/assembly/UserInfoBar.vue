@@ -66,7 +66,7 @@ var humanSize = require('human-size');
 export default {
     mounted: function () {
         // `this` points to the vm instance
-        debugger
+        
         const newTotalSize = DB_UTIL.getUploadSize()
         store.commit('updateTotalUploadSize', newTotalSize)
     },

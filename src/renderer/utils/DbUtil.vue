@@ -29,7 +29,6 @@ function addUploadSize(sizeByte) {
 }
 
 function getUploadSize() {
-    debugger
     return db.get('uploadSize').value()
 }
 
