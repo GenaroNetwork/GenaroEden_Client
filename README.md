@@ -1,6 +1,6 @@
 # genaro-eden
 
-> An electron-vue uploader, downloader, and dashboard for the Genaro network
+> An uploader, downloader, and dashboard for the Genaro network
 
 ## Roadmap
 

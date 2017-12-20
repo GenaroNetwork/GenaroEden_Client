@@ -1,11 +1,18 @@
 <script type="text/javascript">
+var fs = require('fs');
 const path = require('path')
 const os = require('os')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
-const dbPath = path.join(os.homedir(), "db.json")
+const dbFolder = path.join(os.homedir(), ".eden")
+if (!fs.existsSync(dbFolder)){
+    fs.mkdirSync(dbFolder);
+}
+const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
+
+
 
 db.defaults({ t_down_files: [], uploadSize: 0 }).write()
 
