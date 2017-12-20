@@ -12,8 +12,6 @@ const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-
-
 db.defaults({ t_down_files: [], uploadSize: 0 }).write()
 
 /* 插入数据 */

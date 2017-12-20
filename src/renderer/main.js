@@ -12,6 +12,8 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';    // 使用 CSS
 Vue.use(iView)
 
+import 'bulma/css/bulma.css'
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

@@ -3,11 +3,11 @@
         <Card class="box-card">
             <div class='login_center'>
                 <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
-                <h3>Genaro</h3>
+                <h1>Genaro</h1>
             </div>
             <Form ref="login" :model="login" :rules="ruleInline">
                 <FormItem prop="username">
-                    <Input type="text" v-model="login.username" placeholder="Username">
+                    <Input type="text" v-model="login.username" placeholder="User Name">
                         <Icon type="ios-person-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
@@ -16,13 +16,13 @@
                         <Icon type="ios-locked-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
-                <div class='login_center'>
+                <div class='login_center is-clearfix'>
                     <FormItem>
-                        <Button type="primary" @click="submitLogin()">Sign In</Button>
+                        <Button type="primary" @click="submitLogin()" size="large" long>Sign In</Button>
                     </FormItem>
 
-                    <router-link to="register">Sign Up</router-link>
-                    <router-link to="password-reset">Reset Passowrd</router-link>
+                    <router-link class="otherlink is-pulled-left" to="register">Sign Up</router-link>
+                    <router-link class="otherlink is-pulled-right" to="password-reset">Reset Passowrd</router-link>
                 </div>
             </Form>
         </Card>
@@ -147,4 +147,10 @@
       margin-left:10px;
   }
 
+  .otherlink {
+      font-size: 12px
+  }
+  h1 {
+      padding: 10px
+  }
 </style>

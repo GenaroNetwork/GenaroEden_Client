@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "bulma": "^0.6.1",
     "human-size": "^1.1.0",
     "iview": "^2.7.4",
     "lowdb": "^1.0.0",

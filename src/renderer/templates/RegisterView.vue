@@ -1,14 +1,35 @@
 <style scoped>
+  .box-card {
+    width: 480px;
+    top: 50%;
+    transform: translate(0, -70%);
+    margin:0px auto;
+  }
+  .login_center {
+      width: 100%;
+      text-align: center;
+  }
+  #wrap{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  .otherlink {
+      font-size: 12px
+  }
+
+  h1 {
+      padding: 10px
+  }
 </style>
 
 <template>
     <div id="wrap">
-        <router-link to="/">Back</router-link>
         <Card class="box-card">
             <div class='login_center'>
                 <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
-                <h3>Genaro</h3>
-                <h3>Register Genaro Account</h3>
+                <h1>Register Genaro Account</h1>
             </div>
             <Form ref="register" :model="register" :rules="ruleInline">
                 <FormItem prop="username">
@@ -26,10 +47,11 @@
                         <Icon type="ios-locked-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
-                <div class='login_center'>
+                <div class='login_center is-clearfix'>
                     <FormItem>
-                        <Button type="primary" @click="submitSignup()">Register</Button>
+                        <Button type="primary" long @click="submitSignup()">Sign Up</Button>
                     </FormItem>
+                    <router-link class="otherlink is-pulled-left" to="/">Sign In</router-link>
                 </div>
             </Form>
         </Card>
