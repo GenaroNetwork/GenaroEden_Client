@@ -60,7 +60,7 @@ export default {
             return humanSize(this.totalMaxSize)
         },
         percent() {
-            this.totalUploadSize * 100 / this.totalMaxSizeHuman
+            return this.$store.state.User.totalUploadSize * 100 / this.totalMaxSize
         }
     },
 }

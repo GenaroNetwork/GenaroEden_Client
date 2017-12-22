@@ -1,5 +1,5 @@
 <template>
-    <div id="wrap">
+    <div id="wrap" @keyup.enter="submitLogin">
         <Card class="box-card">
             <div class='login_center'>
                 <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
