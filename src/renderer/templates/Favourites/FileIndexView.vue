@@ -9,10 +9,34 @@
         height: 25px;
     }
 
+    #list {
+        display: flex;
+        flex-flow: column;
+    }
+
+    #file-list {
+        flex-grow: 1;
+        display: flex;
+        flex-flow: column;
+    }
+    #bucket-list {
+        flex-shrink: 0;
+    }
+    .filecard {
+        flex-grow: 1;
+        display: flex;
+        flex-flow: column;
+    }
+    .files {
+        flex-grow: 1;
+        max-height: 100%;
+        overflow: scroll;
+        padding: 14px 16px;
+    }
 </style>
 
 <template>
-    <div id="list">
+    <div id="list" class="fullheight">
          <div id="bucket-list" style="background:#eee">
             <Card :bordered="false" dis-hover>
                 <p slot="title" id="add-bucket-title">Buckets</p> 
@@ -31,21 +55,24 @@
                 </Row>
             </Card>
         </div>
-        <div id="file-list" style="background:#eee">
-            <Card v-if="selected.selectBucketName != '' && selected.selectBucketId != ''" :bordered="false" dis-hover>
-                <p slot="title">Files</p>
-                Bucket Info:{{ selected.selectBucketName }} | {{ selected.selectBucketId }} 
-                <Dropdown @on-click="bucketAction">
-                    <a href="javascript:void(0)">
-                        Action
-                        <Icon type="arrow-down-b"></Icon>
-                    </a>
-                    <DropdownMenu slot="list">
-                        <DropdownItem name="delete">Delete</DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-                <Table :loading="fileListLoading" no-data-text="No Data" height="260" :columns="fileTableColums" :data="bucketFileList"></Table>
-            </Card>
+        <div id="file-list">
+            <div class="filecard" v-if="selected.selectBucketName != '' && selected.selectBucketId != ''" :bordered="false" dis-hover>
+                <div class="ivu-card-head"><p data-v-1095df14="" id="add-bucket-title">Files</p></div>
+                <span style="padding: 14px 16px;">Bucket Info:{{ selected.selectBucketName }} | {{ selected.selectBucketId }}
+                    <Dropdown @on-click="bucketAction">
+                        <a href="javascript:void(0)">
+                            Action
+                            <Icon type="arrow-down-b"></Icon>
+                        </a>
+                        <DropdownMenu slot="list">
+                            <DropdownItem name="delete">Delete</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </span> 
+                <div class="files">
+                    <Table :loading="fileListLoading" no-data-text="No Data" :columns="fileTableColums" :data="bucketFileList"></Table>
+                </div>
+            </div>
         </div>
             <template>
                 <!-- 添加bucket的modal -->
@@ -59,9 +86,9 @@
                         </FormItem>
                     </Form> -->
                     <Row>
-                            <Col span="5"><h4>Bucket Name:</h4></Col>
-                            <Col span="19"><Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name" v-on:on-enter="addBucketOk"></Input></Col>
-                        </Row>
+                        <Col span="5"><h4>Bucket Name:</h4></Col>
+                        <Col span="19"><Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name" v-on:on-enter="addBucketOk"></Input></Col>
+                    </Row>
                 </Modal>
 
                 <!-- 显示receipt的modal -->
