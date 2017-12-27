@@ -39,9 +39,10 @@ function saveDownloadFile(bucketId, fileId, callback) {
 
 /* 校验文件是否已经下载 */
 function checkFileDownload(bucketId, fileId, callback) {
-    var val = {bucketId: bucketId, fileId: fileId }
-    var result = DB_UTIL.query('t_down_files', val)
-    callback(result)
+    // var val = {bucketId: bucketId, fileId: fileId }
+    // var result = DB_UTIL.query('t_down_files', val)
+    // callback(result)
+    callback([])
 }
 
 /* 删除文件 */
