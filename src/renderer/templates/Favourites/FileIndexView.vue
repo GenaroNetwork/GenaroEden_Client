@@ -39,18 +39,18 @@
     <div id="list" class="fullheight">
          <div id="bucket-list" style="background:#eee">
             <Card :bordered="false" dis-hover>
-                <p slot="title" id="add-bucket-title">Buckets</p> 
+                <p slot="title" id="add-bucket-title">Folders</p> 
                 <Row type="flex" justify="start">
                     <Col span="8" style="padding-top:3px" v-for="item in showBucketList">
                         <Button type="ghost" style="width:195px" @click="bucketBtnClick({label: item.name, value: item.id})">{{ item.name }}</Button>
                     </Col>
                     <Col v-if="bucketList.length >= 5" span="8" style="padding-top:3px">
-                        <Select style="width:195px" placeholder="More Bucket" @on-change="bucketBtnClick" label-in-value>
+                        <Select style="width:195px" placeholder="More Folder" @on-change="bucketBtnClick" label-in-value>
                             <Option v-for="item in moreBucketList" :value="item.id" :label="item.name">{{ item.name }}</Option>
                         </Select>
                     </Col>
                     <Col span="8" style="padding-top:3px">
-                        <Button type="dashed" style="width:195px" @click="add_bucket_modal=true">Add Bucket</Button>
+                        <Button type="dashed" style="width:195px" @click="add_bucket_modal=true">New Folder</Button>
                     </Col>
                 </Row>
             </Card>
@@ -58,7 +58,7 @@
         <div id="file-list">
             <div class="filecard" v-if="selected.selectBucketName != '' && selected.selectBucketId != ''" :bordered="false" dis-hover>
                 <div class="ivu-card-head"><p data-v-1095df14="" id="add-bucket-title">Files</p></div>
-                <span style="padding: 14px 16px;">Bucket Info:{{ selected.selectBucketName }} | {{ selected.selectBucketId }}
+                <span style="padding: 14px 16px;">Folder Info:{{ selected.selectBucketName }} | {{ selected.selectBucketId }}
                     <Dropdown @on-click="bucketAction">
                         <a href="javascript:void(0)">
                             Action
@@ -77,17 +77,12 @@
             <template>
                 <!-- 添加bucket的modal -->
                 <Modal 
-                    v-model="add_bucket_modal" title="Add Bucket" 
+                    v-model="add_bucket_modal" title="Add Folder" 
                     @on-ok="addBucketOk" @on-cancel="addBucketCancel"
                     ok-text="OK" cancel-text="Cancel" :closable="false">
-                    <!-- <Form :model="addBucketItem" :label-width="100">
-                        <FormItem label="Bucket Name">
-                            <Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name" v-on:on-enter="addBucketOk"></Input>
-                        </FormItem>
-                    </Form> -->
                     <Row>
-                        <Col span="5"><h4>Bucket Name:</h4></Col>
-                        <Col span="19"><Input v-model="addBucketItem.bucketName" placeholder="Input Bucket Name" v-on:on-enter="addBucketOk"></Input></Col>
+                        <Col span="5"><h4>Folder Name:</h4></Col>
+                        <Col span="19"><Input v-model="addBucketItem.bucketName" placeholder="Input Folder Name" v-on:on-enter="addBucketOk"></Input></Col>
                     </Row>
                 </Modal>
 
@@ -123,7 +118,7 @@
                     <div style="height:40px; margin-top: 20px">
                         <Row>
                             <Col span="8">
-                                <h4>Confrim Delete Bucket:</h4>
+                                <h4>Confrim Delete Folder:</h4>
                             </Col>
                             <Col span="16">
                                 {{ selected.selectBucketName }}
@@ -303,21 +298,21 @@
                     var bridgeUser = this.username
                     var bridgePass = this.password
 
-                    // iView.Message.info('Add Bucket Waiting');
+                    // iView.Message.info('Add Folder Waiting');
 
                     // 调用创建Bucket Api
                     STROJ_CLIENT.createBucket(bucketName, bridgeUser, bridgePass,
                         function(err) {
                             // 显示错误Notice
                             var noticeArgs = {
-                                title: 'Create Bucket Error',
-                                desc: 'Bucket Name: ' + bucketName,
+                                title: 'Create Folder Error',
+                                desc: 'Folder Name: ' + bucketName,
                                 err: err,
                                 duration: 5
                             }
                             IVIEW_UTIL.showErrNotice(noticeArgs)
                         }, function(result) {
-                            iView.Message.info('Add Bucket Success');
+                            iView.Message.info('Add Folder Success');
 
                             // 添加完成后 刷新Bucket列表
                             FILEINDEX_JS.initBucketList(bridgeUser, bridgePass)
@@ -382,7 +377,7 @@
                         ELECTRON_DIALOG.showSaveDialog(options, function(filepath) {
                             iView.Message.info('File Downloading...');
                             var downloadNoticeArgs = {
-                                desc: 'Source File: ' + downSelect.selectFileName + ' <br>Bucket: ' + downSelect.selectBucketName + ' <br>Target: ' + filepath,
+                                desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filepath,
                                 duration: 5
                             }
 
@@ -429,7 +424,7 @@
                         function(err) {}, 
                         function(result) {
                             // 页面初始化,获取bucketList
-                            iView.Message.info('Bucket Delete Success');
+                            iView.Message.info('Folder Delete Success');
                             FILEINDEX_JS.initBucketList(bridgeUser, bridgePass)
                         }
                 )

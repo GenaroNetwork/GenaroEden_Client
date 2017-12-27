@@ -8,8 +8,8 @@ import DB_UTIL from '../utils/DbUtil'
 function initBucketList(username, password) {
     STROJ_CLIENT.getBucketList(username, password, function(err) {
             iView.Modal.error({
-                title : 'Obtain Bucket Error',
-                content: 'Obtain Bucket Error :' + err,
+                title : 'Obtain Folder Error',
+                content: 'Obtain Folder Error :' + err,
                 okText: 'OK'
             });
         }, function(result) {
@@ -22,7 +22,7 @@ function initBucketList(username, password) {
 function initFileList(username, password, bucketId) {
     store.commit('updateFileListLoading', true)
     STROJ_CLIENT.getFileList(bucketId, username, password, function(err) {
-            iView.Message.error('Get Bucket File List Error:' + err);
+            iView.Message.error('Get Folder File List Error:' + err);
             store.commit('updateFileListLoading', false)
         }, function(result) {
             store.commit('updateBucketFileList', result)

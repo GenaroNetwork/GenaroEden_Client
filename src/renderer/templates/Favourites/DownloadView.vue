@@ -20,7 +20,7 @@ export default {
                 key: 'filepath',
                 width: 230
             }, {
-                title: 'Bucket Name',
+                title: 'Folder Name',
                 key: 'bucketName',
                 width: 230
             }]

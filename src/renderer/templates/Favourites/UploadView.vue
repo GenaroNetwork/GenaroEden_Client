@@ -45,7 +45,7 @@
             <Row>
                 <Col span="24"> Upload to
                 <Dropdown @on-click="bucketSelect">
-                    <a href="javascript:void(0)">{{ bucketName == null? 'Choose Bucket' : bucketName }}<Icon type="arrow-down-b"></Icon></a>
+                    <a href="javascript:void(0)">{{ bucketName == null? 'Choose Folder' : bucketName }}<Icon type="arrow-down-b"></Icon></a>
                     <DropdownMenu slot="list">
                         <DropdownItem v-for="(bucket, index) in bucketList" :name="index">
                             {{ bucket.name }}
@@ -98,7 +98,7 @@
                     key: 'filename'
                 },
                 {
-                    title: 'Bucket Name',
+                    title: 'Folder Name',
                     key: 'bucket'
                 }]
             }
@@ -107,8 +107,8 @@
             // 页面初始化,获取bucketList
             STROJ_CLIENT.getBucketList(this.username, this.password, function(err) {
                 iView.Modal.error({
-                    title : 'Obtain Bucket Error',
-                    content: 'Obtain Bucket Error :' + err
+                    title : 'Obtain Folder Error',
+                    content: 'Obtain Folder Error :' + err
                 });
             }, function(result) {
                 store.commit('updateBucketList', result)
@@ -145,7 +145,7 @@
                 const bucketCheck = this.bucketName != null && this.bucketId != null
                 if(!bucketCheck) {
                     this.$Notice.warning({
-                        title: 'Please Choose Bucket Name!'
+                        title: 'Please Choose Folder Name!'
                     });
                 } else {
                     var uploadBucketName = this.bucketName;
@@ -154,13 +154,13 @@
                     STROJ_CLIENT.uploadFile(file, this.bucketId, this.username, this.password, function(err) {
                         iView.Notice.error({
                             title: '<b>File Upload Error</b>',
-                            desc: 'File: ' + file.path + '<br>Bucket:' + uploadBucketName + '<br>Error:' + err,
+                            desc: 'File: ' + file.path + '<br>Folder:' + uploadBucketName + '<br>Error:' + err,
                             duration: 0
                         });
                     }, function() {
                         iView.Notice.success({
                             title: '<b>File Upload Success</b>',
-                            desc: 'File: ' + file.path + ' <br>Bucket: ' + uploadBucketName,
+                            desc: 'File: ' + file.path + ' <br>Folder: ' + uploadBucketName,
                             duration: 0
                         });
 
