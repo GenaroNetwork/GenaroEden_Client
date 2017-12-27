@@ -26,7 +26,6 @@
 <template>
     <div class="layout-user-info">
         <div class="layout-user-processor">
-            <span class="username">{{ username }}</span>
             <Progress class="progress" :percent="percent"  status="active" hide-info :stroke-width="3" ></Progress>
             <span><span>{{totalUploadSize}}</span>/<span>{{totalMaxSizeHuman}}</span></span>
         </div>

@@ -31,10 +31,8 @@
             <img shape="circle" src="~@/assets/logo_big@2x.png" >
         </div>
         <div class="demo-avatar-badge">
-            <Badge count="">
-                <img shape="circle" src="~@/assets/genaro_logo.png" size="large" >
-            </Badge>
             <Poptip placement="bottom-end" width="">
+                <span>{{username}}</span>
                 <Icon type="arrow-down-b"></Icon>
                 <div class="api" slot="content">
                     <storage-usage></storage-usage>
@@ -48,6 +46,7 @@
 <script>
     import router from '../router'
     import StorageUsage from '@/assembly/StorageUsage'
+    import store from '../store'
     export default {
         methods: {
             logout() {
@@ -56,6 +55,11 @@
         },
         components:{
             StorageUsage
+        },
+        computed: {
+            username() {
+                return this.$store.state.User.username
+            }
         }
     }
 </script>
