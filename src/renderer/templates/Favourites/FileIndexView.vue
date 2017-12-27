@@ -33,6 +33,17 @@
         overflow: scroll;
         padding: 14px 16px;
     }
+    .file-info {
+        padding: 14px 16px;
+        display: flex;
+    }
+    .folder-name-id {
+        flex-grow: 1;
+        text-overflow: ellipsis;
+    }
+    .folder-action {
+        flex-shrink: 0;
+    }
 </style>
 
 <template>
@@ -57,15 +68,16 @@
         </div>
         <div id="file-list">
             <div class="filecard" v-if="selected.selectBucketName != '' && selected.selectBucketId != ''" :bordered="false" dis-hover>
-                <div class="ivu-card-head"><p data-v-1095df14="" id="add-bucket-title">Files</p></div>
-                <span style="padding: 14px 16px;">Folder Info:{{ selected.selectBucketName }} | {{ selected.selectBucketId }}
-                    <Dropdown @on-click="bucketAction">
+                <div class="ivu-card-head"><p id="add-bucket-title">Files</p></div>
+                <span class="file-info">
+                    <span class="folder-name-id">Folder Info:{{ selected.selectBucketName }} | {{ selected.selectBucketId }}</span>
+                    <Dropdown @on-click="bucketAction" class="folder-action">
                         <a href="javascript:void(0)">
                             Action
                             <Icon type="arrow-down-b"></Icon>
                         </a>
                         <DropdownMenu slot="list">
-                            <DropdownItem name="delete">Delete</DropdownItem>
+                            <DropdownItem name="delete">Delete Folder</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </span> 
@@ -99,7 +111,7 @@
                         </Row>
                         <Row>
                             <Col span="4"><h4>GNX Paid:</h4></Col>
-                            <Col span="20">0</Col>
+                            <Col span="20">0 (free for beta testing)</Col>
                         </Row>
                         <Row>
                             <Col span="4"><h4>QR Code:</h4></Col>
