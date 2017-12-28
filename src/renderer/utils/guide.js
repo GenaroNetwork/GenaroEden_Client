@@ -14,7 +14,7 @@ var tour = new Shepherd.Tour({
 
 function runGuide() {
     tour.addStep('myfiles-menu', {
-        text: '<h1 class="tour-steps"><span>1</span>/5</h1>Select My Files menu to browser your folders and file ',
+        text: '<h1 class="tour-steps"><span>1</span>/5</h1>Click on My Files to browser your folders and files',
         attachTo: '.myfiles-menu right',
         classes: 'shepherd shepherd-open shepherd-theme-arrows shepherd-transparent-text',
         buttons: [{
@@ -27,7 +27,7 @@ function runGuide() {
             action: tour.next
         }]
     }).addStep('newfolder', {
-        text: '<h1 class="tour-steps"><span>2</span>/5</h1>Create new folder before upload',
+        text: '<h1 class="tour-steps"><span>2</span>/5</h1>Create a new folder before uploading',
         attachTo: '.newfolder bottom',
         classes: 'shepherd shepherd-open shepherd-theme-arrows shepherd-transparent-text',
         buttons: [{
@@ -40,7 +40,7 @@ function runGuide() {
             action: tour.next
         }]
     }).addStep('upload-menu', {
-        text: '<h1 class="tour-steps"><span>3</span>/5</h1>select upload menu to upload files',
+        text: '<h1 class="tour-steps"><span>3</span>/5</h1>Click Upload to transfer files',
         attachTo: '.upload-menu right',
         classes: 'shepherd shepherd-open shepherd-theme-arrows shepherd-transparent-text',
         buttons: [{
@@ -53,7 +53,7 @@ function runGuide() {
             action: tour.next
         }]
     }).addStep('download-history', {
-        text: '<h1 class="tour-steps"><span>4</span>/5</h1>select upload menu to upload files',
+        text: '<h1 class="tour-steps"><span>4</span>/5</h1>Click download history to see your previous transactions',
         attachTo: '.download-history right',
         classes: 'shepherd shepherd-open shepherd-theme-arrows shepherd-transparent-text',
         buttons: [{
@@ -68,7 +68,7 @@ function runGuide() {
     })
 
     tour.addStep('account-info', {
-        text: '<h1 class="tour-steps"><span>5</span>/5</h1>drop down to view your account info',
+        text: '<h1 class="tour-steps"><span>5</span>/5</h1>Click here to view your account info',
         attachTo: '.demo-avatar-badge bottom',
         classes: 'shepherd shepherd-open shepherd-theme-arrows shepherd-transparent-text',
         buttons: [{
