@@ -5,6 +5,7 @@
         box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
         display: flex;
         align-items: center;
+        flex-shrink: 0;
     }
     .dropItem {
         margin-left: 20px
@@ -32,7 +33,7 @@
         </div>
         <div class="demo-avatar-badge">
             <Poptip placement="bottom-end" width="">
-                <span>{{username}}</span>
+                <span class="account-info">{{username}}</span>
                 <Icon type="arrow-down-b"></Icon>
                 <div class="api" slot="content">
                     <storage-usage></storage-usage>
@@ -47,6 +48,7 @@
     import router from '../router'
     import StorageUsage from '@/assembly/StorageUsage'
     import store from '../store'
+    import {stepReady} from "../utils/guide"
     export default {
         methods: {
             logout() {
@@ -60,6 +62,9 @@
             username() {
                 return this.$store.state.User.username
             }
+        },
+        mounted: function (){
+            stepReady('account-info')
         }
     }
 </script>

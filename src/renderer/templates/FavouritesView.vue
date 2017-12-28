@@ -25,9 +25,9 @@
         <div class="layout-favourites-enum">
             <Menu theme="light" :active-name="activePath" @on-select="routerTo">
                 <MenuGroup title="FAVOURITES">
-                    <MenuItem name="file-index"><Icon type="android-document"></Icon>My Files</Icon></MenuItem>
-                    <MenuItem name="file-upload"><Icon type="android-arrow-up"></Icon>Upload</MenuItem>
-                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon>Download History</MenuItem>
+                    <MenuItem name="file-index"><Icon type="android-document"></Icon><span class="myfiles-menu">My Files</span></MenuItem>
+                    <MenuItem name="file-upload"><Icon type="android-arrow-up"></Icon><span class="upload-menu">Upload</span></MenuItem>
+                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon><span class="download-history">Download History</span></MenuItem>
                     <MenuItem name="share-my-storage"><Icon type="android-upload"></Icon>Share My Storage</MenuItem>
                     <!-- <MenuItem name="4"><Icon type="android-delete"></Icon>Delete</MenuItem>
                     <MenuItem name="5"><Icon type="android-time"></Icon>History</MenuItem>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+    import {stepReady} from "../utils/guide"
     export default {
         data() {
             return {
@@ -54,6 +55,11 @@
         },
         created: function () {
             this.$router.push({ path: '/file-index'});
+        },
+        mounted: function (){
+            stepReady('My Folder')
+            stepReady('Upload')
+            stepReady('download-history')
         },
         computed: {
             activePath() {

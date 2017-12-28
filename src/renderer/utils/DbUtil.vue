@@ -4,9 +4,12 @@ const path = require('path')
 const os = require('os')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
+
+var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
 if (!fs.existsSync(dbFolder)){
-    fs.mkdirSync(dbFolder);
+    fs.mkdirSync(dbFolder)
+    isFirstTime = true
 }
 const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
@@ -36,6 +39,7 @@ export default {
     save,
     query,
     addUploadSize,
-    getUploadSize
+    getUploadSize,
+    isFirstTime
 }
 </script>

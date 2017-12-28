@@ -50,7 +50,7 @@
     <div id="list" class="fullheight">
          <div id="bucket-list" style="background:#eee">
             <Card :bordered="false" dis-hover>
-                <p slot="title" id="add-bucket-title">Folders</p> 
+                <p slot="title" class="folderstext" id="add-bucket-title">Folders</p> 
                 <Row type="flex" justify="start">
                     <Col span="8" style="padding-top:3px" v-for="item in showBucketList">
                         <Button type="ghost" style="width:195px" @click="bucketBtnClick({label: item.name, value: item.id})">{{ item.name }}</Button>
@@ -61,7 +61,7 @@
                         </Select>
                     </Col>
                     <Col span="8" style="padding-top:3px">
-                        <Button type="dashed" style="width:195px" @click="add_bucket_modal=true">New Folder</Button>
+                        <Button class="newfolder" type="dashed" style="width:195px" @click="add_bucket_modal=true">+ New Folder</Button>
                     </Col>
                 </Row>
             </Card>
@@ -128,13 +128,8 @@
                 <!-- 删除Bucket确认框-->
                 <Modal v-model="show_del_bucket_modal" ok-text="OK" cancel-text="Cancel" :closable="false">
                     <div style="height:40px; margin-top: 20px">
-                        <Row>
-                            <Col span="8">
-                                <h4>Confrim Delete Folder:</h4>
-                            </Col>
-                            <Col span="16">
-                                {{ selected.selectBucketName }}
-                            </Col>
+                            <h4>Confirm Delete Folder: {{ selected.selectBucketName }}</h4>
+                            <p>All your files in this folder will be deleted. This action cannot be undone.</p>
                         </Row>
                     </div>
                     <div slot="footer">
@@ -183,6 +178,7 @@
     import FILEINDEX_JS from '../../js/FileIndexJs'
     import iView from 'iview';
     import store from '../../store'
+    import {stepReady} from "../../utils/guide"
 
     export default {
         data() {
@@ -272,6 +268,10 @@
         created: function () {
             // 页面初始化,获取bucketList
             FILEINDEX_JS.initBucketList(this.username, this.password)
+            // console.log('sss' + Shepherd)
+        },
+        mounted: function (){
+            stepReady('new-folder')
         },
         computed: {
             username() {
