@@ -1,15 +1,12 @@
 <style scoped>
-    #share-chart-img {
-        margin-left: 22px;
-    }
-    #share-note {
-        margin-left: 30px;
+    div {
+        padding: 14px;
     }
 </style>
 <template>
     <div>
-        <img id="share-chart-img" src="~@/assets/share_chart_img.png" title="Note: This feature is not available for Genaro Eden Beta">
-        <h4 id="share-note">Note: This feature is not available for Genaro Eden Beta</h4>
+        Genaro share now on Beta. <br>
+        Please visit <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">https://www.npmjs.com/package/genaroshare-daemon</a> for installation and running operation.
     </div>
 </template>
 
