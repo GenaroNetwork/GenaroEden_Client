@@ -75,8 +75,7 @@ function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCal
             errorCallback(err)
             return console.error(err);
         }
-        successCallback(result)
-        console.log('list-files:', result);
+        successCallback(result)        
     })
 }
 
