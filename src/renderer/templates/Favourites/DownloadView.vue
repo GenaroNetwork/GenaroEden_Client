@@ -2,7 +2,7 @@
     <div>
         <Card :bordered="false" dis-hover>
             <p slot="title">Download</p>
-            <Table no-data-text="No Data" height="260" :columns="fileTableColums" :data="downloadFileList"></Table>
+            <Table no-data-text="No Data" :columns="fileTableColums" :data="downloadFileList"></Table>
         </Card>
     </div>
 </template>
@@ -17,8 +17,7 @@ export default {
                 width: 230
             },{
                 title: 'File Path',
-                key: 'filepath',
-                width: 230
+                key: 'filepath'
             }, {
                 title: 'Folder Name',
                 key: 'bucketName',
