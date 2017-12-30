@@ -1,14 +1,17 @@
 <style scoped>
     div {
-        padding: 14px;
         text-align: center;
     }
     img {
-        margin: 20px auto;
+        margin: 90px auto 40px auto;
     }
     h1 {
         font-size: 1.6rem;
         margin: 20px auto;
+    }
+    p {
+        width: 600px;
+        margin: 0 auto;
     }
 </style>
 <template>
