@@ -148,8 +148,19 @@
                         title: 'Please Choose Folder Name!'
                     });
                 } else {
-                    var uploadBucketName = this.bucketName;
+                    var uploadBucketName = this.bucketName
 
+                    const totalMaxSize = 100 * 1024 * 1024
+                    const sizeNow = DB_UTIL.getUploadSize()
+                    if(totalMaxSize < sizeNow + file.size) {
+                        iView.Notice.error({
+                            title: '<b>File Upload Error</b>',
+                            desc: 'File: ' + file.path + '<br>Folder:' + uploadBucketName + '<br>Error: You have no space left.',
+                            duration: 0
+                        });
+                        return
+                    }
+                    
                     iView.Message.info('File Uploading...');
                     STROJ_CLIENT.uploadFile(file, this.bucketId, this.username, this.password, function(err) {
                         iView.Notice.error({
