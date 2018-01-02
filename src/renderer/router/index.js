@@ -30,29 +30,38 @@ export default new Router({
           component: require('@/templates/FavouritesView').default,
           children: [
             {
+              path: '/folders',
+              name: 'folders-view',
+              component: require('@/templates/Favourites/Folders').default
+            },
+            {
+              path: '/folder/:folderId',
+              name: 'folder-view',
+              component: require('@/templates/Favourites/Folder').default
+            },
+            {
               path: '/file-index',
+              name: 'file-index',
               component: require('@/templates/Favourites/FileIndexView').default
             },
             {
               path: '/file-upload',
+              name: 'file-upload',
               component: require('@/templates/Favourites/UploadView').default
             },
             {
               path: '/file-download',
+              name: 'file-download',
               component: require('@/templates/Favourites/DownloadView').default
             },
             {
               path: '/share-my-storage',
+              name: 'share-my-storage',
               component: require('@/templates/Favourites/ShareMyStorage').default
             }
           ]
         }
       ]
-    },
-    {
-      path: '/register',
-      name: 'register-view',
-      component: require('@/templates/RegisterView').default
     },
     {
       path: '*',

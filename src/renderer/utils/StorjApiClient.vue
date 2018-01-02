@@ -73,9 +73,10 @@ function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCal
     _storj.listFiles(bucketId, function (err, result) {
         if (err) {
             errorCallback(err)
-            return console.error(err);
+            console.error(err)
+        } else {
+            successCallback(result)
         }
-        successCallback(result)        
     })
 }
 

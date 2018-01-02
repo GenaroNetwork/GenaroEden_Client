@@ -24,7 +24,7 @@ function initFileList(username, password, bucketId) {
     STROJ_CLIENT.getFileList(bucketId, username, password, function(err) {
             iView.Message.error('Get Folder File List Error:' + err);
             store.commit('updateFileListLoading', false)
-        }, function(result) {
+    }, function(result) {
             store.commit('updateBucketFileList', result)
             store.commit('updateFileListLoading', false)
     })

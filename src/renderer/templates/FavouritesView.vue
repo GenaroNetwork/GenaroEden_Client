@@ -26,6 +26,7 @@
             <Menu theme="light" :active-name="activePath" @on-select="routerTo">
                 <MenuGroup title="FAVOURITES">
                     <MenuItem name="file-index"><Icon type="android-document"></Icon><span class="myfiles-menu">My Files</span></MenuItem>
+                    <MenuItem name="folders-view"><Icon type="android-document"></Icon><span class="myfiles-menu">Browser Files</span></MenuItem>
                     <MenuItem name="file-upload"><Icon type="android-arrow-up"></Icon><span class="upload-menu">Upload</span></MenuItem>
                     <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon><span class="download-history">Download History</span></MenuItem>
                     <MenuItem name="share-my-storage"><Icon type="android-upload"></Icon>Share My Storage</MenuItem>
@@ -50,7 +51,6 @@
     export default {
         data() {
             return {
-                activeName: 'file-index'
             }
         },
         created: function () {
@@ -69,7 +69,7 @@
         methods: {
             routerTo(e) {
                 console.log(e);
-                this.$router.push(e);
+                this.$router.push({name: e});
             }
         }
     }
