@@ -2,11 +2,11 @@
 import iView from 'iview';
 import store from '../store'
 import config from '../../config'
-
+const uuidv4 = require('uuid/v4');
 const {Environment} = require('storj');
 
 const storjApiUrl = config.bridgeApiUrl;
-
+const TASKSTATE = config.TASKSTATE
 /* 创建Bucket */
 function createBucket(bucketName, bridgeUser, bridgePass, errorCallback, successCallback) {
     var _storj = getStorj(bridgeUser, bridgePass);
@@ -47,24 +47,50 @@ function deleteBucket(bucketId, bridgeUser, bridgePass, errorCallback, successCa
     });
 }
 
-/* 上传文件 */
-function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
-    _storj.storeFile(bucketId, file.path, {
+function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback1) {
+    var _storj = getStorj(bridgeUser, bridgePass)
+    let task = {
+        taskId: uuidv4(),
+        taskState: TASKSTATE.INIT,
+        state: null,
+        filePath: file.path,
+        bucketId: bucketId,
+        user: bridgeUser,
+        progress: 0,
+        uploadedBytes: 0,
+        totalBytes: 0,
+        created: Date.now(),
+        updated: Date.now(),
+        cancel: () => {
+            console.log('cancel task: ' + taskId)
+            console.log(this.state)
+            _storj.storeFileCancel(this.state)
+        }
+    }
+    task.state = _storj.storeFile(bucketId, file.path, {
         filename: file.name,
         progressCallback: function (progress, uploadedBytes, totalBytes) {
-            progressCallback(progress, uploadedBytes, totalBytes)
-            console.log('Progress: %d, uploadedBytes: %d, totalBytes: %d', progress, uploadedBytes, totalBytes);
+            task.progress = progress
+            task.updated = Date.now()
+            task.uploadedBytes = uploadedBytes
+            task.totalBytes = totalBytes
+            task.taskState = TASKSTATE.INPROGRESS
+            progressCallback1(task)
+            console.log(task)
         },
         finishedCallback: function (err, fileId) {
             if(err) {
+                task.taskState = TASKSTATE.ERROR
                 errorCallback(err)
-                return console.error('upload-file error: ' + err + ' filename=' + file.name);
+                console.error('upload-file error: ' + err + ' filename=' + file.name)
+            } else {
+                task.taskState = TASKSTATE.SUCCESS
+                console.log(file.path + 'File upload complete:', fileId)
+                successCallback()
             }
-            console.log('File upload complete:', fileId);
-            successCallback()
         }
-    });
+    })
+    return task
 }
 
 /* 获取文件列表 */

@@ -162,12 +162,13 @@
                     }
                     
                     iView.Message.info('File Uploading...');
-                    STROJ_CLIENT.uploadFile(file, this.bucketId, this.username, this.password, function(err) {
+                    var task = STROJ_CLIENT.uploadFile(file, this.bucketId, this.username, this.password, function(err) {
                         iView.Notice.error({
                             title: '<b>File Upload Error</b>',
                             desc: 'File: ' + file.path + '<br>Folder:' + uploadBucketName + '<br>Error:' + err,
                             duration: 0
                         });
+                        store.commit('updateUploadTask', task)
                     }, function() {
                         iView.Notice.success({
                             title: '<b>File Upload Success</b>',
@@ -175,11 +176,13 @@
                             duration: 0
                         });
 
-                        store.commit('addFile', {filename: file.path, bucket: uploadBucketName})
+                        store.commit('updateUploadTask', task)
                         DB_UTIL.addUploadSize(file.size)
                         const newTotalSize = DB_UTIL.getUploadSize()
                         store.commit('updateTotalUploadSize', newTotalSize)
-                    }, function(progress, uploadedBytes, totalBytes) {
+                    }, function(task1) {
+                        console.log(task === task1)
+                        store.commit('updateUploadTask', task)
                     })
                 }
             },
