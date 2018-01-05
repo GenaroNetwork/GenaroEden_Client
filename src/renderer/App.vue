@@ -19,7 +19,7 @@
   /* CSS */
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Microsoft YaHei";
-    -webkit-user-select: none;
+    
     -webkit-app-region: drag;
     cursor: default;
     background: #f5f7f9;

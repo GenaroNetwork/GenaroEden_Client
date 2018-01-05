@@ -1,27 +1,26 @@
-
 const state = {
-    uploadList: []
+    downloadList: []
 }
 
 const getters = {
-    uploadList: state=> state.uploadList
+    downloadList: state=> state.downloadList
 }
 
 const mutations = {
-    updateUploadTask(state, task) {
-        let existTask = state.uploadList.find((ele) => {
+    updateDownloadTask(state, task) {
+        let existTask = state.downloadList.find((ele) => {
             return ele.taskId === task.taskId
         })
         if(existTask) {
             existTask.progress = task.progress
-            existTask.uploadedBytes = task.uploadedBytes
+            existTask.downloadedBytes = task.downloadedBytes
             existTask.totalBytes = task.totalBytes
             existTask.updated = task.updated
             existTask.taskState = task.taskState
             console.log('update process: ' + existTask.progress)
             console.log('update process: ' + existTask.taskState)
         } else {
-            state.uploadList.push({
+            state.downloadList.push({
                 taskId: task.taskId,
                 taskType: task.taskType,
                 taskState: task.taskState,
@@ -29,7 +28,7 @@ const mutations = {
                 bucketId: task.bucketId,
                 user: task.user,
                 progress: task.progress,
-                uploadedBytes: task.uploadedBytes,
+                downloadedBytes: task.downloadedBytes,
                 totalBytes: task.totalBytes,
                 created: task.created,
                 updated: task.updated,

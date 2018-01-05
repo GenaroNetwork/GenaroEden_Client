@@ -244,7 +244,7 @@
                 })
 
                 // 检查文件是否已经下载
-                FILEINDEX_JS.checkFileDownload(this.selected.selectBucketId, this.selected.selectFileId, function(result) {
+                FILEINDEX_JS.checkFileDownload(this.folderId, this.selected.selectFileId, function(result) {
                     if(result.length > 0)
                         store.commit('updateFileDownloadFlag', true)
                     else 
@@ -254,13 +254,14 @@
             // 文件删除操作
             deleteFile() {
                 FILEINDEX_JS.deleteFile(this.username, this.password, 
-                    this.selected.selectBucketId, this.selected.selectFileId)
+                    this.folderId, this.selected.selectFileId)
                 this.show_del_file_modal = false
                 this.show_receipt_modal = false
             },
             // 文件下载
             downloadFile() {
                 // 弹出保存对话框配置
+                let this2 = this
                 var options = {
                     title: 'Save File',
                     defaultPath: './' + this.selected.selectFileName
@@ -269,7 +270,7 @@
                 var bridgeUser = this.username
                 var bridgePass = this.password                
                 // 校验文件是否已经下载
-                FILEINDEX_JS.checkFileDownload(this.selected.selectBucketId, this.selected.selectFileId, function(result) {
+                FILEINDEX_JS.checkFileDownload(this2.folderId, this.selected.selectFileId, function(result) {
                     if(result.length == 0) {
                         // 显示保存对话框
                         ELECTRON_DIALOG.showSaveDialog(options, function(filepath) {
@@ -278,29 +279,29 @@
                                 desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filepath,
                                 duration: 5
                             }
-
                             // 修改文件下载状态 = true
                             store.commit('updateFileDownloadFlag', true)
-                            STROJ_CLIENT.downloadFile(downSelect.selectBucketId, downSelect.selectFileId,
-                                filepath, bridgeUser, bridgePass, function(err) {
-                                    downloadNoticeArgs['title'] = 'File Download Error'
-                                    downloadNoticeArgs['err'] = err
-                                    IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
-                                }, function() {
-                                    downloadNoticeArgs['title'] = 'File Download Success'
-                                    IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
-                                    
-                                    // 更新文件下载列表
-                                    store.commit('updateDownloadFileList', {
-                                        filename: downSelect.selectFileName,
-                                        filepath : filepath,
-                                        bucketName: downSelect.selectBucketName
-                                    })
-
-                                    // 保存文件记录
-                                    FILEINDEX_JS.saveDownloadFile(downSelect.selectBucketId, downSelect.selectFileId, function() {})
-                                }, function(progress, downloadedBytes, totalBytes) {}
-                            )
+                            let task = STROJ_CLIENT.downloadFile(this2.folderId, downSelect.selectFileId, filepath, bridgeUser, bridgePass, function(err) {
+                                downloadNoticeArgs['title'] = 'File Download Error'
+                                downloadNoticeArgs['err'] = err
+                                IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
+                                store.commit('updateDownloadTask', task)
+                            }, function() {
+                                downloadNoticeArgs['title'] = 'File Download Success'
+                                IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
+                                
+                                // 更新文件下载列表
+                                store.commit('updateDownloadFileList', {
+                                    filename: downSelect.selectFileName,
+                                    filepath : filepath,
+                                    bucketName: downSelect.selectBucketName
+                                })
+                                store.commit('updateDownloadTask', task)
+                                // 保存文件记录
+                                FILEINDEX_JS.saveDownloadFile(this2.folderId, downSelect.selectFileId, function() {})
+                            }, function(progress, downloadedBytes, totalBytes) {
+                                store.commit('updateDownloadTask', task)
+                            })
                         })
                     } else {
                         IVIEW_UTIL.showWarnAlert('File Already Download')
