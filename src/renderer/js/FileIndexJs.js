@@ -1,4 +1,3 @@
-<script type="text/javascript">
 import iView from 'iview';
 import store from '../store'
 import STROJ_CLIENT from '../utils/StorjApiClient'
@@ -65,4 +64,3 @@ export default {
     checkFileDownload,
     deleteFile
 }
-</script>
