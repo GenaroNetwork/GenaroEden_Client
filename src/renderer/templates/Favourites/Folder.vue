@@ -273,34 +273,26 @@
                 FILEINDEX_JS.checkFileDownload(this2.folderId, this.selected.selectFileId, function(result) {
                     if(result.length == 0) {
                         // 显示保存对话框
-                        ELECTRON_DIALOG.showSaveDialog(options, function(filepath) {
+                        ELECTRON_DIALOG.showSaveDialog(options, function(filePath) {
                             iView.Message.info('File Downloading...');
                             var downloadNoticeArgs = {
-                                desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filepath,
+                                desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filePath,
                                 duration: 5
                             }
                             // 修改文件下载状态 = true
                             store.commit('updateFileDownloadFlag', true)
-                            let task = STROJ_CLIENT.downloadFile(this2.folderId, downSelect.selectFileId, filepath, bridgeUser, bridgePass, function(err) {
+
+                            store.dispatch('fireDownload', {
+                                folderId: this2.folderId, 
+                                fileId: downSelect.selectFileId, 
+                                filePath
+                            }).then(() => {
+                                downloadNoticeArgs['title'] = 'File Download Success'
+                                IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
+                            }).catch((err) => {
                                 downloadNoticeArgs['title'] = 'File Download Error'
                                 downloadNoticeArgs['err'] = err
                                 IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
-                                store.commit('updateDownloadTask', task)
-                            }, function() {
-                                downloadNoticeArgs['title'] = 'File Download Success'
-                                IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
-                                
-                                // 更新文件下载列表
-                                store.commit('updateDownloadFileList', {
-                                    filename: downSelect.selectFileName,
-                                    filepath : filepath,
-                                    bucketName: downSelect.selectBucketName
-                                })
-                                store.commit('updateDownloadTask', task)
-                                // 保存文件记录
-                                FILEINDEX_JS.saveDownloadFile(this2.folderId, downSelect.selectFileId, function() {})
-                            }, function(progress, downloadedBytes, totalBytes) {
-                                store.commit('updateDownloadTask', task)
                             })
                         })
                     } else {

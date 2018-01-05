@@ -181,7 +181,6 @@
                         const newTotalSize = DB_UTIL.getUploadSize()
                         store.commit('updateTotalUploadSize', newTotalSize)
                     }, function(task1) {
-                        console.log(task === task1)
                         store.commit('updateUploadTask', task)
                     })
                 }

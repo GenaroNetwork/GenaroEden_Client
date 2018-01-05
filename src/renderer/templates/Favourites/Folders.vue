@@ -171,55 +171,6 @@
                 this.show_del_file_modal = false
                 this.show_receipt_modal = false
             },
-            // 文件下载
-            downloadFile() {
-                // 弹出保存对话框配置
-                var options = {
-                    title: 'Save File',
-                    defaultPath: './' + this.selected.selectFileName
-                }
-                var downSelect = this.selected
-                var bridgeUser = this.username
-                var bridgePass = this.password                
-                // 校验文件是否已经下载
-                FILEINDEX_JS.checkFileDownload(this.selected.selectBucketId, this.selected.selectFileId, function(result) {
-                    if(result.length == 0) {
-                        // 显示保存对话框
-                        ELECTRON_DIALOG.showSaveDialog(options, function(filepath) {
-                            iView.Message.info('File Downloading...');
-                            var downloadNoticeArgs = {
-                                desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filepath,
-                                duration: 5
-                            }
-
-                            // 修改文件下载状态 = true
-                            store.commit('updateFileDownloadFlag', true)
-                            STROJ_CLIENT.downloadFile(downSelect.selectBucketId, downSelect.selectFileId,
-                                filepath, bridgeUser, bridgePass, function(err) {
-                                    downloadNoticeArgs['title'] = 'File Download Error'
-                                    downloadNoticeArgs['err'] = err
-                                    IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
-                                }, function() {
-                                    downloadNoticeArgs['title'] = 'File Download Success'
-                                    IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
-                                    
-                                    // 更新文件下载列表
-                                    store.commit('updateDownloadFileList', {
-                                        filename: downSelect.selectFileName,
-                                        filepath : filepath,
-                                        bucketName: downSelect.selectBucketName
-                                    })
-
-                                    // 保存文件记录
-                                    FILEINDEX_JS.saveDownloadFile(downSelect.selectBucketId, downSelect.selectFileId, function() {})
-                                }, function(progress, downloadedBytes, totalBytes) {}
-                            )
-                        })
-                    } else {
-                        IVIEW_UTIL.showWarnAlert('File Already Download')
-                    }
-                })
-            },
             // Bucket Action的操作
             bucketAction(name) {
                 if (name === 'delete') {
