@@ -1,4 +1,3 @@
-<script type="text/javascript">
 import iView from 'iview'
 
 /* 显示错误Notice */
@@ -32,4 +31,3 @@ export default {
     showSuccessNotice,
     showWarnAlert
 }
-</script>

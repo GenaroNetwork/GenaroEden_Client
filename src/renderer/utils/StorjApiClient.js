@@ -1,4 +1,3 @@
-<script type="text/javascript">
 import iView from 'iview';
 import store from '../store'
 import config from '../../config'
@@ -240,4 +239,3 @@ export default {
     getInfo,
     register
 }
-</script>

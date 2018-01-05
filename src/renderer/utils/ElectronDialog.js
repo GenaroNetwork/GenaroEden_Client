@@ -1,4 +1,3 @@
-<script type="text/javascript">
 const {dialog} = require('electron').remote
 
 /* 显示文件保存对话框 */
@@ -14,4 +13,3 @@ function showSaveDialog(options, filepathCallback) {
 export default {
     showSaveDialog
 }
-</script>

@@ -1,4 +1,3 @@
-<script type="text/javascript">
 var fs = require('fs');
 const path = require('path')
 const os = require('os')
@@ -42,4 +41,3 @@ export default {
     getUploadSize,
     isFirstTime
 }
-</script>

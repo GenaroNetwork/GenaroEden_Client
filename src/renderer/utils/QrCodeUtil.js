@@ -1,4 +1,3 @@
-<script type="text/javascript">
 var QRCode = require('qrcode')
 
 var opts = {
@@ -23,4 +22,3 @@ function createQrCodeStr(val, errorCallback, successCallback) {
 export default {
     createQrCodeStr
 }
-</script>
