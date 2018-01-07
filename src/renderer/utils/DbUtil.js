@@ -14,7 +14,7 @@ const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ t_down_files: [], uploadSize: 0 }).write()
+db.defaults({ t_down_files: [], uploadSize: 0, history: [] }).write()
 
 /* 插入数据 */
 function save(tableName, data) {
@@ -34,10 +34,25 @@ function getUploadSize() {
     return db.get('uploadSize').value()
 }
 
+function getHistory() {
+    return db.get('history').sortBy('created').value()
+}
+
+function addHistory(data) {
+    db.get('history').push(data).write()
+}
+
+function removeHistoryById(id) {
+    db.get('history').remove({historyId: id}).write()
+}
+
 export default {
     save,
     query,
     addUploadSize,
     getUploadSize,
-    isFirstTime
+    isFirstTime,
+    getHistory,
+    addHistory,
+    removeHistoryById
 }

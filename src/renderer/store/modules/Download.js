@@ -39,7 +39,7 @@ const mutations = {
 }
 
 const actions = {
-    fireDownload({ commit, rootState }, {folderId, fileId, filePath}) {
+    fireDownload({ commit, rootState, dispatch }, {folderId, fileId, filePath}) {
         // TODO: history
         let bridgeUser = rootState.User.username
         let bridgePass = rootState.User.password
@@ -50,6 +50,7 @@ const actions = {
                 reject(err)
             }, () => { // success
                 commit('updateRunningDownloadTask', task)
+                dispatch('logHistory', task, { root: true })
                 resolve()
             }, () => { // in process
                 commit('updateRunningDownloadTask', task)

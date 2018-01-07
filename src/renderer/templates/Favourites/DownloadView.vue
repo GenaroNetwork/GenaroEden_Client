@@ -1,7 +1,6 @@
 <template>
     <Tabs value="name1">
         <TabPane label="Running Task" name="name1">
-            <p slot="title">Download</p>
             <table>
                 <thead>
                     <tr>
@@ -30,7 +29,35 @@
             </table>
             <!-- <Table no-data-text="No Data" width="100%" :columns="fileTableColums" :data="uploadFileList"></Table> -->
         </TabPane>
-        <TabPane label="History" name="name2">tav 2</TabPane>
+        <TabPane label="History" name="name2">
+            <table>
+                <thead>
+                    <tr>
+                        <th>type</th>
+                        <th>filePath</th>
+                        <th>progress</th>
+                        <th>Folder Id</th>
+                        <th>created</th>
+                        <th>action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in historyList" :key="item.taskId">
+                        <td>{{item.taskType}}</td>
+                        <td>{{item.filePath}}</td>
+                        <td>
+                            <Progress class="progress" :percent="item.progress * 100"  status="active" hide-info :stroke-width="3" ></Progress>
+                        </td>
+                        <td>{{item.bucketId}}</td>
+                        <td>{{item.created}}</td>
+                        <td>
+                            <a @click.prevent="ShowUploadItemInFolder(item)">Show in Folder</a>
+                            <a @click.prevent="deleteHistory(item)">x</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </TabPane>
     </Tabs>
 </template>
 
@@ -69,13 +96,23 @@ export default {
                 return b.created - a.created
             })
             return allTask
+        },
+        historyList() {
+            return this.$store.state.History.historyList
         }
     },
     methods: {
         ShowUploadItemInFolder(item) {
             alert('todo')
             console.log(item)
+        },
+        deleteHistory(item) {
+            this.$store.dispatch('removeHistory', item.historyId)
         }
+    },
+    mounted: function() {
+        console.log(this.$store)
+        this.$store.dispatch('loadHistory')
     }
 }
 </script>
