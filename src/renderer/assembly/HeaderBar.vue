@@ -49,10 +49,14 @@
     import StorageUsage from '@/assembly/StorageUsage'
     import store from '../store'
     import {stepReady} from "../utils/guide"
+    import dbUtil from '../utils/DbUtil'
+
     export default {
         methods: {
             logout() {
-                router.push({path: '/'})
+                dbUtil.deleteCredentials().then(() => {
+                    router.push({path: '/'})
+                })
             }
         },
         components:{

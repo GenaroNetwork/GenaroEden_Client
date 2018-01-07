@@ -16,6 +16,11 @@
                         <Icon type="ios-locked-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
+
+                <FormItem label="Remember Password">
+                    <Checkbox label="Remember Password" v-model="login.isRememberPwd"></Checkbox>
+                </FormItem>
+
                 <div class='login_center is-clearfix'>
                     <FormItem>
                         <Button type="primary" @click="submitLogin()" size="large" long>Sign In</Button>
@@ -35,16 +40,26 @@
     import store from '../store'
     import iView from 'iview'
     import { resetPassword } from '../../bridge/users'
+    import dbUtil from '../utils/DbUtil'
 
     export default {
         name : 'login-view',
         created: function () {
+            dbUtil.getCredentials().then((credentials)=>{
+                if(credentials) {
+                    store.commit('updateUsername', credentials.account)
+                    store.commit('updatePassword', credentials.password)
+                    console.log(credentials.account)
+                    router.push({ path: '/index'})
+                }
+            })
         },
         data: function() {
             return {
                 login: {
                     username: '',
-                    password: ''
+                    password: '',
+                    isRememberPwd: false
                 },
                 ruleInline: {
                     username: [
@@ -65,6 +80,7 @@
                         this.$Spin.show()
                         var bridgeUser = this.login.username
                         var bridgePass = this.login.password
+                        const isRemPwd = this.login.isRememberPwd
                         STROJ_CLIENT.getBucketList(bridgeUser, bridgePass, (err) => {
                             iView.Spin.hide()
                             iView.Modal.error({
@@ -77,6 +93,9 @@
                             store.commit('updateUsername', bridgeUser)
                             store.commit('updatePassword', bridgePass)
                             router.push({ path: '/index'})
+                            if(isRemPwd) {
+                                dbUtil.saveCredentials(bridgeUser, bridgePass)
+                            }
                         });
                     }
                 })

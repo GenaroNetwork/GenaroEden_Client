@@ -13,7 +13,7 @@ const mutations = {
 }
 
 const actions = {
-    logHistory({dispatch}, history) {
+    logHistory({ dispatch }, history) {
         history.historyId = uuidV1()
         // 1. save history in databse
         dbUtil.addHistory(history)
