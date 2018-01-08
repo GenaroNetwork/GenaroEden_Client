@@ -1,12 +1,14 @@
 import iView from 'iview';
 import store from '../store'
 import config from '../../config'
-const uuidv4 = require('uuid/v4');
-const {Environment} = require('storj');
+const uuidv4 = require('uuid/v4')
+const {Environment, mnemonicGenerate, mnemonicCheck} = require('storj')
 
-const storjApiUrl = config.bridgeApiUrl;
+const BRIDGE_API_URL = config.bridgeApiUrl;
 const TASKSTATE = config.TASKSTATE
 const TASKTYPE = config.TASKTYPE
+
+let _storj
 
 function newTask(customProp) {
     let baseTask = {
@@ -27,7 +29,6 @@ function newTask(customProp) {
 
 /* 创建Bucket */
 function createBucket(bucketName, bridgeUser, bridgePass, errorCallback, successCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
     _storj.createBucket(bucketName, function(err, result) {
         if (err) {
             errorCallback(err)
@@ -41,7 +42,6 @@ function createBucket(bucketName, bridgeUser, bridgePass, errorCallback, success
 
 /* 获取bucket列表 */
 function getBucketList(bridgeUser, bridgePass, errorCallback, successCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
     _storj.getBuckets(function (err, result) {
         if(err) {
             errorCallback(err)
@@ -53,7 +53,6 @@ function getBucketList(bridgeUser, bridgePass, errorCallback, successCallback) {
 
 /* 删除Bucket */
 function deleteBucket(bucketId, bridgeUser, bridgePass, errorCallback, successCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
     _storj.deleteBucket(bucketId,function (err,result) {
         if(err){
             errorCallback(err)
@@ -66,7 +65,6 @@ function deleteBucket(bucketId, bridgeUser, bridgePass, errorCallback, successCa
 }
 
 function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback1) {
-    var _storj = getStorj(bridgeUser, bridgePass)
     let task = newTask({
         taskType: TASKTYPE.UPLOAD,
         state: null,
@@ -110,7 +108,6 @@ function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, succe
 
 /* 获取文件列表 */
 function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
     _storj.listFiles(bucketId, function (err, result) {
         if (err) {
             errorCallback(err)
@@ -123,8 +120,6 @@ function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCal
 
 /* 下载文件 */
 function downloadFile(bucketId, fileId, downloadFilePath, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback1) {
-    var _storj = getStorj(bridgeUser, bridgePass);
-
     let task = newTask({
         taskType: TASKTYPE.DOWNLOAD,
         state: null,
@@ -169,7 +164,6 @@ function downloadFile(bucketId, fileId, downloadFilePath, bridgeUser, bridgePass
 
 /* 删除文件 */
 function deleteFile(bucketId, fileId, bridgeUser, bridgePass, errorCallback, successCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
     _storj.deleteFile(bucketId, fileId, function (err,result) {
         if (err) {
             errorCallback(err)
@@ -182,7 +176,6 @@ function deleteFile(bucketId, fileId, bridgeUser, bridgePass, errorCallback, suc
 
 /* 获取信息 */
 function getInfo(bridgeUser, bridgePass, errorCallback, successCallback) {
-    var _storj = getStorj(bridgeUser, bridgePass);
     _storj.getInfo(function(err, result) {
         if(err) {
             errorCallback(err)
@@ -195,8 +188,15 @@ function getInfo(bridgeUser, bridgePass, errorCallback, successCallback) {
 }
 
 function register(email, passwd, errorCallback, successCallback) {
-    var _storj = getEmptyStorj();
-    _storj.register(email, passwd, function(err, result) {
+    function getEmptyStorj() {
+        var _storj2 = new Environment({
+            bridgeUrl: BRIDGE_API_URL,
+            logLevel: 0
+        })
+        return _storj2
+    }
+    var _storj2 = getEmptyStorj();
+    _storj2.register(email, passwd, function(err, result) {
         if(err) {
             errorCallback(err)
             console.error(err);
@@ -207,27 +207,22 @@ function register(email, passwd, errorCallback, successCallback) {
     })
 }
 
-/* 获取Storj连接 */
-function getStorj(bridgeUser, bridgePass) {
-    var _storj = new Environment({
-        bridgeUrl: storjApiUrl,
+function setEnvironment(bridgeUser, bridgePass, key) {
+    _storj = new Environment({
+        bridgeUrl: BRIDGE_API_URL,
         bridgeUser: bridgeUser,
         bridgePass: bridgePass,
-        encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+        encryptionKey: key,
         logLevel: 0
-    });
-    return _storj;
+    })
 }
-function getEmptyStorj() {
-    var _storj = new Environment({
-        bridgeUrl: storjApiUrl,
-        encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
-        logLevel: 0
-    });
-    return _storj;
+
+function generateKey() {
+
 }
 
 export default {
+    setEnvironment,
     createBucket,
     getBucketList,
     deleteBucket,
@@ -237,5 +232,7 @@ export default {
     downloadFile,
     deleteFile,
     getInfo,
-    register
+    register,
+    mnemonicGenerate,
+    mnemonicCheck
 }

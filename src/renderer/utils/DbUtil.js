@@ -76,13 +76,20 @@ function getCredentials() {
 function deleteCredentials() {
     const account = db.get('username').value()
     db.set('username', null).write()
+    keytar.deletePassword(KEYCHAIN_ENCRYPTIONKEY, account)
     return keytar.deletePassword(KEYCHAIN_LOGIN, account)
 }
 
 function saveEncryptionKey(key) {
-    const account = db.get('username').value()
-    keytar.setPassword(KEYCHAIN_ENCRYPTIONKEY, account, key).then(() => {
-        console.log('Credentials saved to keychain')
+    return new Promise((resolve, reject) => {
+        const account = db.get('username').value()
+        keytar.setPassword(KEYCHAIN_ENCRYPTIONKEY, account, key).then(() => {
+            console.log('Credentials saved to keychain')
+            resolve()
+        }).catch((e) => {
+            console.log(e)
+            reject()
+        })
     })
 }
 
@@ -91,7 +98,7 @@ function getEncryptionKey() {
         const account = db.get('username').value()
         if(account) {
             keytar.getPassword(KEYCHAIN_ENCRYPTIONKEY, account).then((password) => {
-                resolve({account, password})
+                resolve(password)
             }).catch(() => {
                 console.error('getEncryptionKey from keyChain error!')
                 resolve(null)

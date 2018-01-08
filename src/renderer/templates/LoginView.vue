@@ -45,12 +45,16 @@
     export default {
         name : 'login-view',
         created: function () {
+            const this2 = this
             dbUtil.getCredentials().then((credentials)=>{
                 if(credentials) {
                     store.commit('updateUsername', credentials.account)
-                    store.commit('updatePassword', credentials.password)
-                    console.log(credentials.account)
-                    router.push({ path: '/index'})
+                    if(credentials.password) {
+                        store.commit('updatePassword', credentials.password)
+                        this2.checkEncryptionKeyAndLogin(credentials.account, credentials.password)
+                    } else {
+                        this.username = credentials.account
+                    }
                 }
             })
         },
@@ -74,13 +78,20 @@
             }
         },
         methods:{
+            checkEncryptionKeyAndLogin(bridgeUser, bridgePass) {
+                store.commit('updateUsername', bridgeUser)
+                store.commit('updatePassword', bridgePass)
+                router.push({ path: '/encryption-key'})
+            },
             submitLogin() {
+                let this2 = this
                 this.$refs['login'].validate((valid) => {
                     if(valid) {
                         this.$Spin.show()
                         var bridgeUser = this.login.username
                         var bridgePass = this.login.password
                         const isRemPwd = this.login.isRememberPwd
+                        STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
                         STROJ_CLIENT.getBucketList(bridgeUser, bridgePass, (err) => {
                             iView.Spin.hide()
                             iView.Modal.error({
@@ -90,13 +101,9 @@
                             })
                         }, function(result) {
                             iView.Spin.hide()
-                            store.commit('updateUsername', bridgeUser)
-                            store.commit('updatePassword', bridgePass)
-                            router.push({ path: '/index'})
-                            if(isRemPwd) {
-                                dbUtil.saveCredentials(bridgeUser, bridgePass)
-                            }
-                        });
+                            dbUtil.saveCredentials(bridgeUser, bridgePass)
+                            this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
+                        })
                     }
                 })
             },

@@ -16,6 +16,11 @@ export default new Router({
       component: require('@/templates/RegisterView').default
     },
     {
+      path: '/encryption-key',
+      name: 'encryption-key',
+      component: require('@/templates/EncryptionKey').default
+    },
+    {
       path: '/password-reset',
       name: 'password-reset',
       component: require('@/templates/PasswordResetView').default

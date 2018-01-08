@@ -2,6 +2,7 @@ const state = {
     username: '',
     password: '',
     bucketId: '{bucketId}',
+    encryptionKey: '',
     totalUploadSize: 0
 }
 
@@ -24,6 +25,9 @@ const mutations = {
     },
     updateTotalUploadSize(state, sizeByte) {
         state.totalUploadSize = sizeByte
+    },
+    setEncryptionKey(state, key) {
+        state.encryptionKey = key
     }
 }
 
