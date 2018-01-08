@@ -17,10 +17,6 @@
                     </Input>
                 </FormItem>
 
-                <FormItem label="Remember Password">
-                    <Checkbox label="Remember Password" v-model="login.isRememberPwd"></Checkbox>
-                </FormItem>
-
                 <div class='login_center is-clearfix'>
                     <FormItem>
                         <Button type="primary" @click="submitLogin()" size="large" long>Sign In</Button>
@@ -62,8 +58,7 @@
             return {
                 login: {
                     username: '',
-                    password: '',
-                    isRememberPwd: false
+                    password: ''
                 },
                 ruleInline: {
                     username: [
@@ -90,7 +85,6 @@
                         this.$Spin.show()
                         var bridgeUser = this.login.username
                         var bridgePass = this.login.password
-                        const isRemPwd = this.login.isRememberPwd
                         STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
                         STROJ_CLIENT.getBucketList(bridgeUser, bridgePass, (err) => {
                             iView.Spin.hide()
