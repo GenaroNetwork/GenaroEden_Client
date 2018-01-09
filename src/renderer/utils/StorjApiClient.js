@@ -1,4 +1,3 @@
-import iView from 'iview';
 import store from '../store'
 import config from '../../config'
 const uuidv4 = require('uuid/v4')
@@ -64,12 +63,12 @@ function deleteBucket(bucketId, bridgeUser, bridgePass, errorCallback, successCa
     });
 }
 
-function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback1) {
+function uploadFile(filePath, filename, bucketId, errorCallback, successCallback, progressCallback1) {
     let task = newTask({
         taskType: TASKTYPE.UPLOAD,
         state: null,
-        filePath: file.path,
-        bucketId: bucketId,
+        filePath,
+        bucketId,
         user: bridgeUser,
         uploadedBytes: 0,
         totalBytes: 0,
@@ -79,8 +78,8 @@ function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, succe
             _storj.storeFileCancel(this.state)
         }
     })
-    task.state = _storj.storeFile(bucketId, file.path, {
-        filename: file.name,
+    task.state = _storj.storeFile(bucketId, filePath, {
+        filename: filename,
         progressCallback: function (progress, uploadedBytes, totalBytes) {
             task.progress = progress
             task.updated = Date.now()
@@ -98,7 +97,7 @@ function uploadFile(file, bucketId, bridgeUser, bridgePass, errorCallback, succe
             } else {
                 task.progress = 1
                 task.taskState = TASKSTATE.SUCCESS
-                console.log(file.path + 'File upload complete:', fileId)
+                console.log(filePath + 'File upload complete:', fileId)
                 successCallback()
             }
         }
@@ -119,7 +118,7 @@ function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCal
 }
 
 /* 下载文件 */
-function downloadFile(bucketId, fileId, downloadFilePath, bridgeUser, bridgePass, errorCallback, successCallback, progressCallback1) {
+function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, successCallback, progressCallback1) {
     let task = newTask({
         taskType: TASKTYPE.DOWNLOAD,
         state: null,

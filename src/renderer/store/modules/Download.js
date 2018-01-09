@@ -40,11 +40,8 @@ const mutations = {
 
 const actions = {
     fireDownload({ commit, rootState, dispatch }, {folderId, fileId, filePath}) {
-        // TODO: history
-        let bridgeUser = rootState.User.username
-        let bridgePass = rootState.User.password
         return new Promise((resolve, reject) => {
-            let task = STROJ_CLIENT.downloadFile(folderId, fileId, filePath, bridgeUser, bridgePass, (err) => {
+            let task = STROJ_CLIENT.downloadFile(folderId, fileId, filePath, (err) => {
                 // error
                 commit('updateRunningDownloadTask', task)
                 reject(err)

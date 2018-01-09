@@ -21,7 +21,6 @@
                     <FormItem>
                         <Button type="primary" @click="submitLogin()" size="large" long>Sign In</Button>
                     </FormItem>
-
                     <router-link class="otherlink is-pulled-left" to="register">Sign Up</router-link>
                     <router-link class="otherlink is-pulled-right" to="password-reset">Reset Password</router-link>
                 </div>

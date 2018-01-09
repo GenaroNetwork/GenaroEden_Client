@@ -1,5 +1,15 @@
 <style scoped>
-
+.files {
+    position: relative;
+}
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(117, 190, 218, 0.5);;
+    top: 0;
+    left: 0;
+}
 </style>
 
 <template>
@@ -19,8 +29,12 @@
                     </Dropdown>
                 </span>
                 <router-link to="/folders">Back</router-link>
-                <div class="files">
+                <el-button type="primary" @click="upload">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+                <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
                     <Table :loading="fileListLoading" no-data-text="No Data" :columns="fileTableColums" :data="bucketFileList"></Table>
+                    <div class="overlay" v-if="dragging">
+                        <h2>drop to upload your files to {{folderName}}</h2>
+                    </div>
                 </div>
             </div>
         </div>
@@ -191,7 +205,8 @@
                     selectBucketId: '',
                     selectFileName: '',
                     selectFileId: ''
-                }
+                },
+                dragging: false
             }
         },
         created: function () {
@@ -322,6 +337,56 @@
 
                 this.selected.selectBucketId = ''
                 this.show_del_bucket_modal = false
+            },
+            fileDragOver(e) {
+                this.dragging = true
+            },
+            fileDrop(e) {
+                this.dragging = false
+                let this2 = this
+                for (let f of e.dataTransfer.files) {
+                    console.log('File(s) you dragged here: ', f.path)
+                    store.dispatch('fireUpload', {
+                        filePath: f.path,
+                        bucketId: this2.folderId
+                    }).then(() => {
+                        this.$notify({
+                            title: 'success',
+                            message: 'File Uploaded',
+                            type: 'success'
+                        })
+                    }).catch((err) => {
+                        alert(err)
+                        console.error(err)
+                    })
+                }
+            },
+            fileDragLeave(e) {
+                this.dragging = false
+            },
+            upload() {
+                let this2 = this
+                const {dialog} = require('electron').remote
+                const files = dialog.showOpenDialog({properties: ['openFile', 'multiSelections']})
+
+                if (files && files.length > 0) {
+                    store.dispatch('fireUpload', {
+                        filePath: files[0],
+                        bucketId: this2.folderId
+                    }).then(() => {
+                        this.$notify({
+                            title: 'success',
+                            message: 'File Uploaded',
+                            type: 'success'
+                        })
+                    }).catch((err) => {
+                        this.$notify({
+                            title: 'success',
+                            message: 'File Uploaded',
+                            type: 'error'
+                        })
+                    })
+                }
             }
         }
     }
