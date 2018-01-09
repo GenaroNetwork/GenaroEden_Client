@@ -61,7 +61,6 @@
         },
         methods: {
             routerTo(e) {
-                console.log(e);
                 this.$router.push({name: e});
             }
         }

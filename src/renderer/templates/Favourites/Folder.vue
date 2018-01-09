@@ -115,8 +115,6 @@
     import STROJ_CLIENT from '../../utils/StorjApiClient'
     import QR_CODE from '../../utils/QrCodeUtil'
     import ELECTRON_DIALOG from '../../utils/ElectronDialog'
-    import IVIEW_UTIL from '../../utils/IviewUtil'
-    import FILEINDEX_JS from '../../js/FileIndexJs'
     import iView from 'iview';
     import store from '../../store'
     import {stepReady} from "../../utils/guide"
@@ -247,10 +245,7 @@
             },
             // 文件删除操作
             deleteFile() {
-                FILEINDEX_JS.deleteFile(this.username, this.password, 
-                    this.folderId, this.selected.selectFileId)
-                this.show_del_file_modal = false
-                this.show_receipt_modal = false
+                alert('deleteFile')
             },
             // 文件下载
             downloadFile() {
@@ -275,12 +270,9 @@
                         fileId: downSelect.selectFileId, 
                         filePath
                     }).then(() => {
-                        downloadNoticeArgs['title'] = 'File Download Success'
-                        IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
+                        this.$message.success('File Download Success')
                     }).catch((err) => {
-                        downloadNoticeArgs['title'] = 'File Download Error'
-                        downloadNoticeArgs['err'] = err
-                        IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
+                        this.$message.error('File Download Error: ' + err)
                     })
                 })
             },
