@@ -326,14 +326,11 @@
                 var bridgeUser = this.username
                 var bridgePass = this.password
 
-                STROJ_CLIENT.deleteBucket(this.selected.selectBucketId, bridgeUser, bridgePass, 
-                        function(err) {}, 
-                        function(result) {
-                            // 页面初始化,获取bucketList
-                            iView.Message.info('Folder Delete Success');
-                            FILEINDEX_JS.initBucketList(bridgeUser, bridgePass)
-                        }
-                )
+                this.$store.dispatch('deleteBucket', {selectBucketId: this.selected.selectBucketId}).then(data => {
+                    iView.Message.info('Folder Delete Success');
+                }).catch( e => {
+                    
+                })
 
                 this.selected.selectBucketId = ''
                 this.show_del_bucket_modal = false

@@ -85,17 +85,19 @@
                         var bridgeUser = this.login.username
                         var bridgePass = this.login.password
                         STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
-                        STROJ_CLIENT.getBucketList(bridgeUser, bridgePass, (err) => {
-                            iView.Spin.hide()
-                            iView.Modal.error({
-                                title : 'Login Error',
-                                content: 'Username Or Password Error',
-                                okText: 'OK'
-                            })
-                        }, function(result) {
-                            iView.Spin.hide()
-                            dbUtil.saveCredentials(bridgeUser, bridgePass)
-                            this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
+                        STROJ_CLIENT.getBucketList((err) => {
+                            if (err) {
+                                iView.Spin.hide()
+                                iView.Modal.error({
+                                    title : 'Login Error',
+                                    content: 'Username Or Password Error',
+                                    okText: 'OK'
+                                })
+                            } else {
+                                iView.Spin.hide()
+                                dbUtil.saveCredentials(bridgeUser, bridgePass)
+                                this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
+                            }
                         })
                     }
                 })

@@ -8,6 +8,7 @@ const TASKSTATE = config.TASKSTATE
 const TASKTYPE = config.TASKTYPE
 
 let _storj
+let bridgeUser
 
 function newTask(customProp) {
     let baseTask = {
@@ -27,40 +28,18 @@ function newTask(customProp) {
 }
 
 /* 创建Bucket */
-function createBucket(bucketName, bridgeUser, bridgePass, errorCallback, successCallback) {
-    _storj.createBucket(bucketName, function(err, result) {
-        if (err) {
-            errorCallback(err)
-            console.error('create-bucket-info: ' + err);
-        } else {
-            successCallback(result)
-            console.log('create-bucket-info:', result);
-        }
-    });
+function createBucket(bucketName, callback) {
+    _storj.createBucket(bucketName, callback);
 }
 
 /* 获取bucket列表 */
-function getBucketList(bridgeUser, bridgePass, errorCallback, successCallback) {
-    _storj.getBuckets(function (err, result) {
-        if(err) {
-            errorCallback(err)
-        } else {
-            successCallback(result)
-        }
-    });
+function getBucketList(callback) {
+    _storj.getBuckets(callback)
 }
 
 /* 删除Bucket */
-function deleteBucket(bucketId, bridgeUser, bridgePass, errorCallback, successCallback) {
-    _storj.deleteBucket(bucketId,function (err,result) {
-        if(err){
-            errorCallback(err)
-            console.error('delete-bucket error: ' + err);
-        } else {
-            successCallback(result)
-            console.log('delete-bucket:',result);
-        }
-    });
+function deleteBucket(bucketId, callBack) {
+    _storj.deleteBucket(bucketId, callBack);
 }
 
 function uploadFile(filePath, filename, bucketId, errorCallback, successCallback, progressCallback1) {

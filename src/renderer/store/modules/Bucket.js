@@ -1,28 +1,59 @@
+import bridgeApi from '../../utils/StorjApiClient'
 const state = {
-    bucketList: [],
-    showBucketList:[],
-    moreBucketList:[]
+    bucketList: []
 }
 
 const getters = {
-    bucketList: state=> state.bucketList,
-    showBucketList: state=> state.showBucketList,
-    moreBucketList: state=> state.moreBucketList
+    bucketList: state=> state.bucketList
 }
 
 const mutations = {
     updateBucketList(state, bucketList) {
         state.bucketList = bucketList
-        if(bucketList.length < 5) {
-            state.showBucketList = bucketList
-        } else {
-            state.showBucketList = bucketList.slice(0,4)
-            state.moreBucketList = bucketList.slice(4)
-        }
+    }
+}
+
+const actions = {
+    fetchBucketList({ commit }) {
+        return new Promise((resolve, reject) => {
+            bridgeApi.getBucketList((err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    commit('updateBucketList', data)
+                    resolve()
+                }
+            })
+        })
+    },
+    createBucket({ commit, dispatch }, {bucketName}) {
+        return new Promise((resolve, reject) => {
+            bridgeApi.createBucket(bucketName, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    dispatch('fetchBucketList')
+                    resolve()
+                }
+            })
+        })
+    },
+    deleteBucket({ commit, dispatch }, {bucketId}) {
+        return new Promise((resolve, reject) => {
+            bridgeApi.deleteBucket(bucketId, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    dispatch('fetchBucketList')
+                    resolve()
+                }
+            })
+        })
     }
 }
 
 export default {
     state,
-    mutations
+    mutations,
+    actions
 }

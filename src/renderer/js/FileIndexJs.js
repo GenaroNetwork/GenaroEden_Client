@@ -5,16 +5,18 @@ import DB_UTIL from '../utils/DbUtil'
 
 /* 初始化BucketList */
 function initBucketList(username, password) {
-    STROJ_CLIENT.getBucketList(username, password, function(err) {
+    STROJ_CLIENT.getBucketList(function(err, result) {
+        if(err) {
             iView.Modal.error({
                 title : 'Obtain Folder Error',
                 content: 'Obtain Folder Error :' + err,
                 okText: 'OK'
-            });
-        }, function(result) {
-                store.commit('updateBucketList', result)
+            })
+        } else {
+
+            store.commit('updateBucketList', result)
         }
-    );
+    });
 }
 
 /* 初始化文件列表 */

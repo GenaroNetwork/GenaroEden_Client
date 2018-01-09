@@ -68,19 +68,19 @@
                     selectBucketId: '',
                     selectFileName: '',
                     selectFileId: ''
-                },
-                showBucketList: this.$store.state.Bucket.bucketList
+                }
             }
         },
         created: function () {
-            // 页面初始化,获取bucketList
-            FILEINDEX_JS.initBucketList(this.username, this.password)
-            // console.log('sss' + Shepherd)
+            this.$store.dispatch('fetchBucketList')
         },
         mounted: function (){
             stepReady('new-folder')
         },
         computed: {
+            showBucketList() {
+                return this.$store.state.Bucket.bucketList
+            },
             username() {
                 return this.$store.state.User.username
             },
@@ -116,24 +116,17 @@
 
                     // iView.Message.info('Add Folder Waiting');
 
-                    // 调用创建Bucket Api
-                    STROJ_CLIENT.createBucket(bucketName, bridgeUser, bridgePass,
-                        function(err) {
-                            // 显示错误Notice
-                            var noticeArgs = {
-                                title: 'Create Folder Error',
-                                desc: 'Folder Name: ' + bucketName,
-                                err: err,
-                                duration: 5
-                            }
-                            IVIEW_UTIL.showErrNotice(noticeArgs)
-                        }, function(result) {
-                            iView.Message.info('Add Folder Success');
-
-                            // 添加完成后 刷新Bucket列表
-                            FILEINDEX_JS.initBucketList(bridgeUser, bridgePass)
+                    this.$store.dispatch('createBucket', {bucketName}).then(data => {
+                        iView.Message.info('Add Folder Success')
+                    }).catch( e => {
+                        var noticeArgs = {
+                            title: 'Create Folder Error',
+                            desc: 'Folder Name: ' + bucketName,
+                            err: err,
+                            duration: 5
                         }
-                    )
+                        IVIEW_UTIL.showErrNotice(noticeArgs)
+                    })
                     this.addBucketItem.bucketName = ''
                     this.add_bucket_modal=false
                 }
@@ -182,15 +175,11 @@
                 var bridgeUser = this.username
                 var bridgePass = this.password
 
-                STROJ_CLIENT.deleteBucket(this.selected.selectBucketId, bridgeUser, bridgePass, 
-                        function(err) {}, 
-                        function(result) {
-                            // 页面初始化,获取bucketList
-                            iView.Message.info('Folder Delete Success');
-                            FILEINDEX_JS.initBucketList(bridgeUser, bridgePass)
-                        }
-                )
-
+                this.$store.dispatch('deleteBucket', {selectBucketId}).then(data => {
+                    iView.Message.info('Folder Delete Success');
+                }).catch( e => {
+                    
+                })
                 this.selected.selectBucketId = ''
                 this.show_del_bucket_modal = false
             }

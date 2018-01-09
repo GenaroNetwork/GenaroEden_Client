@@ -45,16 +45,6 @@ export default new Router({
               component: require('@/templates/Favourites/Folder').default
             },
             {
-              path: '/file-index',
-              name: 'file-index',
-              component: require('@/templates/Favourites/FileIndexView').default
-            },
-            {
-              path: '/file-upload',
-              name: 'file-upload',
-              component: require('@/templates/Favourites/UploadView').default
-            },
-            {
               path: '/file-download',
               name: 'file-download',
               component: require('@/templates/Favourites/DownloadView').default

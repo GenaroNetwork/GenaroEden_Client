@@ -25,19 +25,12 @@
         <div class="layout-favourites-enum">
             <Menu theme="light" :active-name="activePath" @on-select="routerTo">
                 <MenuGroup title="FAVOURITES">
-                    <MenuItem name="file-index"><Icon type="android-document"></Icon><span class="myfiles-menu">My Files</span></MenuItem>
-                    <MenuItem name="folders-view"><Icon type="android-document"></Icon><span class="myfiles-menu">Browser Files</span></MenuItem>
-                    <MenuItem name="file-upload"><Icon type="android-arrow-up"></Icon><span class="upload-menu">Upload</span></MenuItem>
-                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon><span class="download-history">Download History</span></MenuItem>
+                    <MenuItem name="folders-view"><Icon type="android-document"></Icon><span class="myfiles-menu">My Files</span></MenuItem>
+                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon><span class="download-history">Recent</span></MenuItem>
                     <MenuItem name="share-my-storage"><Icon type="android-upload"></Icon>Share My Storage</MenuItem>
-                    <!-- <MenuItem name="4"><Icon type="android-delete"></Icon>Delete</MenuItem>
-                    <MenuItem name="5"><Icon type="android-time"></Icon>History</MenuItem>
-                    <MenuItem name="6"><Icon type="android-upload"></Icon>Share My Storage</MenuItem>
-                    <MenuItem name="7"><Icon type="android-more-horizontal"></Icon>More</MenuItem> -->
                 </MenuGroup>
             </Menu>
         </div>
-        <!-- 文件列表div -->
         <div class="layout-favourites-content">
             <transition mode="out-in">
                 <router-view></router-view>
@@ -54,7 +47,7 @@
             }
         },
         created: function () {
-            this.$router.push({ path: '/file-index'});
+            this.$router.push({ path: '/folders'});
         },
         mounted: function (){
             stepReady('My Folder')
