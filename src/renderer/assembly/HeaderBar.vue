@@ -24,6 +24,9 @@
     .logout {
         text-align: right;
     }
+    .api {
+        padding: 15px
+    }
 </style>
 
 <template>
@@ -32,14 +35,17 @@
             <img shape="circle" src="~@/assets/logo_big@2x.png" >
         </div>
         <div class="demo-avatar-badge">
-            <Poptip placement="bottom-end" width="">
-                <span class="account-info">{{username}}</span>
-                <Icon type="arrow-down-b"></Icon>
-                <div class="api" slot="content">
-                    <storage-usage></storage-usage>
-                    <div class="logout"><a href="" @click="logout">logout</a></div>
-                </div>
-            </Poptip>
+            <el-dropdown>
+                <span class="el-dropdown-link">
+                    {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                    <div class="api">
+                        <storage-usage></storage-usage>
+                        <div class="logout"><a href="" @click="logout">logout</a></div>
+                    </div>
+                </el-dropdown-menu>
+            </el-dropdown>
         </div>
     </div>
 </template>

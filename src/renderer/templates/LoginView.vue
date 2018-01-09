@@ -1,31 +1,28 @@
 <template>
     <div id="wrap" @keyup.enter="submitLogin">
-        <Card class="box-card">
+        <el-card class="box-card">
             <div class='login_center'>
                 <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
                 <h1>Genaro</h1>
             </div>
-            <Form ref="login" :model="login" :rules="ruleInline">
-                <FormItem prop="username">
-                    <Input type="text" v-model="login.username" placeholder="User Name">
-                        <Icon type="ios-person-outline" slot="prepend"></Icon>
-                    </Input>
-                </FormItem>
-                <FormItem prop="password">
-                    <Input type="password" v-model="login.password" placeholder="Password">
-                        <Icon type="ios-locked-outline" slot="prepend"></Icon>
-                    </Input>
-                </FormItem>
-
-                <div class='login_center is-clearfix'>
-                    <FormItem>
-                        <Button type="primary" @click="submitLogin()" size="large" long>Sign In</Button>
-                    </FormItem>
-                    <router-link class="otherlink is-pulled-left" to="register">Sign Up</router-link>
-                    <router-link class="otherlink is-pulled-right" to="password-reset">Reset Password</router-link>
+            <el-form ref="login" :model="login" :rules="ruleInline">
+                <el-form-item prop="username">
+                    <el-input type="text" v-model="login.username" placeholder="User Name">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input type="password" v-model="login.password" placeholder="Password">
+                    </el-input>
+                </el-form-item>
+                <div class='login_center clearfix'>
+                    <el-form-item>
+                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">Sign In</el-button>
+                    </el-form-item>
+                    <router-link class="otherlink pull-left" to="register">Sign Up</router-link>
+                    <router-link class="otherlink pull-right" to="password-reset">Reset Password</router-link>
                 </div>
-            </Form>
-        </Card>
+            </el-form>
+        </el-card>
     </div>
 </template>
 
@@ -33,7 +30,6 @@
     import STROJ_CLIENT from '../utils/StorjApiClient'
     import router from '../router'
     import store from '../store'
-    import iView from 'iview'
     import { resetPassword } from '../../bridge/users'
     import dbUtil from '../utils/DbUtil'
 
@@ -68,7 +64,8 @@
                         { required: true, message: 'Please input password', trigger: 'blur' },
                         { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
                     ]
-                }
+                },
+                signing: false
             }
         },
         methods:{
@@ -81,49 +78,18 @@
                 let this2 = this
                 this.$refs['login'].validate((valid) => {
                     if(valid) {
-                        this.$Spin.show()
+                        this.signing = true
                         var bridgeUser = this.login.username
                         var bridgePass = this.login.password
                         STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
                         STROJ_CLIENT.getBucketList((err) => {
+                            this.signing = false
                             if (err) {
-                                iView.Spin.hide()
-                                iView.Modal.error({
-                                    title : 'Login Error',
-                                    content: 'Username Or Password Error',
-                                    okText: 'OK'
-                                })
+                                this.$message.error('Username Or Password Error')
                             } else {
-                                iView.Spin.hide()
                                 dbUtil.saveCredentials(bridgeUser, bridgePass)
                                 this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
                             }
-                        })
-                    }
-                })
-            },
-            submitSignup() {
-                var this2 = this
-                this.$refs['login'].validate((valid) => {
-                    if(valid) {
-                        this2.$Spin.show()
-                        var bridgeUser = this2.login.username
-                        var bridgePass = this2.login.password
-                        STROJ_CLIENT.register(bridgeUser, bridgePass, function(err){
-                            this2.$Spin.hide()
-                            this2.$Modal.info({
-                                title : 'Register Error',
-                                content: 'User already exists',
-                                okText: 'OK'
-                            })
-                        }, function(result){
-                            this2.$Spin.hide()
-                            this2.$Modal.success({
-                                title : 'Register Success',
-                                content: 'A mail has been sent to &lt;' + bridgeUser + '&gt;, please follow the instructions in the email to activate your account before login.',
-                                okText: 'OK'
-                            })
-                            console.log(result)
                         })
                     }
                 })
@@ -173,5 +139,21 @@
   }
   h1 {
       padding: 10px
+  }
+  .sign-in {
+      width: 100%
+  }
+  .pull-left {
+      float: left;
+  }
+  .pull-right {
+      float: right;
+  }
+  .clearfix:after { 
+    content: "."; 
+    visibility: hidden; 
+    display: block; 
+    height: 0; 
+    clear: both;
   }
 </style>

@@ -28,10 +28,6 @@
     overflow: hidden;
     background: #fff;
 }
-
-.ivu-col {
-    transition: width .2s ease-in-out;
-}
 .fcontainer {
     display: flex;
     flex-grow: 1;
