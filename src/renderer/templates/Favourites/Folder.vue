@@ -61,7 +61,7 @@
                 </div>
                 <div slot="footer">
                     <input id="fileDialog" type="file" nwsaveas hidden/>
-                    <Button v-if="!fileDownloadFlag" type="primary" size="large"  @click="downloadFile">Download File</Button>
+                    <Button type="primary" size="large"  @click="downloadFile">Download File</Button>
                     <Button type="error" size="large"  @click="show_del_file_modal = true">Delete File</Button>
                 </div>
             </Modal>
@@ -211,8 +211,7 @@
         },
         created: function () {
             this.folderId = this.$route.params.folderId
-            this.folderName = this.$route.query.folderName
-            FILEINDEX_JS.initFileList(this.username, this.password, this.folderId)
+            this.$store.dispatch('initBucketData', {bucketId: this.$route.params.folderId})
         },
         mounted: function (){
             stepReady('new-folder')
@@ -224,26 +223,14 @@
             password() {
                 return this.$store.state.User.password
             },
-            bucketList() {
-                return this.$store.state.Bucket.bucketList
-            },
-            showBucketList() {
-                return this.$store.state.Bucket.showBucketList
-            },
-            moreBucketList() {
-                return this.$store.state.Bucket.moreBucketList
-            },
             bucketFileList() {
-                return this.$store.state.File.bucketFileList
+                return this.$store.state.CurrentBucket.fileList
             },
             fileListLoading() {
                 return this.$store.state.File.fileListLoading
             },
             fileQrCode() {
                 return this.$store.state.File.fileQrCode
-            },
-            fileDownloadFlag() {
-                return this.$store.state.File.fileDownloadFlag
             }
         },
         methods: {
@@ -256,14 +243,6 @@
                 // 生成文件二维码
                 QR_CODE.createQrCodeStr(fileId, function(error) {}, function(result) {
                     store.commit('updateFileQrCode', result)
-                })
-
-                // 检查文件是否已经下载
-                FILEINDEX_JS.checkFileDownload(this.folderId, this.selected.selectFileId, function(result) {
-                    if(result.length > 0)
-                        store.commit('updateFileDownloadFlag', true)
-                    else 
-                        store.commit('updateFileDownloadFlag', false)
                 })
             },
             // 文件删除操作
@@ -283,36 +262,26 @@
                 }
                 var downSelect = this.selected
                 var bridgeUser = this.username
-                var bridgePass = this.password                
-                // 校验文件是否已经下载
-                FILEINDEX_JS.checkFileDownload(this2.folderId, this.selected.selectFileId, function(result) {
-                    if(result.length == 0) {
-                        // 显示保存对话框
-                        ELECTRON_DIALOG.showSaveDialog(options, function(filePath) {
-                            iView.Message.info('File Downloading...');
-                            var downloadNoticeArgs = {
-                                desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filePath,
-                                duration: 5
-                            }
-                            // 修改文件下载状态 = true
-                            store.commit('updateFileDownloadFlag', true)
-
-                            store.dispatch('fireDownload', {
-                                folderId: this2.folderId, 
-                                fileId: downSelect.selectFileId, 
-                                filePath
-                            }).then(() => {
-                                downloadNoticeArgs['title'] = 'File Download Success'
-                                IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
-                            }).catch((err) => {
-                                downloadNoticeArgs['title'] = 'File Download Error'
-                                downloadNoticeArgs['err'] = err
-                                IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
-                            })
-                        })
-                    } else {
-                        IVIEW_UTIL.showWarnAlert('File Already Download')
+                var bridgePass = this.password
+                ELECTRON_DIALOG.showSaveDialog(options, function(filePath) {
+                    iView.Message.info('File Downloading...');
+                    var downloadNoticeArgs = {
+                        desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filePath,
+                        duration: 5
                     }
+
+                    store.dispatch('fireDownload', {
+                        folderId: this2.folderId, 
+                        fileId: downSelect.selectFileId, 
+                        filePath
+                    }).then(() => {
+                        downloadNoticeArgs['title'] = 'File Download Success'
+                        IVIEW_UTIL.showSuccessNotice(downloadNoticeArgs)
+                    }).catch((err) => {
+                        downloadNoticeArgs['title'] = 'File Download Error'
+                        downloadNoticeArgs['err'] = err
+                        IVIEW_UTIL.showErrNotice(downloadNoticeArgs)
+                    })
                 })
             },
             // Bucket Action的操作

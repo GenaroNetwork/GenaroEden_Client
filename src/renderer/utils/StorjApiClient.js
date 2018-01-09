@@ -85,15 +85,8 @@ function uploadFile(filePath, filename, bucketId, errorCallback, successCallback
 }
 
 /* 获取文件列表 */
-function getFileList(bucketId, bridgeUser, bridgePass, errorCallback, successCallback) {
-    _storj.listFiles(bucketId, function (err, result) {
-        if (err) {
-            errorCallback(err)
-            console.error(err)
-        } else {
-            successCallback(result)
-        }
-    })
+function getFileList(bucketId, callBack) {
+    _storj.listFiles(bucketId, callBack)
 }
 
 /* 下载文件 */

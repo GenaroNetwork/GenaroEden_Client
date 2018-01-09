@@ -3,8 +3,7 @@ const state = {
     fileListLoading: true,  // Bucket文件列表加载中标志
     fileQrCode: '',         // 文件二维码
     fileDownPath: '',       // 文件下载路径
-    downloadFileList: [],   // 下载文件列表
-    fileDownloadFlag: true  // 文件已下载标志位
+    downloadFileList: []   // 下载文件列表
 }
 
 const getters = {
@@ -12,8 +11,7 @@ const getters = {
     fileListLoading: state=> state.fileListLoading,
     fileQrCode: state=> state.fileQrCode,
     fileDownPath: state=> state.fileDownPath,
-    downloadFileList: state=> state.downloadFileList,
-    fileDownloadFlag: state=> state.fileDownloadFlag
+    downloadFileList: state=> state.downloadFileList
 }
 
 const mutations = {
@@ -31,9 +29,6 @@ const mutations = {
     },
     updateDownloadFileList(state, downloadFile) {
         state.downloadFileList.push(downloadFile)
-    },
-    updateFileDownloadFlag(state, fileDownloadFlag) {
-        state.fileDownloadFlag = fileDownloadFlag
     }
 }
 
