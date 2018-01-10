@@ -14,6 +14,10 @@ const mutations = {
     },
     setBucket(state, bucket) {
         state.bucket = bucket
+    },
+    deleteFile(state, fileId) {
+        const index = state.fileList.findIndex(f => f.id === fileId)
+        state.fileList.splice(index, 1)
     }
 }
 
@@ -28,6 +32,18 @@ const actions = {
                     reject()
                 } else {
                     commit('setFileList', data)
+                    resolve()
+                }
+            })
+        })
+    },
+    deleteFile({ commit, getters, rootState }, { bucketId, fileId }) {
+        return new Promise((resolve, reject) => {
+            bridgeApi.deleteFile(bucketId, fileId, (err, result) => {
+                if(err) {
+                    reject(err)
+                } else {
+                    commit('deleteFile', fileId)
                     resolve()
                 }
             })

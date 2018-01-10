@@ -16,28 +16,35 @@
     <div id="list" class="fullheight">
         <div id="file-list">
             <div class="filecard">
-                <span class="folder-name-id">Folder Info:{{ folderName }} | {{ folderId }}</span>
+                <span class="folder-name-id">Folder Info:{{ currentBucketName }} | {{ currentBucketId }}</span>
                 <span class="file-info">
-                    <el-dropdown @on-click="bucketAction" class="folder-action">
+                    <el-dropdown  @command="bucketAction" class="folder-action">
                         <span class="el-dropdown-link">
                             Actions<i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>Delete Folder</el-dropdown-item>
+                            <el-dropdown-item command="delete">Delete Folder</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </span>
                 <router-link to="/folders">Back</router-link>
-                <el-button type="primary" @click="upload">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-button type="primary" @click="upload">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
                 <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
                     <el-table :data="fileList" style="width: 100%">
                         <el-table-column prop="filename" label="File Name" width="180"></el-table-column>
                         <el-table-column prop="date" label="Size" width="180"></el-table-column>
                         <el-table-column prop="date" label="Time" width="180"></el-table-column>
                         <el-table-column prop="id" label="File ID" width="180"></el-table-column>
+                        <el-table-column label="Action" width="180">
+                            <template slot-scope="scope">
+                                <el-button @click="showReceipt(scope.row)" type="text" size="small">Receipt</el-button>
+                                <el-button @click="downloadFile(scope.row)" type="text" size="small">Download</el-button>
+                                <el-button @click="deleteFile(scope.row)" type="text" size="small">Delete</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                     <div class="overlay" v-if="dragging">
-                        <h2>drop to upload your files to {{folderName}}</h2>
+                        <h2>drop to upload your files to {{currentBucketName}}</h2>
                     </div>
                 </div>
             </div>
@@ -47,11 +54,11 @@
             <div style="text-align:center">
                 <div>
                     <div span="4"><h4>Filename:</h4></div>
-                    <div span="20">{{ selected.selectFileName }}</div>
+                    <div span="20">{{ 'selected.selectFileName' }}</div>
                 </div>
                 <div>
                     <div span="4"><h4>File Id:</h4></div>
-                    <div span="20">{{ selected.selectFileId }}</div>
+                    <div span="20">{{ 'selected.selectFileId' }}</div>
                 </div>
                 <div>
                     <div span="4"><h4>GNX Paid:</h4></div>
@@ -65,39 +72,7 @@
             <div slot="footer">
                 <input id="fileDialog" type="file" nwsaveas hidden/>
                 <el-button type="primary" size="large"  @click="downloadFile">Download File</el-button>
-                <el-button type="error" size="large"  @click="show_del_file_modal = true">Delete File</el-button>
-            </div>
-        </el-dialog>
-        
-        <el-dialog :visible.sync="show_del_bucket_modal" ok-text="OK" cancel-text="Cancel" :close-on-click-modal="false">
-            <div style="height:40px; margin-top: 20px">
-                <h4>Confirm Delete Folder: {{ selected.selectBucketName }}</h4>
-                <p>All your files in this folder will be deleted. This action cannot be undone.</p>
-            </div>
-            <div slot="footer">
-                <el-button type="primary" size="large"  @click="show_del_bucket_modal = false">Cancel</el-button>
-                <el-button type="error" size="large"  @click="deleteBucket">Delete</el-button>
-            </div>
-        </el-dialog>
-
-        <!-- 删除File确认框 -->
-        <el-dialog :visible.sync="show_del_file_modal" :close-on-click-modal="false">
-            <div style="height:40px; margin-top: 5px; margin-bottom:10px;">
-                <h3>Confirm Delete File?</h3>
-                    <h4>BucketName:</h4>
-                <div span="16">
-                    {{ selected.selectBucketName }}
-                </div>
-                <div span="8">
-                    <h4>FileName:</h4>
-                </div>
-                <div span="16">
-                    {{ selected.selectFileName }}
-                </div>
-            </div>
-            <div slot="footer">
-                <el-button type="primary" size="large"  @click="show_del_file_modal = false">Cancel</el-button>
-                <el-button type="error" size="large"  @click="deleteFile">Delete</el-button>
+                <el-button type="error" size="large"  @click="deleteFile">Delete File</el-button>
             </div>
         </el-dialog>
     </div>
@@ -113,28 +88,15 @@
     export default {
         data() {
             return {
-                folderId: '',
-                folderName: '',
                 add_bucket_modal: false,
                 show_buckets_modal: false,
                 show_receipt_modal: false,
-                show_del_bucket_modal: false,
-                show_del_file_modal: false,
-                addBucketItem: {
-                    bucketName: ''
-                },
-                selected: {
-                    selectBucketName: '',
-                    selectBucketId: '',
-                    selectFileName: '',
-                    selectFileId: ''
-                },
                 dragging: false
             }
         },
         created: function () {
-            this.folderId = this.$route.params.folderId
-            this.$store.dispatch('initBucketData', {bucketId: this.$route.params.folderId})
+            const folderId = this.$route.params.folderId
+            this.$store.dispatch('initBucketData', {bucketId: folderId})
         },
         mounted: function (){
             stepReady('new-folder')
@@ -145,57 +107,79 @@
             },
             fileQrCode() {
                 return this.$store.state.File.fileQrCode
+            },
+            currentBucketId() {
+                return this.$store.state.CurrentBucket.bucket.id
+            },
+            currentBucketName() {
+                return this.$store.state.CurrentBucket.bucket.name
             }
         },
         methods: {
-            // 显示文件Receipt模态框事件
-            showReceipt(filename, fileId) {
-                this.selected.selectFileName = filename
-                this.selected.selectFileId = fileId
+            showReceipt({filename, id}) {
                 this.show_receipt_modal = true
-
-                // 生成文件二维码
+                
                 QR_CODE.createQrCodeStr(fileId, function(error) {}, function(result) {
                     store.commit('updateFileQrCode', result)
                 })
             },
-            // 文件删除操作
-            deleteFile() {
-                alert('deleteFile')
+            deleteFile({filename, id}) {
+                const this2 = this
+                this.$confirm('Are you sure to delete file: ' + filename, 'Confirm', {
+                    confirmButtonText: 'Delete',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning'
+                }).then(() => {
+                    store.dispatch('deleteFile', {
+                        bucketId: this2.currentBucketId, 
+                        fileId: id
+                    }).then(() => {
+                        this2.$message.success('File Deleted')
+                    }).catch((err) => {
+                        this2.$message.error('File Delete Error: ' + err)
+                    })
+                })
             },
             // 文件下载
-            downloadFile() {
+            downloadFile({filename, id}) {
                 // 弹出保存对话框配置
                 let this2 = this
                 var options = {
                     title: 'Save File',
-                    defaultPath: './' + this.selected.selectFileName
+                    defaultPath: './' + filename
                 }
-                var downSelect = this.selected
-                var bridgeUser = this.username
-                var bridgePass = this.password
                 ELECTRON_DIALOG.showSaveDialog(options, function(filePath) {
-                    iView.Message.info('File Downloading...');
-                    var downloadNoticeArgs = {
-                        desc: 'Source File: ' + downSelect.selectFileName + ' <br>Folder: ' + downSelect.selectBucketName + ' <br>Target: ' + filePath,
-                        duration: 5
-                    }
+                    this2.$message('File Downloading...')
 
                     store.dispatch('fireDownload', {
-                        folderId: this2.folderId, 
-                        fileId: downSelect.selectFileId, 
+                        folderId: this2.currentBucketId, 
+                        fileId: id, 
                         filePath
                     }).then(() => {
-                        this.$message.success('File Download Success')
+                        this2.$message.success('File Download Success')
                     }).catch((err) => {
-                        this.$message.error('File Download Error: ' + err)
+                        this2.$message.error('File Download Error: ' + err)
                     })
                 })
             },
             // Bucket Action的操作
-            bucketAction(name) {
-                if (name === 'delete') {
-                    this.show_del_bucket_modal = true
+            bucketAction(command) {
+                const this2 = this
+                if (command === 'delete') {
+                    this.$confirm('All your files in folder ' + this2.currentBucketName +' will be deleted. This action cannot be undone.', 'Confirm Delete Folder: ' + this2.currentBucketName, {
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel',
+                        type: 'warning'
+                    }).then(() => {
+                        store.dispatch('deleteBucket', {
+                            bucketId: this2.currentBucketId
+                        }).then(() => {
+                            this2.$message.success('Folder Deleted')
+                            this.$router.push({ path: '/folders' })
+                        }).catch((err) => {
+                            this2.$message.error('Folder Delete Error: ' + err)
+                        })
+                    })
                 }
             },
             // Bucket 删除操作
@@ -203,14 +187,11 @@
                 var bridgeUser = this.username
                 var bridgePass = this.password
 
-                this.$store.dispatch('deleteBucket', {selectBucketId: this.selected.selectBucketId}).then(data => {
-                    iView.Message.info('Folder Delete Success');
+                this.$store.dispatch('deleteBucket', {selectBucketId: this.bucketId}).then(data => {
+                    this.$message.success('Folder Delete Success')
                 }).catch( e => {
                     
                 })
-
-                this.selected.selectBucketId = ''
-                this.show_del_bucket_modal = false
             },
             fileDragOver(e) {
                 this.dragging = true
@@ -222,7 +203,7 @@
                     console.log('File(s) you dragged here: ', f.path)
                     store.dispatch('fireUpload', {
                         filePath: f.path,
-                        bucketId: this2.folderId
+                        bucketId: this2.currentBucketId
                     }).then(() => {
                         this.$notify({
                             title: 'success',
@@ -246,7 +227,7 @@
                 if (files && files.length > 0) {
                     store.dispatch('fireUpload', {
                         filePath: files[0],
-                        bucketId: this2.folderId
+                        bucketId: this2.currentBucketId
                     }).then(() => {
                         this.$notify({
                             title: 'success',
