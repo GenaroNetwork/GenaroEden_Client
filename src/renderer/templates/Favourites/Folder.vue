@@ -18,96 +18,88 @@
             <div class="filecard">
                 <span class="folder-name-id">Folder Info:{{ folderName }} | {{ folderId }}</span>
                 <span class="file-info">
-                    <Dropdown @on-click="bucketAction" class="folder-action">
-                        <a href="javascript:void(0)">
-                            Action
-                            <Icon type="arrow-down-b"></Icon>
-                        </a>
-                        <DropdownMenu slot="list">
-                            <DropdownItem name="delete">Delete Folder</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
+                    <el-dropdown @on-click="bucketAction" class="folder-action">
+                        <span class="el-dropdown-link">
+                            Actions<i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item>Delete Folder</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </span>
                 <router-link to="/folders">Back</router-link>
                 <el-button type="primary" @click="upload">上传<i class="el-icon-upload el-icon--right"></i></el-button>
                 <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-                    <Table :loading="fileListLoading" no-data-text="No Data" :columns="fileTableColums" :data="bucketFileList"></Table>
+                    <el-table :data="fileList" style="width: 100%">
+                        <el-table-column prop="filename" label="File Name" width="180"></el-table-column>
+                        <el-table-column prop="date" label="Size" width="180"></el-table-column>
+                        <el-table-column prop="date" label="Time" width="180"></el-table-column>
+                        <el-table-column prop="id" label="File ID" width="180"></el-table-column>
+                    </el-table>
                     <div class="overlay" v-if="dragging">
                         <h2>drop to upload your files to {{folderName}}</h2>
                     </div>
                 </div>
             </div>
         </div>
-        <template>
-            <!-- 显示receipt的modal -->
-            <Modal v-model="show_receipt_modal" width="500" :closable="false">
-                <div style="text-align:center">
-                    <Row>
-                        <Col span="4"><h4>Filename:</h4></Col>
-                        <Col span="20">{{ selected.selectFileName }}</Col>
-                    </Row>
-                    <Row>
-                        <Col span="4"><h4>File Id:</h4></Col>
-                        <Col span="20">{{ selected.selectFileId }}</Col>
-                    </Row>
-                    <Row>
-                        <Col span="4"><h4>GNX Paid:</h4></Col>
-                        <Col span="20">0 (free for beta testing)</Col>
-                    </Row>
-                    <Row>
-                        <Col span="4"><h4>QR Code:</h4></Col>
-                        <Col span="20"><img :src="fileQrCode"></Col>
-                    </Row>
+        <!-- 显示receipt的modal -->
+        <el-dialog :visible.sync="show_receipt_modal" width="500" :close-on-click-modal="false">
+            <div style="text-align:center">
+                <div>
+                    <div span="4"><h4>Filename:</h4></div>
+                    <div span="20">{{ selected.selectFileName }}</div>
                 </div>
-                <div slot="footer">
-                    <input id="fileDialog" type="file" nwsaveas hidden/>
-                    <el-button type="primary" size="large"  @click="downloadFile">Download File</el-button>
-                    <el-button type="error" size="large"  @click="show_del_file_modal = true">Delete File</el-button>
+                <div>
+                    <div span="4"><h4>File Id:</h4></div>
+                    <div span="20">{{ selected.selectFileId }}</div>
                 </div>
-            </Modal>
+                <div>
+                    <div span="4"><h4>GNX Paid:</h4></div>
+                    <div span="20">0 (free for beta testing)</div>
+                </div>
+                <div>
+                    <div span="4"><h4>QR Code:</h4></div>
+                    <div span="20"><img :src="fileQrCode"></div>
+                </div>
+            </div>
+            <div slot="footer">
+                <input id="fileDialog" type="file" nwsaveas hidden/>
+                <el-button type="primary" size="large"  @click="downloadFile">Download File</el-button>
+                <el-button type="error" size="large"  @click="show_del_file_modal = true">Delete File</el-button>
+            </div>
+        </el-dialog>
+        
+        <el-dialog :visible.sync="show_del_bucket_modal" ok-text="OK" cancel-text="Cancel" :close-on-click-modal="false">
+            <div style="height:40px; margin-top: 20px">
+                <h4>Confirm Delete Folder: {{ selected.selectBucketName }}</h4>
+                <p>All your files in this folder will be deleted. This action cannot be undone.</p>
+            </div>
+            <div slot="footer">
+                <el-button type="primary" size="large"  @click="show_del_bucket_modal = false">Cancel</el-button>
+                <el-button type="error" size="large"  @click="deleteBucket">Delete</el-button>
+            </div>
+        </el-dialog>
 
-            <!-- 删除Bucket确认框-->
-            <Modal v-model="show_del_bucket_modal" ok-text="OK" cancel-text="Cancel" :closable="false">
-                <div style="height:40px; margin-top: 20px">
-                        <h4>Confirm Delete Folder: {{ selected.selectBucketName }}</h4>
-                        <p>All your files in this folder will be deleted. This action cannot be undone.</p>
-                    </Row>
+        <!-- 删除File确认框 -->
+        <el-dialog :visible.sync="show_del_file_modal" :close-on-click-modal="false">
+            <div style="height:40px; margin-top: 5px; margin-bottom:10px;">
+                <h3>Confirm Delete File?</h3>
+                    <h4>BucketName:</h4>
+                <div span="16">
+                    {{ selected.selectBucketName }}
                 </div>
-                <div slot="footer">
-                    <el-button type="primary" size="large"  @click="show_del_bucket_modal = false">Cancel</el-button>
-                    <el-button type="error" size="large"  @click="deleteBucket">Delete</el-button>
+                <div span="8">
+                    <h4>FileName:</h4>
                 </div>
-            </Modal>
-
-            <!-- 删除File确认框 -->
-            <Modal v-model="show_del_file_modal" :closable="false">
-                <div style="height:40px; margin-top: 5px; margin-bottom:10px;">
-                    <Row>
-                        <h3>Confirm Delete File?</h3>
-                    </Row>
-                    <Row>
-                        <Col span="8">
-                            <h4>BucketName:</h4>
-                        </Col>
-                        <Col span="16">
-                            {{ selected.selectBucketName }}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span="8">
-                            <h4>FileName:</h4>
-                        </Col>
-                        <Col span="16">
-                            {{ selected.selectFileName }}
-                        </Col>
-                    </Row>
+                <div span="16">
+                    {{ selected.selectFileName }}
                 </div>
-                <div slot="footer">
-                    <el-button type="primary" size="large"  @click="show_del_file_modal = false">Cancel</el-button>
-                    <el-button type="error" size="large"  @click="deleteFile">Delete</el-button>
-                </div>
-            </Modal>
-        </template>
+            </div>
+            <div slot="footer">
+                <el-button type="primary" size="large"  @click="show_del_file_modal = false">Cancel</el-button>
+                <el-button type="error" size="large"  @click="deleteFile">Delete</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -115,7 +107,6 @@
     import STROJ_CLIENT from '../../utils/StorjApiClient'
     import QR_CODE from '../../utils/QrCodeUtil'
     import ELECTRON_DIALOG from '../../utils/ElectronDialog'
-    import iView from 'iview';
     import store from '../../store'
     import {stepReady} from "../../utils/guide"
 
@@ -132,72 +123,6 @@
                 addBucketItem: {
                     bucketName: ''
                 },
-                fileTableColums: [{
-                    title: 'File Name',
-                    key: 'filename',
-                },
-                {
-                    title: 'File Id',
-                    key: 'id',
-                    width: 220
-                },
-                {
-                    title: 'Action',
-                    key: 'action',
-                    align: 'center',
-                    width: 230,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('a', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginLeft: '23px',
-                                    marginRight: '3px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.showReceipt(params.row.filename, params.row.id)
-                                    }
-                                }
-                            },'Receipt'),
-                            h('a', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '3px'
-                                },
-                                on: {
-                                    click:() => {
-                                        this.selected.selectFileName = params.row.filename
-                                        this.selected.selectFileId = params.row.id
-                                        this.downloadFile()
-                                    }
-                                }
-                            }, 'Download'),
-                            h('a', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '3px'
-                                },
-                                on: {
-                                    click:() => {
-                                        this.selected.selectFileName = params.row.filename
-                                        this.selected.selectFileId = params.row.id
-                                        this.show_del_file_modal = true
-                                    }
-                                }
-                            }, 'Delete')
-                        ])
-                    }
-                }],
                 selected: {
                     selectBucketName: '',
                     selectBucketId: '',
@@ -215,17 +140,8 @@
             stepReady('new-folder')
         },
         computed: {
-            username() {
-                return this.$store.state.User.username
-            },
-            password() {
-                return this.$store.state.User.password
-            },
-            bucketFileList() {
+            fileList() {
                 return this.$store.state.CurrentBucket.fileList
-            },
-            fileListLoading() {
-                return this.$store.state.File.fileListLoading
             },
             fileQrCode() {
                 return this.$store.state.File.fileQrCode

@@ -10,10 +10,6 @@ import store from './store'
 
 Vue.prototype.$http = axios
 
-/* 引入 iView UI */
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';    // 使用 CSS
-Vue.use(iView)
 Vue.use(ElementUI)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

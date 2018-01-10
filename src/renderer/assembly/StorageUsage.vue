@@ -35,11 +35,9 @@
 <script>
 import DB_UTIL from '../utils/DbUtil'
 import store from '../store'
-var humanSize = require('human-size');
+const humanSize = require('human-size');
 export default {
     mounted: function () {
-        // `this` points to the vm instance
-        
         const newTotalSize = DB_UTIL.getUploadSize()
         store.commit('updateTotalUploadSize', newTotalSize)
     },

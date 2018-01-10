@@ -24,15 +24,15 @@
     <div class="colcontainer">
         <div class="layout-favourites-enum">
             <el-menu default-active="0" :router="true">
-                <el-menu-item index="0" route="folders">
+                <el-menu-item index="0" route="/folders">
                     <i class="el-icon-document"></i>
                     <span slot="title">My Files</span>
                 </el-menu-item>
-                <el-menu-item index="1" route="file-download">
+                <el-menu-item index="1" route="/file-download">
                     <i class="el-icon-time"></i>
                     <span slot="title">Recent</span>
                 </el-menu-item>
-                <el-menu-item index="2" route="share-my-storage">
+                <el-menu-item index="2" route="/share-my-storage">
                     <i class="el-icon-share"></i>
                     <span slot="title">Share My Storage</span>
                 </el-menu-item>
