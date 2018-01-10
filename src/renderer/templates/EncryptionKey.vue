@@ -1,41 +1,145 @@
 <style scoped>
-
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
+.content {
+    width: 700px;
+    margin: 100px auto;
+    text-align: center;
+    font-size: 16px;
+}
+.content img.explain-img {
+    width: 200px;
+    height: auto;
+    margin: 40px auto;
+}
+.back-btn { 
+   left: 3px;
+   position: absolute;               /* 2 */
+   top: 50%;                         /* 3 */
+   transform: translate(0, -50%)
+}
+.navigation {
+    position: relative;
+}
+h1{
+    font-weight: normal;
+    font-size: 16px;
+}
+h2 {
+    font-weight: normal;
+    font-size: 20px;
+}
+.desc {
+    margin: 2em auto;
+}
+.desc p {
+    text-align: left;
+    margin: 30px auto;
+    color: #949494;
+}
+.main-area {
+    padding: 0 60px;
+}
+div.key-area {
+    background-color: #ececec;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+}
+.action-area {
+    margin: 30px auto;
+}
+.key-action {
+    margin-top: 10px;
+    text-align: center;
+}
 </style>
 
 <template>
-    <div>
-        <h1>Set Encryption Key</h1>
-        <div class='newOrReturn' v-if="showPage === 'newOrReturn'">
-            <Button type="primary" @click="gotoGenerate()" size="large" long>I'm a new user and I don't have an Encryption Key, generate now</Button>
-            <Button type="primary" @click="gotoInput()" size="large" long>I already have an Encryption Key, goto input</Button>
-        </div>
-        <div class='generate' v-if="showPage === 'generate'">
-            <p>
-                <h2>Generate a new Encryption Key</h2>
-                <p>The Encryption Key is used to encrypt/decrypt your files. Once it's lost, so are your files. Please keep it safe and secret!</p>
-            </p>
-            <Input v-model="encryptionKey" type="textarea" :rows="4" placeholder="Encryption Key" disabled></Input>
-            <Button type="primary" @click="randomKey()" size="large" long>Genarate Key</Button>
-            <Button type="primary" @click="confirm()" size="large" long>Continue</Button>
-            <Button type="primary" @click="gotoNewOrReturn()" size="large" long>Back</Button>
-        </div>
-        <div class='inputKey' v-if="showPage === 'inputKey'">
-            <p>
-                <h2>input existing Encryption Key</h2>
-                <p>The Encryption Key is used to encrypt/decrypt your files. Once it's lost, so are your files. Please keep it safe and secret!</p>
-            </p>
-            <Input v-model="encryptionKey" type="textarea" :rows="4" placeholder="Encryption Key"></Input>
-            <Button type="primary" @click="confirm()" size="large" long>Continue</Button>
-            <Button type="primary" @click="gotoNewOrReturn()" size="large" long>Back</Button>
-        </div>
-        <div class="confirm" v-if="showPage === 'confirm'">
-            <p>Important: Your Encryption Key is below, please keep it safe and secret.</p>
-            <p>{{encryptionKey}}</p>
-            <Button type="primary" @click="saveKey()" size="large" long>Save Key as file..</Button>
-            <Button type="primary" @click="copyKey()" size="large" long>Copy to Clipboard</Button>
-            <Button type="primary" @click="regenKey()" size="large" long>Back to Regenerate</Button>
-            <Button type="primary" @click="submitLogin()" size="large" long>Continue</Button>
-        </div>
+    <div class="content">
+        <el-card v-if="showPage === 'newOrReturn'">
+            <div class="navigation clearfix" slot="header">
+                <h1>Set Encryption Key</h1>
+            </div>
+            <div class='newOrReturn'>
+                <img class="explain-img" src="~@/assets/key@2x.png">
+                <br>
+                <el-button type="primary" @click="gotoGenerate()" long>I'm a new user and I don't have an Encryption Key, generate now</el-button>
+                <br>
+                <el-button type="text" @click="gotoInput()" long>I already have an Encryption Key, go to input</el-button>
+            </div>
+        </el-card>
+        <el-card v-if="showPage === 'generate'">
+            <div class="navigation clearfix" slot="header">
+                <el-button class="back-btn" type="text" @click="gotoNewOrReturn()" icon="el-icon-arrow-left">Back</el-button>
+                <h1>Set Encryption Key</h1>
+            </div>
+            <div class='main-area'>
+                <div class="desc">
+                    <h2>Step 1. <strong>Generate a new Encryption Key</strong></h2>
+                    <p>The Encryption Key is used to encrypt/decrypt your files. Once it's lost, so are your files. Please keep it safe and secret!</p>
+                </div>
+
+                <div class="key-area">
+                    <p>{{encryptionKey}}</p>
+                    <div class="key-action">
+                        <el-button-group>
+                            <el-button @click="randomKey()" icon="el-icon-refresh" size="mini">ReGenarate Key</el-button>
+                            <el-button @click="saveKey()" icon="el-icon-download" size="mini">download</el-button>
+                            <el-button @click="copyKey()" size="mini">copy</el-button>
+                        </el-button-group>
+                    </div>
+                </div>
+                <div class="action-area">
+                    <el-button type="primary" @click="gotoConfirmMatch()" long>I have written down my Encryption Key, Continue</el-button>
+                </div>
+            </div>
+        </el-card>
+        <el-card v-if="showPage === 'confirm'">
+            <div class="navigation clearfix" slot="header">
+                <el-button class="back-btn" type="text" @click="regenKey()" icon="el-icon-arrow-left">Back</el-button>
+                <h1>Set Encryption Key</h1>
+            </div>
+            <div class="main-area">
+                <div class="desc">
+                    <h2>Step 2. <strong>Confirm Your Encryption Key</strong></h2>
+                    <p>Please Retype your encryption key to confirm</p>
+                </div>
+                <div class="key-area">
+                    <el-input type="textarea" :rows="2" placeholder="Type your encryption key here to confirm" v-model="keyConfirm">
+                    </el-input>
+                </div>
+                <div class="action-area">
+                    <el-button type="primary" @click="validateKeyMatchAndSubmit()" long>Continue</el-button>
+                </div>
+            </div>
+        </el-card>
+        <el-card v-if="showPage === 'inputKey'">
+            <div class="navigation clearfix" slot="header">
+                <el-button class="back-btn" type="text" @click="gotoNewOrReturn()" icon="el-icon-arrow-left">Back</el-button>
+                <h1>Set Encryption Key</h1>
+            </div>
+            <div class='main-area'>
+                <div class="desc">
+                    <h2><strong>input existing Encryption Key</strong></h2>
+                    <p>Use existing Encryption Key to encrypt/decrypt files.</p>
+                </div>
+                <div class="key-area">
+                    <el-input type="textarea" :rows="2" placeholder="Your encryption key" v-model="encryptionKey">
+                    </el-input>
+                </div>
+                <div class="action-area">
+                    <el-button type="primary" @click="confirm()" long>Continue</el-button>
+                </div>
+            </div>
+        </el-card>
+        
     </div>
 </template>
 
@@ -43,14 +147,14 @@
 import dbUtil from '../utils/DbUtil'
 import router from '../router'
 import bridgeApi from '../utils/StorjApiClient'
-import iView from 'iview'
 
 export default {
     name : 'encryption-key',
     data: function() {
         return {
             showPage: 'newOrReturn',
-            encryptionKey: ''
+            encryptionKey: '',
+            keyConfirm: ''
         }
     },
     created: function () {
@@ -65,26 +169,24 @@ export default {
                     bridgeApi.setEnvironment(name, pwd, c)
                     router.push({ path: '/index'})
                 } else {
-
+                    console.error('no key found')
                 }
             })
         },
         confirm() {
             const valid = bridgeApi.mnemonicCheck(this.encryptionKey)
             if(valid) {
-                console.log('good key')
-                this.showPage = 'confirm'
+                this.submitLogin()
             } else {
                 console.error('bad key')
-                iView.Modal.error({
-                    title : 'Bad Key',
-                    content: 'Not a valid Encryption Key',
-                    okText: 'OK'
-                })
+                this.$message.error('Not a valid Encryption Key')
             }
         },
         regenKey() {
             this.showPage = 'generate'
+        },
+        gotoConfirmMatch() {
+            this.showPage = 'confirm'
         },
         gotoGenerate() {
             this.randomKey()
@@ -96,6 +198,13 @@ export default {
         },
         gotoNewOrReturn() {
             this.showPage = 'newOrReturn'
+        },
+        validateKeyMatchAndSubmit() {
+            if (this.keyConfirm === this.encryptionKey) {
+                this.submitLogin()
+            } else {
+                this.$message.error('Your key does not match');
+            }
         },
         submitLogin() {
             const this2 = this

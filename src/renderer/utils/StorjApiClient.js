@@ -178,7 +178,8 @@ function register(email, passwd, errorCallback, successCallback) {
     })
 }
 
-function setEnvironment(bridgeUser, bridgePass, key) {
+function setEnvironment(bridgeUser1, bridgePass, key) {
+    bridgeUser = bridgeUser1
     _storj = new Environment({
         bridgeUrl: BRIDGE_API_URL,
         bridgeUser: bridgeUser,
