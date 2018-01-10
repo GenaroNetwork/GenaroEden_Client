@@ -1,6 +1,6 @@
 <template>
-    <Tabs value="name1">
-        <TabPane label="Running Task" name="name1">
+    <el-tabs value="name1">
+        <el-tab-pane label="Running Task" name="name1">
             <table>
                 <thead>
                     <tr>
@@ -17,7 +17,7 @@
                         <td>{{item.taskType}}</td>
                         <td>{{item.filePath}}</td>
                         <td>
-                            <Progress class="progress" :percent="item.progress * 100"  status="active" hide-info :stroke-width="3" ></Progress>
+                            <el-progress :percentage="item.progress * 100"></el-progress>
                         </td>
                         <td>{{item.bucketId}}</td>
                         <td>{{item.created}}</td>
@@ -28,8 +28,8 @@
                 </tbody>
             </table>
             <!-- <Table no-data-text="No Data" width="100%" :columns="fileTableColums" :data="uploadFileList"></Table> -->
-        </TabPane>
-        <TabPane label="History" name="name2">
+        </el-tab-pane>
+        <el-tab-pane label="History" name="name2">
             <table>
                 <thead>
                     <tr>
@@ -46,7 +46,7 @@
                         <td>{{item.taskType}}</td>
                         <td>{{item.filePath}}</td>
                         <td>
-                            <Progress class="progress" :percent="item.progress * 100"  status="active" hide-info :stroke-width="3" ></Progress>
+                            <el-progress :percentage="item.progress * 100" :show-text="false"></el-progress>
                         </td>
                         <td>{{item.bucketId}}</td>
                         <td>{{item.created}}</td>
@@ -57,8 +57,8 @@
                     </tr>
                 </tbody>
             </table>
-        </TabPane>
-    </Tabs>
+        </el-tab-pane>
+    </el-tabs>
 </template>
 
 <script>
