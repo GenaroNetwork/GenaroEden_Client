@@ -20,8 +20,8 @@
 }
 .back-btn { 
    left: 3px;
-   position: absolute;               /* 2 */
-   top: 50%;                         /* 3 */
+   position: absolute;
+   top: 50%;
    transform: translate(0, -50%)
 }
 .navigation {

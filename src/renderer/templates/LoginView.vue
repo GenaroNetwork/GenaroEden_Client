@@ -1,3 +1,62 @@
+<style scoped>
+  .text {
+    font-size: 14px;
+  }
+
+  .item {
+    padding: 18px 0;
+  }
+
+  .box-card {
+    width: 480px;
+    position:relative;
+    top:-100px;
+    margin:0px auto;
+  }
+
+  .login_center {
+      width: 100%;
+      text-align: center;
+  }
+
+  #wrap{
+    position:fixed;
+    top:35%;
+    left:0;
+    width:100%;
+  }
+
+  #login_form {
+      width: 100%;
+  }
+
+  #a_forget {
+      margin-left:10px;
+  }
+
+  .otherlink {
+      font-size: 12px
+  }
+  h1 {
+      padding: 10px
+  }
+  .sign-in {
+      width: 100%
+  }
+  .pull-left {
+      float: left;
+  }
+  .pull-right {
+      float: right;
+  }
+  .clearfix:after { 
+    content: "."; 
+    visibility: hidden; 
+    display: block; 
+    height: 0; 
+    clear: both;
+  }
+</style>
 <template>
     <div id="wrap" @keyup.enter="submitLogin">
         <el-card class="box-card">
@@ -97,63 +156,3 @@
         }
     }
 </script>
-
-<style scoped>
-  .text {
-    font-size: 14px;
-  }
-
-  .item {
-    padding: 18px 0;
-  }
-
-  .box-card {
-    width: 480px;
-    position:relative;
-    top:-100px;
-    margin:0px auto;
-  }
-
-  .login_center {
-      width: 100%;
-      text-align: center;
-  }
-
-  #wrap{
-    position:fixed;
-    top:35%;
-    left:0;
-    width:100%;
-  }
-
-  #login_form {
-      width: 100%;
-  }
-
-  #a_forget {
-      margin-left:10px;
-  }
-
-  .otherlink {
-      font-size: 12px
-  }
-  h1 {
-      padding: 10px
-  }
-  .sign-in {
-      width: 100%
-  }
-  .pull-left {
-      float: left;
-  }
-  .pull-right {
-      float: right;
-  }
-  .clearfix:after { 
-    content: "."; 
-    visibility: hidden; 
-    display: block; 
-    height: 0; 
-    clear: both;
-  }
-</style>
