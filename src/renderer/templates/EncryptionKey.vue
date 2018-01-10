@@ -1,12 +1,4 @@
 <style scoped>
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-.clearfix:after {
-  clear: both
-}
 .content {
     width: 700px;
     margin: 100px auto;
@@ -169,7 +161,7 @@ export default {
                     bridgeApi.setEnvironment(name, pwd, c)
                     router.push({ path: '/index'})
                 } else {
-                    console.error('no key found')
+                    console.log('no key found')
                 }
             })
         },

@@ -158,26 +158,6 @@ function getInfo(bridgeUser, bridgePass, errorCallback, successCallback) {
     })
 }
 
-function register(email, passwd, errorCallback, successCallback) {
-    function getEmptyStorj() {
-        var _storj2 = new Environment({
-            bridgeUrl: BRIDGE_API_URL,
-            logLevel: 0
-        })
-        return _storj2
-    }
-    var _storj2 = getEmptyStorj();
-    _storj2.register(email, passwd, function(err, result) {
-        if(err) {
-            errorCallback(err)
-            console.error(err);
-        } else {
-            successCallback(result)
-            console.log(result);
-        }
-    })
-}
-
 function setEnvironment(bridgeUser1, bridgePass, key) {
     bridgeUser = bridgeUser1
     _storj = new Environment({
@@ -204,7 +184,6 @@ export default {
     downloadFile,
     deleteFile,
     getInfo,
-    register,
     mnemonicGenerate,
     mnemonicCheck
 }

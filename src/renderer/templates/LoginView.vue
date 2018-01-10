@@ -14,7 +14,7 @@
     margin:0px auto;
   }
 
-  .login_center {
+  .login-center {
       width: 100%;
       text-align: center;
   }
@@ -26,11 +26,11 @@
     width:100%;
   }
 
-  #login_form {
+  #login-form {
       width: 100%;
   }
 
-  #a_forget {
+  #a-forget {
       margin-left:10px;
   }
 
@@ -49,18 +49,11 @@
   .pull-right {
       float: right;
   }
-  .clearfix:after { 
-    content: "."; 
-    visibility: hidden; 
-    display: block; 
-    height: 0; 
-    clear: both;
-  }
 </style>
 <template>
     <div id="wrap" @keyup.enter="submitLogin">
         <el-card class="box-card">
-            <div class='login_center'>
+            <div class='login-center'>
                 <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
                 <h1>Genaro</h1>
             </div>
@@ -73,7 +66,7 @@
                     <el-input type="password" v-model="login.password" placeholder="Password">
                     </el-input>
                 </el-form-item>
-                <div class='login_center clearfix'>
+                <div class='login-center clearfix'>
                     <el-form-item>
                         <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">Sign In</el-button>
                     </el-form-item>

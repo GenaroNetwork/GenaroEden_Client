@@ -1,11 +1,9 @@
 <style scoped>
   .box-card {
     width: 480px;
-    top: 50%;
-    transform: translate(0, -70%);
-    margin:0px auto;
+    margin:100px auto;
   }
-  .login_center {
+  .login-center {
       width: 100%;
       text-align: center;
   }
@@ -22,39 +20,42 @@
   h1 {
       padding: 10px
   }
+  .main-btn {
+    width: 100%
+  }
+  .pulled-left {
+      float: left
+  }
 </style>
 
 <template>
     <div id="wrap">
-        <Card class="box-card">
-            <div class='login_center'>
+        <el-card class="box-card">
+            <div class='login-center'>
                 <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
                 <h1>Register Genaro Account</h1>
             </div>
-            <Form ref="register" :model="register" :rules="ruleInline">
-                <FormItem prop="username">
-                    <Input type="text" v-model="register.username" placeholder="Your email">
-                        <Icon type="ios-person-outline" slot="prepend"></Icon>
-                    </Input>
-                </FormItem>
-                <FormItem prop="password">
-                    <Input type="password" v-model="register.password" placeholder="Password">
-                        <Icon type="ios-locked-outline" slot="prepend"></Icon>
-                    </Input>
-                </FormItem>
-                <FormItem prop="passwordCheck">
-                    <Input type="password" v-model="register.passwordCheck" placeholder="Confirm Your Password">
-                        <Icon type="ios-locked-outline" slot="prepend"></Icon>
-                    </Input>
-                </FormItem>
-                <div class='login_center is-clearfix'>
-                    <FormItem>
-                        <Button type="primary" long @click="submitSignup()">Sign Up</Button>
-                    </FormItem>
-                    <router-link class="otherlink is-pulled-left" to="/">Sign In</router-link>
+            <el-form ref="register" :model="register" :rules="ruleInline">
+                <el-form-item prop="username">
+                    <el-input type="text" v-model="register.username" placeholder="Your email">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input type="password" v-model="register.password" placeholder="Password">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="passwordCheck">
+                    <el-input type="password" v-model="register.passwordCheck" placeholder="Confirm Your Password">
+                    </el-input>
+                </el-form-item>
+                <div class='login-center clearfix'>
+                    <el-form-item>
+                        <el-button class="main-btn" type="primary" @click="submitSignup()" :loading="processing">Sign Up</el-button>
+                    </el-form-item>
+                    <router-link class="otherlink pulled-left" to="/"><i class="el-icon-arrow-left"></i>Sign In</router-link>
                 </div>
-            </Form>
-        </Card>
+            </el-form>
+        </el-card>
     </div>
 </template>
 
@@ -62,7 +63,6 @@
 import STROJ_CLIENT from '../utils/StorjApiClient'
 import router from '../router'
 import store from '../store'
-import iView from 'iview'
 import { register } from '../../bridge/users'
 
 export default {
@@ -72,6 +72,7 @@ export default {
     },
     data: function() {
         return {
+            processing: false,
             register: {
                 username: '',
                 password: '',
@@ -105,23 +106,23 @@ export default {
             var this2 = this
             this.$refs['register'].validate((valid) => {
                 if(valid) {
-                    this2.$Spin.show()
+                    this2.processing = true
                     var bridgeUser = this2.register.username
                     var bridgePass = this2.register.password
-                    register(bridgeUser, bridgePass, function(result){
-                        this2.$Spin.hide()
-                        this2.$Modal.success({
-                            title : 'Register Success',
-                            content: 'A mail has been sent to &lt;' + bridgeUser + '&gt;, please follow the instructions in the email to activate your account before login.',
-                            okText: 'OK'
+                    register(bridgeUser, bridgePass).then(result => {
+                        this2.processing = false
+                        this.$alert('A mail has been sent to <' + bridgeUser + '>, please follow the instructions in the email to activate your account before login.', 'Register Success', {
+                            type: 'success',
+                            confirmButtonText: 'OK',
+                            callback: action => {
+                                this2.$router.push('/')
+                            }
                         })
-                        console.log(result)
-                    }, function(err){
-                        this2.$Spin.hide()
-                        this2.$Modal.info({
-                            title : 'Register Error',
-                            content: 'User already exists',
-                            okText: 'OK'
+                    }).catch(err => {
+                        this2.processing = false
+                        this.$alert('User already exists', 'Register Error', {
+                            type: 'error',
+                            confirmButtonText: 'OK'
                         })
                     })
                 }

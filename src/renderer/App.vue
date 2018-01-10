@@ -19,11 +19,8 @@
   /* CSS */
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Microsoft YaHei";
-    
-    -webkit-app-region: drag;
-    cursor: default;
     background: #f5f7f9;
-    overflow: scroll;
+    overflow: hidden;
   }
   .shepherd-step {
     z-index: 99999;
@@ -60,5 +57,14 @@
   .shepherd-element.shepherd-open, .shepherd-target.shepherd-enabled {
     z-index: 100000; 
     position: relative;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
   }
 </style>

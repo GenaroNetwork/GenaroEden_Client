@@ -61,8 +61,8 @@
                 </div>
                 <div slot="footer">
                     <input id="fileDialog" type="file" nwsaveas hidden/>
-                    <Button type="primary" size="large"  @click="downloadFile">Download File</Button>
-                    <Button type="error" size="large"  @click="show_del_file_modal = true">Delete File</Button>
+                    <el-button type="primary" size="large"  @click="downloadFile">Download File</el-button>
+                    <el-button type="error" size="large"  @click="show_del_file_modal = true">Delete File</el-button>
                 </div>
             </Modal>
 
@@ -74,8 +74,8 @@
                     </Row>
                 </div>
                 <div slot="footer">
-                    <Button type="primary" size="large"  @click="show_del_bucket_modal = false">Cancel</Button>
-                    <Button type="error" size="large"  @click="deleteBucket">Delete</Button>
+                    <el-button type="primary" size="large"  @click="show_del_bucket_modal = false">Cancel</el-button>
+                    <el-button type="error" size="large"  @click="deleteBucket">Delete</el-button>
                 </div>
             </Modal>
 
@@ -103,8 +103,8 @@
                     </Row>
                 </div>
                 <div slot="footer">
-                    <Button type="primary" size="large"  @click="show_del_file_modal = false">Cancel</Button>
-                    <Button type="error" size="large"  @click="deleteFile">Delete</Button>
+                    <el-button type="primary" size="large"  @click="show_del_file_modal = false">Cancel</el-button>
+                    <el-button type="error" size="large"  @click="deleteFile">Delete</el-button>
                 </div>
             </Modal>
         </template>
