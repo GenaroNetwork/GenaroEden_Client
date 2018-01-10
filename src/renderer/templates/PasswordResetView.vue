@@ -66,9 +66,6 @@ import { resetPassword } from '../../bridge/users'
 
 export default {
     name : 'password-reset',
-    created: function () {
-        console.log('login-view init')
-    },
     data: function() {
         return {
             processing: false,

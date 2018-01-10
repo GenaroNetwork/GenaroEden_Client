@@ -23,13 +23,20 @@
 <template>
     <div class="colcontainer">
         <div class="layout-favourites-enum">
-            <Menu theme="light" :active-name="activePath" @on-select="routerTo">
-                <MenuGroup title="FAVOURITES">
-                    <MenuItem name="folders-view"><Icon type="android-document"></Icon><span class="myfiles-menu">My Files</span></MenuItem>
-                    <MenuItem name="file-download"><Icon type="android-arrow-down"></Icon><span class="download-history">Recent</span></MenuItem>
-                    <MenuItem name="share-my-storage"><Icon type="android-upload"></Icon>Share My Storage</MenuItem>
-                </MenuGroup>
-            </Menu>
+            <el-menu default-active="0" :router="true">
+                <el-menu-item index="0" route="folders">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">My Files</span>
+                </el-menu-item>
+                <el-menu-item index="1" route="file-download">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">Recent</span>
+                </el-menu-item>
+                <el-menu-item index="2" route="share-my-storage">
+                    <i class="el-icon-setting"></i>
+                    <span slot="title">Share My Storage</span>
+                </el-menu-item>
+            </el-menu>
         </div>
         <div class="layout-favourites-content">
             <transition mode="out-in">
@@ -53,16 +60,6 @@
             stepReady('My Folder')
             stepReady('Upload')
             stepReady('download-history')
-        },
-        computed: {
-            activePath() {
-              return this.$route.path.replace('/','');
-            }
-        },
-        methods: {
-            routerTo(e) {
-                this.$router.push({name: e});
-            }
         }
     }
 </script>

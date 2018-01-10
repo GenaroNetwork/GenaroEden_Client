@@ -51,16 +51,10 @@
 
 <script>
 import HeaderBar from '@/assembly/HeaderBar'
-import LeftBar from '@/assembly/LeftBar'
-import TitleBar from '@/assembly/TitleBar'
-import UserInfoBar from '@/assembly/UserInfoBar'
 
 export default {
     components:{
-        HeaderBar,
-        LeftBar,
-        TitleBar,
-        UserInfoBar
+        HeaderBar
     }
 }
 
