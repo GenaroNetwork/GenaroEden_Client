@@ -21,6 +21,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Microsoft YaHei";
     background: #f5f7f9;
     overflow: hidden;
+    margin: 0;
   }
   .shepherd-step {
     z-index: 99999;
