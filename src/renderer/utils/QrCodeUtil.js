@@ -2,7 +2,7 @@ const QRCode = require('qrcode')
 
 const opts = {
   errorCorrectionLevel: 'H',
-  type: 'image/jpeg',
+  type: 'png',
   rendererOpts: {
     quality: 0.3
   }

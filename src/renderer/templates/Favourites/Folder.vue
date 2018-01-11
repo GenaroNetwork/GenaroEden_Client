@@ -10,6 +10,18 @@
     top: 0;
     left: 0;
 }
+table {
+    margin: 0 auto;
+}
+td {
+    vertical-align: top;
+}
+td.left-td {
+    text-align: right;
+}
+td.right-td {
+    text-align: left;
+}
 </style>
 
 <template>
@@ -30,7 +42,7 @@
                 <router-link to="/folders">Back</router-link>
                 <el-button type="primary" @click="upload">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
                 <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-                    <el-table :data="fileList" style="width: 100%">
+                    <el-table :data="fileList">
                         <el-table-column prop="filename" label="File Name" width="180"></el-table-column>
                         <el-table-column prop="date" label="Size" width="180"></el-table-column>
                         <el-table-column prop="date" label="Time" width="180"></el-table-column>
@@ -51,23 +63,25 @@
         </div>
         <!-- 显示receipt的modal -->
         <el-dialog :visible.sync="receiptModal.display" width="500" :close-on-click-modal="true">
-            <div style="text-align:center">
-                <div>
-                    <div span="4"><h4>Filename:</h4></div>
-                    <div span="20">{{ receiptModal.fileName }}</div>
-                </div>
-                <div>
-                    <div span="4"><h4>File Id:</h4></div>
-                    <div span="20">{{ receiptModal.fileId }}</div>
-                </div>
-                <div>
-                    <div span="4"><h4>GNX Paid:</h4></div>
-                    <div span="20">0 (free for beta testing)</div>
-                </div>
-                <div>
-                    <div span="4"><h4>QR Code:</h4></div>
-                    <div span="20"><img :src="receiptModal.fileQrCode"></div>
-                </div>
+            <div>
+                <table>
+                    <tr>
+                        <td class="left-td">Filename:</td>
+                        <td class="right-td">{{ receiptModal.fileName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left-td">File Id:</td>
+                        <td class="right-td">{{ receiptModal.fileId }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left-td">GNX Paid:</td>
+                        <td class="right-td">0 (free for beta testing)</td>
+                    </tr>
+                    <tr>
+                        <td class="left-td">QR Code:</td>
+                        <td class="right-td"><img :src="receiptModal.fileQrCode"></td>
+                    </tr>
+                </table>
             </div>
             <div slot="footer">
                 <el-button type="primary" size="large"  @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Download File</el-button>
@@ -208,6 +222,7 @@
                 })
             },
             fileDragOver(e) {
+                // TODO: check contain file
                 this.dragging = true
             },
             fileDrop(e) {
@@ -215,19 +230,8 @@
                 let this2 = this
                 for (let f of e.dataTransfer.files) {
                     console.log('File(s) you dragged here: ', f.path)
-                    store.dispatch('fireUpload', {
-                        filePath: f.path,
-                        bucketId: this2.currentBucketId
-                    }).then(() => {
-                        this.$notify({
-                            title: 'success',
-                            message: 'File Uploaded',
-                            type: 'success'
-                        })
-                    }).catch((err) => {
-                        alert(err)
-                        console.error(err)
-                    })
+                    this2.$message('File Uploading. Your can this task in Recent panel on the left.')
+                    this.rawUpload(this2.currentBucketId, f.path)
                 }
             },
             fileDragLeave(e) {
@@ -239,23 +243,21 @@
                 const files = dialog.showOpenDialog({properties: ['openFile', 'multiSelections']})
 
                 if (files && files.length > 0) {
-                    store.dispatch('fireUpload', {
-                        filePath: files[0],
-                        bucketId: this2.currentBucketId
-                    }).then(() => {
-                        this.$notify({
-                            title: 'success',
-                            message: 'File Uploaded',
-                            type: 'success'
-                        })
-                    }).catch((err) => {
-                        this.$notify({
-                            title: 'success',
-                            message: 'File Uploaded',
-                            type: 'error'
-                        })
-                    })
+                    filePath = files[0]
+                    bucketId = this2.currentBucketId
+                    this.rawUpload(bucketId, filePath)
                 }
+            },
+            rawUpload(bucketId, filePath) {
+                const this2 = this
+                store.dispatch('fireUpload', {
+                    filePath,
+                    bucketId
+                }).then(() => {
+                    this2.$message.success('File Uploaded: ' + filePath)
+                }).catch((err) => {
+                    this2.$message.error('File Upload Failed: ' + err)
+                })
             }
         }
     }
