@@ -19,17 +19,49 @@
 .top-bar .btn {
     flex-shrink: 0;
 }
+.folder {
+    width:195px;
+    height:140px;
+    margin: 20px;
+    border: 1.5px dashed #eee;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+}
+.folder:hover {
+    border: 1.5px dashed #eee;
+    background-color: #eee;
+}
+.folder .folder-icon i {
+    font-size:95px;
+    color:#9fd6f6;
+}
+.folder .folder-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
+
+.folder .folder-icon i.create {
+    color:#eee;
+}
+.folder .folder-name .create {
+    color:#eee;
+}
 </style>
 
 <template>
     <div class="fullheight">
         <div class="top-bar">
             <h2>Folders</h2>
-            <el-button class="btn" @click="createFolder" type="primary" icon="el-icon-circle-plus-outline" size="small">Add</el-button>
+            <el-button class="btn" @click="createFolder" type="primary" icon="el-icon-circle-plus-outline" size="small">Create Folder</el-button>
         </div>
         <div class="bucket-list">
-            <div v-for="item in showBucketList">
-                <el-button style="width:195px" @click="bucketBtnClick({label: item.name, value: item.id})">{{ item.name }}</el-button>
+            <div v-for="item in showBucketList" class="folder" @click="bucketBtnClick({label: item.name, value: item.id})">
+                <div class="folder-icon">
+                    <i class="material-icons">folder</i>
+                </div>
+                <div class="folder-name"><span>{{ item.name }}</span></div>
             </div>
         </div>
     </div>
