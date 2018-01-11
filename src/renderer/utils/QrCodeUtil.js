@@ -1,6 +1,6 @@
-var QRCode = require('qrcode')
+const QRCode = require('qrcode')
 
-var opts = {
+const opts = {
   errorCorrectionLevel: 'H',
   type: 'image/jpeg',
   rendererOpts: {
@@ -8,15 +8,8 @@ var opts = {
   }
 }
 
-function createQrCodeStr(val, errorCallback, successCallback) {
-    QRCode.toDataURL(val, opts, function (err, string) {
-        if (err) {
-            errorCallback(err)
-            console.error('create-qrcode:' + err)
-        }
-        successCallback(string)
-        console.log(string)
-    })
+function createQrCodeStr(val, callBack) {
+    QRCode.toDataURL(val, opts, callBack)
 }
 
 export default {

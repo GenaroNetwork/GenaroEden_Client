@@ -21,9 +21,6 @@ const mutations = {
     updateFileListLoading(state, fileListLoading) {
         state.fileListLoading = fileListLoading
     },
-    updateFileQrCode(state, fileQrCode) {
-        state.fileQrCode = fileQrCode
-    },
     updateFileDownPath(state, fileDownPath) {
         state.fileDownPath = fileDownPath
     },

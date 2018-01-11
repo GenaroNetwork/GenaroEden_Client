@@ -134,19 +134,12 @@ function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, success
 }
 
 /* 删除文件 */
-function deleteFile(bucketId, fileId, bridgeUser, bridgePass, errorCallback, successCallback) {
-    _storj.deleteFile(bucketId, fileId, function (err,result) {
-        if (err) {
-            errorCallback(err)
-            console.error(err);
-        } else {
-            successCallback(result)
-        }
-    })
+function deleteFile(bucketId, fileId, callBack) {
+    _storj.deleteFile(bucketId, fileId, callBack)
 }
 
 /* 获取信息 */
-function getInfo(bridgeUser, bridgePass, errorCallback, successCallback) {
+function getInfo(errorCallback, successCallback) {
     _storj.getInfo(function(err, result) {
         if(err) {
             errorCallback(err)

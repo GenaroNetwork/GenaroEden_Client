@@ -50,15 +50,15 @@
             </div>
         </div>
         <!-- 显示receipt的modal -->
-        <el-dialog :visible.sync="show_receipt_modal" width="500" :close-on-click-modal="false">
+        <el-dialog :visible.sync="receiptModal.display" width="500" :close-on-click-modal="true">
             <div style="text-align:center">
                 <div>
                     <div span="4"><h4>Filename:</h4></div>
-                    <div span="20">{{ 'selected.selectFileName' }}</div>
+                    <div span="20">{{ receiptModal.fileName }}</div>
                 </div>
                 <div>
                     <div span="4"><h4>File Id:</h4></div>
-                    <div span="20">{{ 'selected.selectFileId' }}</div>
+                    <div span="20">{{ receiptModal.fileId }}</div>
                 </div>
                 <div>
                     <div span="4"><h4>GNX Paid:</h4></div>
@@ -66,13 +66,12 @@
                 </div>
                 <div>
                     <div span="4"><h4>QR Code:</h4></div>
-                    <div span="20"><img :src="fileQrCode"></div>
+                    <div span="20"><img :src="receiptModal.fileQrCode"></div>
                 </div>
             </div>
             <div slot="footer">
-                <input id="fileDialog" type="file" nwsaveas hidden/>
-                <el-button type="primary" size="large"  @click="downloadFile">Download File</el-button>
-                <el-button type="error" size="large"  @click="deleteFile">Delete File</el-button>
+                <el-button type="primary" size="large"  @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Download File</el-button>
+                <el-button type="error" size="large"  @click="deleteFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Delete File</el-button>
             </div>
         </el-dialog>
     </div>
@@ -88,9 +87,12 @@
     export default {
         data() {
             return {
-                add_bucket_modal: false,
-                show_buckets_modal: false,
-                show_receipt_modal: false,
+                receiptModal: {
+                    display: false,
+                    fileName: '',
+                    fileId: '',
+                    fileQrCode: ''
+                },
                 dragging: false
             }
         },
@@ -105,9 +107,6 @@
             fileList() {
                 return this.$store.state.CurrentBucket.fileList
             },
-            fileQrCode() {
-                return this.$store.state.File.fileQrCode
-            },
             currentBucketId() {
                 return this.$store.state.CurrentBucket.bucket.id
             },
@@ -117,11 +116,25 @@
         },
         methods: {
             showReceipt({filename, id}) {
-                this.show_receipt_modal = true
-                
-                QR_CODE.createQrCodeStr(fileId, function(error) {}, function(result) {
-                    store.commit('updateFileQrCode', result)
+                const this2 = this
+                this.receiptModal.display = true
+                this.receiptModal.fileName = filename
+                this.receiptModal.fileId = id
+                QR_CODE.createQrCodeStr(id, function(err, result) {
+                    if(err) {
+                        console.error('generate QR err for id: ' + id)
+                    } else {
+                        this2.receiptModal.fileQrCode = result
+                    }
                 })
+            },
+            closeReceipt() {
+                if (this.receiptModal.display === true) {
+                    this.receiptModal.display = false
+                    this.receiptModal.fileName = ''
+                    this.receiptModal.fileId = ''
+                    this.receiptModal.fileQrCode = ''
+                }
             },
             deleteFile({filename, id}) {
                 const this2 = this
@@ -130,6 +143,7 @@
                     cancelButtonText: 'Cancel',
                     type: 'warning'
                 }).then(() => {
+                    this2.closeReceipt()
                     store.dispatch('deleteFile', {
                         bucketId: this2.currentBucketId, 
                         fileId: id
@@ -179,7 +193,7 @@
                         }).catch((err) => {
                             this2.$message.error('Folder Delete Error: ' + err)
                         })
-                    })
+                    }).catch()
                 }
             },
             // Bucket 删除操作
