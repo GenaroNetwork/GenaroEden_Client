@@ -22,6 +22,7 @@
     background: #f5f7f9;
     overflow: hidden;
     margin: 0;
+    color: #535353;
   }
   .shepherd-step {
     z-index: 99999;

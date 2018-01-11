@@ -4,12 +4,18 @@ import axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import 'material-design-icons/iconfont/material-icons.css'
+
+// font awesome
+import fontawesome from '@fortawesome/fontawesome'
+import solid from '@fortawesome/fontawesome-free-solid'
+fontawesome.library.add(solid)
+
 import App from './App'
 import router from './router'
 import store from './store'
 
 import locale from 'element-ui/lib/locale/lang/en'
-
 Vue.use(ElementUI, { locale })
 Vue.prototype.$http = axios
 
