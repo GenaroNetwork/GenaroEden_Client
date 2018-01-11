@@ -21,11 +21,17 @@
     "postinstall": ""
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.2",
+    "@fortawesome/fontawesome-free-brands": "^5.0.4",
+    "@fortawesome/fontawesome-free-solid": "^5.0.4",
+    "@fortawesome/vue-fontawesome": "0.0.22",
     "axios": "^0.16.1",
     "element-ui": "^2.0.11",
     "human-size": "^1.1.0",
     "keytar": "^4.1.0",
     "lowdb": "^1.0.0",
+    "material-design-icons": "^3.0.1",
+    "moment": "^2.20.1",
     "qrcode": "^0.9.0",
     "storj": "github:seekerlee/node-libstorj",
     "storj-lib": "^8.0.0",
