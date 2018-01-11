@@ -56,6 +56,7 @@ const actions = {
             }, () => {
                 commit('updateRunningUploadTask', task)
                 dispatch('logHistory', task, { root: true })
+                dispatch('reloadBucketData')
                 dbUtil.addUploadSize(filesize)
                 const newTotalSize = dbUtil.getUploadSize()
                 commit('updateTotalUploadSize', newTotalSize)

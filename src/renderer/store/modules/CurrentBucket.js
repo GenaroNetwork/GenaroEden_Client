@@ -5,7 +5,7 @@ const state = {
 }
 
 const getters = {
-    fileList: state=> state.fileList
+    fileList: state => state.fileList
 }
 
 const mutations = {
@@ -22,22 +22,29 @@ const mutations = {
 }
 
 const actions = {
-    initBucketData({ commit, getters, rootState }, { bucketId }) {
+    initBucketData({ commit, getters, rootState, dispatch }, { bucketId }) {
         let blist = rootState.Bucket.bucketList
         const bucket = blist.find(b => b.id === bucketId)
-        commit('setBucket', bucket) 
+        commit('setBucket', bucket)
+        return dispatch('reloadBucketData')
+    },
+    reloadBucketData({ commit, state }) {
         return new Promise((resolve, reject) => {
-            bridgeApi.getFileList(bucketId, function(err, data) {
-                if(err) {
-                    reject()
-                } else {
-                    commit('setFileList', data)
-                    resolve()
-                }
-            })
+            if(state.bucket) {
+                bridgeApi.getFileList(state.bucket.id, function(err, data) {
+                    if(err) {
+                        reject()
+                    } else {
+                        commit('setFileList', data)
+                        resolve()
+                    }
+                })
+            } else {
+                reject('no current bucket displaying')
+            }
         })
     },
-    deleteFile({ commit, getters, rootState }, { bucketId, fileId }) {
+    deleteFile({ commit, getters }, { bucketId, fileId }) {
         return new Promise((resolve, reject) => {
             bridgeApi.deleteFile(bucketId, fileId, (err, result) => {
                 if(err) {
