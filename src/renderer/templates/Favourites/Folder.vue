@@ -1,4 +1,28 @@
 <style scoped>
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+.top-bar button i{
+    margin-left: 5px;
+    font-size: 12px;
+    vertical-align: bottom;
+}
+.top-bar h2 {
+    margin: 0;
+    font-weight: normal;
+    font-size: 1rem;
+    flex-grow: 1;
+}
+.top-bar h2 a{
+    color: unset;
+    text-decoration:unset;
+}
+.top-bar .folder-action {
+    flex-shrink: 0;
+}
 .files {
     position: relative;
 }
@@ -22,43 +46,50 @@ td.left-td {
 td.right-td {
     text-align: left;
 }
+.files-table {
+    width: 100%;
+}
+.row-action {
+    visibility: hidden;
+}
+.file-row:hover .row-action {
+    visibility: visible;
+}
 </style>
 
 <template>
-    <div id="list" class="fullheight">
-        <div id="file-list">
-            <div class="filecard">
-                <span class="folder-name-id">Folder Info:{{ currentBucketName }} | {{ currentBucketId }}</span>
-                <span class="file-info">
-                    <el-dropdown  @command="bucketAction" class="folder-action">
-                        <span class="el-dropdown-link">
-                            Actions<i class="el-icon-arrow-down el-icon--right"></i>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="delete">Delete Folder</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
+    <div class="fullheight">
+        <div class="top-bar">
+            <h2><router-link to="/folders">Folders</router-link> &gt; <span>{{ currentBucketName }}</span></h2>
+            <el-dropdown  @command="bucketAction" class="folder-action">
+                <span class="el-dropdown-link">
+                    Actions<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
-                <router-link to="/folders">Back</router-link>
-                <el-button type="primary" @click="upload">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
-                <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-                    <el-table :data="fileList">
-                        <el-table-column prop="filename" label="File Name" width="180"></el-table-column>
-                        <el-table-column prop="date" label="Size" width="180"></el-table-column>
-                        <el-table-column prop="date" label="Time" width="180"></el-table-column>
-                        <el-table-column prop="id" label="File ID" width="180"></el-table-column>
-                        <el-table-column label="Action" width="180">
-                            <template slot-scope="scope">
-                                <el-button @click="showReceipt(scope.row)" type="text" size="small">Receipt</el-button>
-                                <el-button @click="downloadFile(scope.row)" type="text" size="small">Download</el-button>
-                                <el-button @click="deleteFile(scope.row)" type="text" size="small">Delete</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div class="overlay" v-if="dragging">
-                        <h2>drop to upload your files to {{currentBucketName}}</h2>
-                    </div>
-                </div>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="delete">Delete Folder</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+            <el-button type="primary" @click="upload" size="small">Download<i class="material-icons">file_download</i></el-button>
+            <el-button type="primary" @click="upload" size="small">Delete<i class="material-icons">delete</i></el-button>
+            <el-button type="primary" @click="upload" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
+        </div>
+        <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
+            <el-table :data="fileList" class="files-table" row-class-name="file-row">
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column prop="filename" label="File Name" width="220"></el-table-column>
+                <el-table-column prop="size" label="Size" width="180" :formatter="formatSize"></el-table-column>
+                <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
+                <el-table-column prop="id" label="File ID" width="250"></el-table-column>
+                <el-table-column label="">
+                    <template slot-scope="scope">
+                        <el-button class="row-action" @click="showReceipt(scope.row)" type="text" size="small"><i class="material-icons">receipt</i></el-button>
+                        <el-button class="row-action" @click="downloadFile(scope.row)" type="text" size="small"><i class="material-icons">file_download</i></el-button>
+                        <el-button class="row-action" @click="deleteFile(scope.row)" type="text" size="small"><i class="material-icons">delete</i></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="overlay" v-if="dragging">
+                <h2>drop to upload your files to {{currentBucketName}}</h2>
             </div>
         </div>
         <!-- 显示receipt的modal -->
@@ -97,6 +128,8 @@ td.right-td {
     import ELECTRON_DIALOG from '../../utils/ElectronDialog'
     import store from '../../store'
     import {stepReady} from "../../utils/guide"
+    const moment = require('moment');
+    const humanSize = require('human-size');
 
     export default {
         data() {
@@ -129,6 +162,12 @@ td.right-td {
             }
         },
         methods: {
+            formatTime(row, column) {
+                return moment(row.created).format("MM/DD/YYYY h:mm a")
+            },
+            formatSize(row, column) {
+                return humanSize(row.size)
+            },
             showReceipt({filename, id}) {
                 const this2 = this
                 this.receiptModal.display = true
