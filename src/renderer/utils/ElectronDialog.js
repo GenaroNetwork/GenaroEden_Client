@@ -10,6 +10,13 @@ function showSaveDialog(options, filepathCallback) {
     })
 }
 
+function selectDirectory(callback) {
+    return dialog.showOpenDialog({
+        properties: ['openDirectory']
+    }, callback)
+}
+
 export default {
-    showSaveDialog
+    showSaveDialog,
+    selectDirectory
 }
