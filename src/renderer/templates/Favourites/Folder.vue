@@ -1,6 +1,10 @@
 <style scoped>
-
+.right-container {
+    flex-direction: column;
+    display: flex;
+}
 .top-bar {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     padding: 10px;
@@ -25,14 +29,33 @@
 }
 .files {
     position: relative;
+    display: flex;
+    flex-grow: 1;
 }
 .overlay {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(117, 190, 218, 0.5);;
+    background-color: rgba(0, 0, 0, 0.2);
     top: 0;
     left: 0;
+    display: flex;
+}
+.overlay div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -90%);
+    text-align: center;
+}
+.overlay div h2 {
+    font-weight: 400;
+    font-size: 18px;
+    margin: 0;
+}
+.overlay div i{
+    color: #409EFF;
+    font-size: 170px;
 }
 table {
     margin: 0 auto;
@@ -58,38 +81,40 @@ td.right-td {
 </style>
 
 <template>
-    <div class="fullheight">
+    <div class="fullheight right-container">
         <div class="top-bar">
             <h2><router-link to="/folders">Folders</router-link> &gt; <span>{{ currentBucketName }}</span></h2>
-            <el-dropdown  @command="bucketAction" class="folder-action">
-                <span class="el-dropdown-link">
-                    Actions<i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="delete">Delete Folder</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
-            <el-button type="primary" @click="upload" size="small">Download<i class="material-icons">file_download</i></el-button>
-            <el-button type="primary" @click="upload" size="small">Delete<i class="material-icons">delete</i></el-button>
+            <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download<i class="material-icons">file_download</i></el-button>
+            <el-button type="primary" :disabled="!anyRowSelected" @click="deleteSelected" size="small">Delete<i class="material-icons">delete</i></el-button>
             <el-button type="primary" @click="upload" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
         </div>
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-            <el-table :data="fileList" class="files-table" row-class-name="file-row">
+            <el-table :data="fileList" class="files-table" height="100%" row-class-name="file-row" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="filename" label="File Name" width="220"></el-table-column>
-                <el-table-column prop="size" label="Size" width="180" :formatter="formatSize"></el-table-column>
-                <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
-                <el-table-column prop="id" label="File ID" width="250"></el-table-column>
-                <el-table-column label="">
+                <el-table-column prop="filename" label="File Name" :show-overflow-tooltip="true">
+                    <template slot-scope="scope">
+                        <font-awesome-icon :icon="file2Icon(scope.row.filename).icon" v-bind:style="{ color: file2Icon(scope.row.filename).color }"/>
+                        <span style="margin-left: 10px">{{ scope.row.filename }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="size" label="Size" width="80" :formatter="formatSize"></el-table-column>
+                <el-table-column prop="created" label="Created" width="180" :formatter="formatTime" class-name="created-col"></el-table-column>
+                <el-table-column prop="id" label="File ID" width="250" class-name="id-col"></el-table-column>
+                <el-table-column width="250" label="">
                     <template slot-scope="scope">
                         <el-button class="row-action" @click="showReceipt(scope.row)" type="text" size="small"><i class="material-icons">receipt</i></el-button>
                         <el-button class="row-action" @click="downloadFile(scope.row)" type="text" size="small"><i class="material-icons">file_download</i></el-button>
                         <el-button class="row-action" @click="deleteFile(scope.row)" type="text" size="small"><i class="material-icons">delete</i></el-button>
                     </template>
                 </el-table-column>
+                <span v-show="!dragging" slot="empty">No file in this folder. <br>You can click <el-button type="text" @click="upload" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button> button or drag and drop file here to upload.</span>
             </el-table>
             <div class="overlay" v-if="dragging">
-                <h2>drop to upload your files to {{currentBucketName}}</h2>
+                <div>
+                    <i class="el-icon-upload el-icon--right"></i>
+                    <h2>drop to upload your files to {{currentBucketName}}</h2>
+                </div>
+                
             </div>
         </div>
         <!-- 显示receipt的modal -->
@@ -115,8 +140,8 @@ td.right-td {
                 </table>
             </div>
             <div slot="footer">
-                <el-button type="primary" size="large"  @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Download File</el-button>
-                <el-button type="error" size="large"  @click="deleteFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Delete File</el-button>
+                <el-button type="primary" size="large" @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Download File</el-button>
+                <el-button type="error" size="large" @click="deleteFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Delete File</el-button>
             </div>
         </el-dialog>
     </div>
@@ -128,6 +153,8 @@ td.right-td {
     import ELECTRON_DIALOG from '../../utils/ElectronDialog'
     import store from '../../store'
     import {stepReady} from "../../utils/guide"
+    import {fileName2Icon} from "../../utils/file2icon"
+    import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
     const moment = require('moment');
     const humanSize = require('human-size');
 
@@ -140,7 +167,9 @@ td.right-td {
                     fileId: '',
                     fileQrCode: ''
                 },
-                dragging: false
+                selectedRow: [],
+                dragging: false,
+                cachedIcon: {}
             }
         },
         created: function () {
@@ -159,14 +188,23 @@ td.right-td {
             },
             currentBucketName() {
                 return this.$store.state.CurrentBucket.bucket.name
+            },
+            anyRowSelected() {
+                return this.selectedRow.length > 0
             }
         },
         methods: {
             formatTime(row, column) {
-                return moment(row.created).format("MM/DD/YYYY h:mm a")
+                return moment(row.created).format("MM/DD/YYYY hh:mm a")
             },
             formatSize(row, column) {
                 return humanSize(row.size)
+            },
+            file2Icon(name) {
+                return fileName2Icon(name)
+            },
+            rowSelectChanged(ss) {
+                this.selectedRow = ss
             },
             showReceipt({filename, id}) {
                 const this2 = this
@@ -189,6 +227,30 @@ td.right-td {
                     this.receiptModal.fileQrCode = ''
                 }
             },
+            deleteSelected() {
+                const this2 = this
+                if (this.anyRowSelected) {
+                    this.$confirm('Are you sure to delete selected files', 'Confirm', {
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel',
+                        type: 'warning'
+                    }).then(() => {
+                        this2.closeReceipt()
+                        this2.selectedRow.forEach(row => {
+                            store.dispatch('deleteFile', {
+                                bucketId: this2.currentBucketId, 
+                                fileId: row.id
+                            }).then(() => {
+                                this2.$message.success('File Deleted: ' + row.filename)
+                            }).catch((err) => {
+                                this2.$message.error('File Delete Error: ' + err)
+                            })
+                        })
+                    })
+                } else {
+                    this.$message('Please select file first')
+                }
+            },
             deleteFile({filename, id}) {
                 const this2 = this
                 this.$confirm('Are you sure to delete file: ' + filename, 'Confirm', {
@@ -207,7 +269,29 @@ td.right-td {
                     })
                 })
             },
-            // 文件下载
+            downloadSelected() {
+                const this2 = this
+                if (this.anyRowSelected) {
+                    ELECTRON_DIALOG.selectDirectory( folders => {
+                        if (folders && folders.length > 0) {
+                            const folderPath = folders[0]
+                            this2.selectedRow.forEach(row => {
+                                store.dispatch('fireDownload', {
+                                    folderId: this2.currentBucketId, 
+                                    fileId: row.id, 
+                                    filePath: folderPath + '/' + row.filename
+                                }).then(() => {
+                                    this2.$message.success('File Download Success: ' + row.filename)
+                                }).catch((err) => {
+                                    this2.$message.error('File Download Error: ' + err)
+                                })
+                            })
+                        }
+                    })
+                } else {
+                    this.$message('Please select file first')
+                }
+            },
             downloadFile({filename, id}) {
                 // 弹出保存对话框配置
                 let this2 = this
@@ -228,26 +312,6 @@ td.right-td {
                         this2.$message.error('File Download Error: ' + err)
                     })
                 })
-            },
-            // Bucket Action的操作
-            bucketAction(command) {
-                const this2 = this
-                if (command === 'delete') {
-                    this.$confirm('All your files in folder ' + this2.currentBucketName +' will be deleted. This action cannot be undone.', 'Confirm Delete Folder: ' + this2.currentBucketName, {
-                        confirmButtonText: 'Delete',
-                        cancelButtonText: 'Cancel',
-                        type: 'warning'
-                    }).then(() => {
-                        store.dispatch('deleteBucket', {
-                            bucketId: this2.currentBucketId
-                        }).then(() => {
-                            this2.$message.success('Folder Deleted')
-                            this.$router.push({ path: '/folders' })
-                        }).catch((err) => {
-                            this2.$message.error('Folder Delete Error: ' + err)
-                        })
-                    }).catch()
-                }
             },
             // Bucket 删除操作
             deleteBucket() {
@@ -282,8 +346,9 @@ td.right-td {
                 const files = dialog.showOpenDialog({properties: ['openFile', 'multiSelections']})
 
                 if (files && files.length > 0) {
-                    filePath = files[0]
-                    bucketId = this2.currentBucketId
+                    this2.$message('File Uploading. Your can this task in Recent panel on the left.')
+                    const filePath = files[0]
+                    const bucketId = this2.currentBucketId
                     this.rawUpload(bucketId, filePath)
                 }
             },
@@ -298,6 +363,9 @@ td.right-td {
                     this2.$message.error('File Upload Failed: ' + err)
                 })
             }
+        },
+        components: {
+            FontAwesomeIcon
         }
     }
 </script>
