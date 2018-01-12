@@ -1,6 +1,5 @@
 <style scoped>
     .layout-favourites-enum {
-        min-height: 520px;
         width: 200px;
         background: #fff;
         overflow: hidden;
@@ -10,7 +9,6 @@
     .layout-favourites-content {
         flex-grow: 1;
         margin-left: 20px;
-        min-height: 520px;
         background: #fff;
         border-radius: 8px;
     }

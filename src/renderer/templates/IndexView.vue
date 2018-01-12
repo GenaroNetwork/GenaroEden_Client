@@ -21,7 +21,6 @@
 }
 
 .layout-right {
-    min-height: 600px;
     width: 210px;
     overflow: hidden;
     background: #fff;
