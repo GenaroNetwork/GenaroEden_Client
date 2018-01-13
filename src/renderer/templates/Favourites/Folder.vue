@@ -91,7 +91,7 @@ td.right-td {
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
             <el-table :data="fileList" class="files-table" height="100%" row-class-name="file-row" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="filename" label="File Name" :show-overflow-tooltip="true">
+                <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <font-awesome-icon :icon="file2Icon(scope.row.filename).icon" v-bind:style="{ color: file2Icon(scope.row.filename).color }"/>
                         <span style="margin-left: 10px">{{ scope.row.filename }}</span>
@@ -100,7 +100,7 @@ td.right-td {
                 <el-table-column prop="size" label="Size" width="80" :formatter="formatSize"></el-table-column>
                 <el-table-column prop="created" label="Created" width="180" :formatter="formatTime" class-name="created-col"></el-table-column>
                 <el-table-column prop="id" label="File ID" width="250" class-name="id-col"></el-table-column>
-                <el-table-column width="250" label="">
+                <el-table-column width="130" label="">
                     <template slot-scope="scope">
                         <el-button class="row-action" @click="showReceipt(scope.row)" type="text" size="small"><i class="material-icons">receipt</i></el-button>
                         <el-button class="row-action" @click="downloadFile(scope.row)" type="text" size="small"><i class="material-icons">file_download</i></el-button>
@@ -114,7 +114,6 @@ td.right-td {
                     <i class="el-icon-upload el-icon--right"></i>
                     <h2>drop to upload your files to {{currentBucketName}}</h2>
                 </div>
-                
             </div>
         </div>
         <!-- 显示receipt的modal -->
@@ -277,7 +276,8 @@ td.right-td {
                             const folderPath = folders[0]
                             this2.selectedRow.forEach(row => {
                                 store.dispatch('fireDownload', {
-                                    folderId: this2.currentBucketId, 
+                                    folderId: this2.currentBucketId,
+                                    folderName: this2.currentBucketName,
                                     fileId: row.id, 
                                     filePath: folderPath + '/' + row.filename
                                 }).then(() => {
@@ -304,6 +304,7 @@ td.right-td {
 
                     store.dispatch('fireDownload', {
                         folderId: this2.currentBucketId, 
+                        folderName: this2.currentBucketName,
                         fileId: id, 
                         filePath
                     }).then(() => {
@@ -356,7 +357,8 @@ td.right-td {
                 const this2 = this
                 store.dispatch('fireUpload', {
                     filePath,
-                    bucketId
+                    bucketId,
+                    folderName: this2.currentBucketName
                 }).then(() => {
                     this2.$message.success('File Uploaded: ' + filePath)
                 }).catch((err) => {

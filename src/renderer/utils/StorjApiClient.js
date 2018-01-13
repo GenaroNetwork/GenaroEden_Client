@@ -72,7 +72,7 @@ function uploadFile(filePath, filename, bucketId, errorCallback, successCallback
             if(err) {
                 task.taskState = TASKSTATE.ERROR
                 errorCallback(err)
-                console.error('upload-file error: ' + err + ' filename=' + file.name)
+                console.error('upload-file error')
             } else {
                 task.progress = 1
                 task.taskState = TASKSTATE.SUCCESS
@@ -166,6 +166,12 @@ function generateKey() {
 
 }
 
+function cancelDownload(state) {
+    if (state) _storj.resolveFileCancel(state)
+}
+function cancelUpload(state) {
+    if (state) _storj.storeFileCancel(state)
+}
 export default {
     setEnvironment,
     createBucket,
@@ -173,8 +179,10 @@ export default {
     deleteBucket,
     deleteBucket,
     uploadFile,
+    cancelUpload,
     getFileList,
     downloadFile,
+    cancelDownload,
     deleteFile,
     getInfo,
     mnemonicGenerate,
