@@ -39,7 +39,7 @@ function getUploadSize() {
 }
 
 function getHistory() {
-    return db.get('history').sortBy('created').value()
+    return db.get('history').sortBy(item => -item.created).value()
 }
 
 function addHistory(data) {
