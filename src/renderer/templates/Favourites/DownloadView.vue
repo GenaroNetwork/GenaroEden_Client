@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 
 
 .right-container {
@@ -6,32 +6,40 @@
     display: flex;
     padding: 0 15px;
 }
-.table-wrapper {
-    
+.task-tabs-parent {
+    display: flex;
+    flex-flow: column;
 }
-.task-type {
+.task-tabs-parent > .el-tabs__content{
+    display: flex;
+}
+.task-tabs-parent .el-tab-pane {
+    display: flex;
+    flex-grow: 1;
+}
+.task-tabs-parent .task-type {
     width: 160px;
     display: inline-block;
 }
-.action-cell, .action-cell span {
+.task-tabs-parent .action-cell, .task-tabs-parent  .action-cell span {
     display: flex;
     align-items: center;
 }
-.process-bar i{
+.task-tabs-parent .process-bar i{
     vertical-align: bottom;
 }
 
-.row-action {
+.task-tabs-parent .row-action {
     visibility: hidden;
 }
-.file-row:hover .row-action {
+.task-tabs-parent .file-row:hover .row-action {
     visibility: visible;
 }
 </style>
 
 <template>
 <div class="fullheight right-container">
-    <el-tabs value="runningTask">
+    <el-tabs value="runningTask" class="task-tabs-parent">
         <el-tab-pane label="Running Task" name="runningTask">
 
             <el-table :data="taskFileList" class="files-table" height="100%" row-class-name="file-row">
@@ -70,7 +78,6 @@
         <!-- -->
         <el-tab-pane label="History" name="history">
 
-            <div class="table-wrapper">
                 <el-table :data="historyList" class="files-table" height="100%" row-class-name="file-row">
                     <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
@@ -93,7 +100,6 @@
                     </el-table-column>
                     <span slot="empty">No upload/download history yet</span>
                 </el-table>
-            </div>
 
         </el-tab-pane>
     </el-tabs>
