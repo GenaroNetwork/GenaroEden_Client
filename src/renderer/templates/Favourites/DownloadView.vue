@@ -1,6 +1,4 @@
 <style>
-
-
 .right-container {
     flex-direction: column;
     display: flex;
@@ -78,28 +76,28 @@
         <!-- -->
         <el-tab-pane label="History" name="history">
 
-                <el-table :data="historyList" class="files-table" height="100%" row-class-name="file-row">
-                    <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
-                        <template slot-scope="scope">
-                            <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }"/>
-                            <span style="margin-left: 10px">{{ getFileName(scope.row.filePath) }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="totalBytes" label="Size" width="80" :formatter="formatSize"></el-table-column>
-                    <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" label="Folder" width="250"></el-table-column>
-                    <el-table-column width="300" label="">
-                        <template slot-scope="scope">
-                            <div class="action-cell">
-                                <span class="task-type" v-if="scope.row.taskType === 2"><i class="material-icons">file_download</i><span>Download Sucess</span></span>
-                                <span class="task-type" v-if="scope.row.taskType === 3"><i class="material-icons">file_upload</i>Upload Sucess</span>
-                                <el-button class="row-action" @click="ShowUploadItemInFolder(scope.row)" type="text" size="small"><i class="material-icons">folder</i></el-button>
-                                <el-button class="row-action" @click="deleteHistory(scope.row)" type="text" size="small"><i class="material-icons">delete</i></el-button>
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <span slot="empty">No upload/download history yet</span>
-                </el-table>
+            <el-table :data="historyList" class="files-table" height="100%" row-class-name="file-row">
+                <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
+                    <template slot-scope="scope">
+                        <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }"/>
+                        <span style="margin-left: 10px">{{ getFileName(scope.row.filePath) }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="totalBytes" label="Size" width="80" :formatter="formatSize"></el-table-column>
+                <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
+                <el-table-column prop="folderName" label="Folder" width="250"></el-table-column>
+                <el-table-column width="300" label="">
+                    <template slot-scope="scope">
+                        <div class="action-cell">
+                            <span class="task-type" v-if="scope.row.taskType === 2"><i class="material-icons">file_download</i><span>Download Sucess</span></span>
+                            <span class="task-type" v-if="scope.row.taskType === 3"><i class="material-icons">file_upload</i>Upload Sucess</span>
+                            <el-button class="row-action" @click="ShowUploadItemInFolder(scope.row)" type="text" size="small"><i class="material-icons">folder</i></el-button>
+                            <el-button class="row-action" @click="deleteHistory(scope.row)" type="text" size="small"><i class="material-icons">delete</i></el-button>
+                        </div>
+                    </template>
+                </el-table-column>
+                <span slot="empty">No upload/download history yet</span>
+            </el-table>
 
         </el-tab-pane>
     </el-tabs>
