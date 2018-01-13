@@ -1,9 +1,9 @@
 {
-  "name": "Genaro-Eden",
-  "productName": "Genaro-Eden",
-  "version": "0.0.3",
-  "author": "sage.xue<job.xueqi@gmail.com>",
-  "description": "An electron-vue project",
+  "name": "genaro-eden",
+  "productName": "Genaro Eden",
+  "version": "1.0.0",
+  "author": "Genaro Network",
+  "description": "Genaro Eden - A Trustworthy Internet for Everyone",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
