@@ -5,7 +5,7 @@ const state = {
 }
 
 const getters = {
-    uploadList: state=> state.uploadList
+    uploadList: state => state.uploadList
 }
 
 const mutations = {
@@ -36,12 +36,21 @@ const mutations = {
             totalBytes: task.totalBytes,
             created: task.created,
             updated: task.updated,
+            folderName: task.folderName,
+            state: task.state
         })
+    },
+    removeUploadTask(state, taskId) {
+        const index = state.uploadList.findIndex(t => t.taskId === taskId)
+        state.uploadList.splice(index, 1)
+    },
+    removeState(state, task) {
+        task.state = null
     }
 }
 
 const actions = {
-    fireUpload({ commit, rootState, dispatch }, {filePath, bucketId}) {
+    fireUpload({ commit, rootState, dispatch }, {filePath, bucketId, folderName}) {
         
         const fs = require('fs')
         const path = require('path')
@@ -64,8 +73,19 @@ const actions = {
             }, () => {
                 commit('updateRunningUploadTask', task)
             })
+            task.folderName = folderName
             commit('appendNewUploadTask', task)
         })
+    },
+    cancelUpload({ commit, state, dispatch }, {taskId}) {
+        const task = state.uploadList.find(t => t.taskId === taskId)
+        if (task) {
+            STROJ_CLIENT.cancelUpload(task.state)
+            commit('removeState', task) // storj may crash when cancel multipile times. set state to null to prevent.
+        }
+    },
+    removeUploadTask({ commit, state, dispatch }, {taskId}) {
+        commit('removeUploadTask', taskId)
     }
 }
 export default {

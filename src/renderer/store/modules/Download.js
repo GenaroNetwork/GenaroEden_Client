@@ -17,8 +17,6 @@ const mutations = {
             existTask.totalBytes = task.totalBytes
             existTask.updated = task.updated
             existTask.taskState = task.taskState
-            console.log('update process: ' + existTask.progress)
-            console.log('update process: ' + existTask.taskState)
         }
     },
     appendNewDownloadTask(state, task) {
@@ -34,16 +32,27 @@ const mutations = {
             totalBytes: task.totalBytes,
             created: task.created,
             updated: task.updated,
+            folderName: task.folderName,
+            state: task.state
         })
+    },
+    removeDownloadTask(state, taskId) {
+        const index = state.downloadList.findIndex(t => t.taskId === taskId)
+        state.downloadList.splice(index, 1)
+    },
+    removeState(state, task) {
+        task.state = null
     }
 }
 
 const actions = {
-    fireDownload({ commit, rootState, dispatch }, {folderId, fileId, filePath}) {
+    fireDownload({ commit, rootState, dispatch }, {folderId, fileId, filePath, folderName}) {
         return new Promise((resolve, reject) => {
             let task = STROJ_CLIENT.downloadFile(folderId, fileId, filePath, (err) => {
                 // error
                 commit('updateRunningDownloadTask', task)
+                const fs = require('fs')
+                fs.unlink(filePath, function(){})
                 reject(err)
             }, () => { // success
                 commit('updateRunningDownloadTask', task)
@@ -52,8 +61,19 @@ const actions = {
             }, () => { // in process
                 commit('updateRunningDownloadTask', task)
             })
+            task.folderName = folderName
             commit('appendNewDownloadTask', task)
         })
+    },
+    cancelDownload({ commit, state, dispatch }, {taskId}) {
+        const task = state.downloadList.find(t => t.taskId === taskId)
+        if (task) {
+            STROJ_CLIENT.cancelDownload(task.state)
+            commit('removeState', task) // storj may crash when cancel task multipile times. set state to null to prevent.
+        }
+    },
+    removeDownloadTask({ commit, state, dispatch }, {taskId}) {
+        commit('removeDownloadTask', taskId)
     }
 }
 export default {
