@@ -96,7 +96,7 @@
                         store.commit('updatePassword', credentials.password)
                         this2.checkEncryptionKeyAndLogin(credentials.account, credentials.password)
                     } else {
-                        this.username = credentials.account
+                        this.login.username = credentials.account
                     }
                 }
             })

@@ -154,10 +154,10 @@ export default {
     },
     methods:{
         checkKeyOkAndContinue() {
-            dbUtil.getEncryptionKey().then((c) => {
+            const name = this.$store.state.User.username
+            const pwd = this.$store.state.User.password
+            dbUtil.getEncryptionKey(pwd).then((c) => {
                 if(c) {
-                    const name = this.$store.state.User.username
-                    const pwd = this.$store.state.User.password
                     bridgeApi.setEnvironment(name, pwd, c)
                     router.push({ path: '/index'})
                 } else {
@@ -200,10 +200,11 @@ export default {
         },
         submitLogin() {
             const this2 = this
-            dbUtil.saveEncryptionKey(this.encryptionKey).then(()=>{
+            const pwd = this.$store.state.User.password
+            dbUtil.saveEncryptionKey(this.encryptionKey, pwd).then(()=>{
                 this2.checkKeyOkAndContinue()
-            }).catch(()=>{
-                console.error('saveEncryptionKey failed')
+            }).catch((e)=>{
+                console.error(e)
             })
         },
         randomKey() {

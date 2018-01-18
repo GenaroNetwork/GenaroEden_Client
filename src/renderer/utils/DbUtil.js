@@ -4,6 +4,7 @@ const os = require('os')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const keytar = require('keytar')
+const {encryptText2Json, decryptJson2Text} = require('./encryptUtil')
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
@@ -15,7 +16,7 @@ const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ username: null, t_down_files: [], uploadSize: 0, history: [] }).write()
+db.defaults({ username: null, t_down_files: [], uploadSize: 0, history: [], encryptionKey: null }).write()
 
 const KEYCHAIN_LOGIN = 'network.genaro.eden.login'
 const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey'
@@ -52,9 +53,9 @@ function removeHistoryById(id) {
 
 function saveCredentials(username, password) {
     db.set('username', username).write()
-    keytar.setPassword(KEYCHAIN_LOGIN, username, password).then(() => {
-        console.log('Credentials saved to keychain')
-    })
+    // keytar.setPassword(KEYCHAIN_LOGIN, username, password).then(() => {
+    //     console.log('Credentials saved to keychain')
+    // })
 }
 
 function getCredentials() {
@@ -80,29 +81,19 @@ function deleteCredentials() {
     return keytar.deletePassword(KEYCHAIN_LOGIN, account)
 }
 
-function saveEncryptionKey(key) {
+function saveEncryptionKey(key, password) {
     return new Promise((resolve, reject) => {
-        const account = db.get('username').value()
-        keytar.setPassword(KEYCHAIN_ENCRYPTIONKEY, account, key).then(() => {
-            console.log('Credentials saved to keychain')
-            resolve()
-        }).catch((e) => {
-            console.log(e)
-            reject()
-        })
+        const cipheredKey = (encryptText2Json(key, password))
+        db.set('encryptionKey', cipheredKey).write()
+        resolve()
     })
 }
 
-function getEncryptionKey() {
+function getEncryptionKey(password) {
     return new Promise((resolve, reject) => {
-        const account = db.get('username').value()
-        if(account) {
-            keytar.getPassword(KEYCHAIN_ENCRYPTIONKEY, account).then((password) => {
-                resolve(password)
-            }).catch(() => {
-                console.error('getEncryptionKey from keyChain error!')
-                resolve(null)
-            })
+        const ek = db.get('encryptionKey').value()
+        if(ek) {
+            resolve( decryptJson2Text(ek, password) )
         } else {
             resolve(null)
         }
