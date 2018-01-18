@@ -26,6 +26,7 @@
     "@fortawesome/fontawesome-free-solid": "^5.0.4",
     "@fortawesome/vue-fontawesome": "0.0.22",
     "axios": "^0.16.1",
+    "bip39": "^2.5.0",
     "crypto-js": "^3.1.9-1",
     "element-ui": "^2.0.11",
     "eth-lightwallet": "^3.0.1",

@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const low = require('lowdb')
@@ -6,8 +6,11 @@ const FileSync = require('lowdb/adapters/FileSync')
 const keytar = require('keytar')
 const Wallet = require('ethereumjs-wallet')
 const hdkey = require('ethereumjs-wallet/hdkey')
+const Tx = require('ethereumjs-tx')
 
 const KEYCHAIN_WALLET = 'network.genaro.eden.wallet'
+const WEB3PROVIDER = 'https://ropsten.infura.io/wYBhtj2SSUB7qlztqEjx'
+const CHAINID = 3
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
@@ -23,7 +26,18 @@ const db = low(adapter)
 db.defaults({ wallet: [] }).write()
 
 function generateWalletName() {
-    return 'wallet 1'
+    const names = new Set()
+    db.get('wallet').value().forEach(e => {
+        names.add(e.name)
+    })
+    var i = 0
+    while(true) {
+        i ++
+        var tmpname = `Account ${i}`
+        if(!names.has(tmpname)) {
+            return tmpname
+        }
+    }
 }
 /*
   {
@@ -52,6 +66,15 @@ function loadWallet() {
                 }).catch( e => reject(e) )
             })
         }
+    })
+}
+
+function loadSingleWallet(address, password) {
+    return new Promise((resolve, reject) => {
+        keytar.getPassword(KEYCHAIN_WALLET, address).then(v3str => {
+            const w = Wallet.fromV3(v3str, password)
+            resolve(w)
+        }).catch( e => reject(e) )
     })
 }
 
@@ -84,9 +107,14 @@ function importFromV3Json(json, password, name) {
 }
 
 function importFromMnemonic(mnemonic, password) {
-    debugger
     return new Promise((resolve, reject) => {
-        let wallet = hdkey.fromMasterSeed(mnemonic).getWallet()
+        // compatible with metamask/jaxx
+        const bip39 = require('bip39')
+        const seed = bip39.mnemonicToSeed(mnemonic)
+        let wallet = hdkey.fromMasterSeed(seed).derivePath(`m/44'/60'/0'/0`).deriveChild(0).getWallet()
+
+        //const ss = wallet.getAddress().toString()
+        const ss2 = wallet.getAddress().toString('hex')
         saveWallet(wallet, generateWalletName(), password).then(() => resolve()).catch(e => reject(e))
     })
 }
