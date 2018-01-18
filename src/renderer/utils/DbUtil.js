@@ -21,16 +21,6 @@ db.defaults({ username: null, uploadSize: 0, history: [], encryptionKey: null })
 const KEYCHAIN_LOGIN = 'network.genaro.eden.login'
 const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey'
 
-/* 插入数据 */
-function save(tableName, data) {
-    db.get(tableName).push(data).write()
-}
-
-/* 查询数据 */
-function query(tableName, queryVal) {
-    return db.get(tableName).filter(queryVal).value()
-}
-
 function addUploadSize(sizeByte) {
     db.set('uploadSize', getUploadSize() + sizeByte).write()
 }
@@ -101,8 +91,6 @@ function getEncryptionKey(password) {
 }
 
 export default {
-    save,
-    query,
     addUploadSize,
     getUploadSize,
     isFirstTime,
