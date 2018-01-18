@@ -66,7 +66,7 @@ function getCredentials() {
 
 function deleteCredentials() {
     const account = db.get('username').value()
-    db.set('username', null).write()
+    db.set('username', null).set('encryptionKey', null).write()
     keytar.deletePassword(KEYCHAIN_ENCRYPTIONKEY, account)
     return keytar.deletePassword(KEYCHAIN_LOGIN, account)
 }

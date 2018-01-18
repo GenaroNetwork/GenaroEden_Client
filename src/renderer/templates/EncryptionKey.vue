@@ -139,6 +139,7 @@ div.key-area {
 import dbUtil from '../utils/DbUtil'
 import router from '../router'
 import bridgeApi from '../utils/StorjApiClient'
+import walletManager from '../../wallet/walletManager'
 
 export default {
     name : 'encryption-key',
@@ -165,10 +166,21 @@ export default {
                 }
             })
         },
-        confirm() {
-            const valid = bridgeApi.mnemonicCheck(this.encryptionKey)
-            if(valid) {
+        generateWalletThenLogin(mnemonic, password) {
+            // generate an HD wallet
+            walletManager.importFromMnemonic(mnemonic, password).then(() => {
                 this.submitLogin()
+            }).catch((e)=>{
+                console.log(e)
+                this.$message.error('generate wallet error')
+            })
+        },
+        confirm() {
+            const this2 = this
+            const valid = bridgeApi.mnemonicCheck(this.encryptionKey)
+            const pwd = this.$store.state.User.password
+            if(valid) {
+                this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
                 console.error('bad key')
                 this.$message.error('Not a valid Encryption Key')
@@ -193,7 +205,8 @@ export default {
         },
         validateKeyMatchAndSubmit() {
             if (this.keyConfirm === this.encryptionKey) {
-                this.submitLogin()
+                const pwd = this.$store.state.User.password
+                this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
                 this.$message.error('Your key does not match');
             }

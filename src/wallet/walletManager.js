@@ -5,6 +5,7 @@ const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const keytar = require('keytar')
 const Wallet = require('ethereumjs-wallet')
+const hdkey = require('ethereumjs-wallet/hdkey')
 
 const KEYCHAIN_WALLET = 'network.genaro.eden.wallet'
 
@@ -20,11 +21,16 @@ const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
 db.defaults({ wallet: [] }).write()
+
+function generateWalletName() {
+    return 'wallet 1'
+}
 /*
   {
-      name: 'wallet 1',
-      created: 1321321,
-      address: '009b5109f8f0ef4d360f10bd51358e76f042d1a1' 
+    name: 'wallet 1',
+    created: 1321321,
+    address: '009b5109f8f0ef4d360f10bd51358e76f042d1a1',
+    source: 'imported' // derieved
   }
 */
 function loadWallet() {
@@ -39,6 +45,7 @@ function loadWallet() {
                     count --
                     w.v3 = JSON.parse(v3str)
                     w.address = w.v3.address
+                    w.rawWallet = null
                     if(count === 0) {
                         resolve(wallets)
                     }
@@ -48,35 +55,53 @@ function loadWallet() {
     })
 }
 
-function importFromV3Json(json, password, name) {
+function saveWallet(wa, name, pass) {
     return new Promise((resolve, reject) => {
-        var w = Wallet.fromV3(json, password)
-        const v3 = w.toV3(password)
-        const addr = v3.address
+        const v3 = wa.toV3(pass)
+        const address = v3.address
 
-        const found = db.get('wallet').find({ address: addr }).value()
+        const found = db.get('wallet').find({ address: address }).value()
         if(found) {
-            reject({message: `address ${addr} already exists. Please delete it first.`})
+            reject({message: `address ${address} already exists. Please delete it first.`})
             return
         }
         keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
             db.get('wallet').push({
-                name: name,
+                name,
                 created: Date.now(),
-                address: v3.address
+                address
             }).write()
-            debugger
             resolve()
         })
     })
 }
 
-function deleteWallet(address) {
-
+function importFromV3Json(json, password, name) {
+    return new Promise((resolve, reject) => {
+        var w = Wallet.fromV3(json, password)
+        saveWallet(w, name, password).then(() => resolve()).catch(e => reject(e))
+    })
 }
 
-export {
+function importFromMnemonic(mnemonic, password) {
+    debugger
+    return new Promise((resolve, reject) => {
+        let wallet = hdkey.fromMasterSeed(mnemonic).getWallet()
+        saveWallet(wallet, generateWalletName(), password).then(() => resolve()).catch(e => reject(e))
+    })
+}
+
+function importFromPrivateKey() {
+    // TODO:
+}
+function initRawWallet(v3, pass) {
+    return Wallet.fromV3(v3, pass)
+}
+
+export default{
     loadWallet,
-    importFromV3Json
+    importFromV3Json,
+    importFromMnemonic,
+    initRawWallet
 }
   
