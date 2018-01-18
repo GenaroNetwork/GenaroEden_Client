@@ -16,7 +16,7 @@ const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ username: null, t_down_files: [], uploadSize: 0, history: [], encryptionKey: null }).write()
+db.defaults({ username: null, uploadSize: 0, history: [], encryptionKey: null }).write()
 
 const KEYCHAIN_LOGIN = 'network.genaro.eden.login'
 const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey'
