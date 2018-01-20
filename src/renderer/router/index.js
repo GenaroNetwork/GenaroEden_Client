@@ -53,6 +53,11 @@ export default new Router({
               path: '/share-my-storage',
               name: 'share-my-storage',
               component: require('@/templates/Favourites/ShareMyStorage').default
+            },
+            {
+              path: '/wallet',
+              name: 'wallet',
+              component: require('@/templates/Favourites/Wallet').default
             }
           ]
         }

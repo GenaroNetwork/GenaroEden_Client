@@ -171,8 +171,8 @@ export default {
             walletManager.importFromMnemonic(mnemonic, password).then(() => {
                 this.submitLogin()
             }).catch((e)=>{
-                console.log(e)
-                this.$message.error('generate wallet error')
+                console.error(e)
+                this.$message.error('generate wallet error, is your phrase correct?')
             })
         },
         confirm() {

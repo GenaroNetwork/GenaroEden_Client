@@ -16,6 +16,13 @@
         display: flex;
         width: 100%;
     }
+    i {    
+        margin-right: 5px;
+        width: 24px;
+        text-align: center;
+        font-size: 18px;
+        vertical-align: middle;
+    }
 </style>
 
 <template>
@@ -29,6 +36,10 @@
                 <el-menu-item index="1" route="/file-download">
                     <i class="el-icon-time"></i>
                     <span slot="title">Recent</span>
+                </el-menu-item>
+                <el-menu-item index="3" route="/wallet">
+                    <i class="material-icons">account_balance_wallet</i>
+                    <span slot="title">My Wallet</span>
                 </el-menu-item>
                 <el-menu-item index="2" route="/share-my-storage">
                     <i class="el-icon-share"></i>

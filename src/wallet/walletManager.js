@@ -1,3 +1,4 @@
+import {web3, chainId, utils} from './web3Util'
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -9,8 +10,6 @@ const hdkey = require('ethereumjs-wallet/hdkey')
 const Tx = require('ethereumjs-tx')
 
 const KEYCHAIN_WALLET = 'network.genaro.eden.wallet'
-const WEB3PROVIDER = 'https://ropsten.infura.io/wYBhtj2SSUB7qlztqEjx'
-const CHAINID = 3
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
@@ -126,10 +125,69 @@ function initRawWallet(v3, pass) {
     return Wallet.fromV3(v3, pass)
 }
 
+function pay(myAddr, password, receiveAddr, amount, gas, gasLimit) {
+    debugger
+    const myWallet = db.get('wallet').find({ address: myAddr }).value()
+    return new Promise((resolve, reject) => {
+        if(myWallet) {
+            loadSingleWallet(myAddr, password).then(rawWallet => {
+                const prikBuf = rawWallet.getPrivateKey()
+                var nonceval
+    
+                if (web3.currentProvider.connected !== true) {
+                    console.log('not ready')
+                } else {
+                    console.log('ready')
+                }
+    
+                web3.eth.getTransactionCount(myAddr).then((nb) => { nonceval = nb }).then(() => {
+    
+                    const weiAmount = utils.toWei(amount,'ether')
+                    debugger
+                    // 1. make transaction data
+                    let txOptions = {
+                        gasPrice: web3.utils.toHex(parseInt(gas)),
+                        gasLimit: web3.utils.toHex(gasLimit),
+                        value: web3.utils.toHex(weiAmount), 
+                        nonce: web3.utils.toHex(nonceval),
+                        from: myAddr,
+                        to: receiveAddr,
+                        chainId
+                    }
+    
+                    var tx = new Tx(txOptions)
+                    // 2. sign transaction
+                    tx.sign(prikBuf)
+                    var serializedTx = tx.serialize()
+    
+                    console.log(txOptions)
+                    console.log(serializedTx.toString('hex'))
+                    // 3. sign
+                    web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), (err, hash) => {
+    
+                        if (err) { 
+                            console.log(err)
+                             return 
+                            }
+    
+                        console.log('tx hash: ' + hash)
+                    })
+                })
+            })
+        } else {
+            reject('wallet not found')
+        }
+    })
+}
+
+function payGnx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
+}
+
 export default{
     loadWallet,
     importFromV3Json,
     importFromMnemonic,
-    initRawWallet
+    initRawWallet,
+    pay
 }
   
