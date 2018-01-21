@@ -3,7 +3,7 @@
 </style>
 <template>
     <div class="fullheight right-container v-flex">
-        <el-popover ref="payFormPop" placement="bottom" width="400" trigger="click" @show="payPopped">
+        <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="400" trigger="click" @show="payPopped">
             <el-form ref="payOption" :model="payOption" :rules="ruleInline">
                 <div v-if="payStep === 0">
                     <el-form-item label="recipient" prop="recipient">
@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import walletManager from '../../../wallet/walletManager'
 import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
 import {utils} from '../../../wallet/web3Util'
 
@@ -82,6 +81,7 @@ export default {
     },
     data: function() {
         return {
+            payFormPop: false,
             payOption: {
                 payType: 'ETH',
                 recipient: '',
@@ -120,12 +120,23 @@ export default {
     },
     methods: {
         pay() {
-            const w = this.wallet
-            walletManager.pay(w.address, this.payOption.password, this.payOption.recipient, this.payOption.amount, this.payOption.gasPrice, this.payOption.gasLimit).then((t) => {
-                this.$message('transaction submitted');
-                console.log(t)
+            const this2 = this
+            function resetPayForm() {
+                this2.payFormPop = false
+                this2.payStep = 0
+
+                this2.payOption.recipient = ''
+                this2.payOption.amount = 0
+                this2.payOption.gasPrice = 0
+                this2.payOption.gasLimit = 0
+                this2.payOption.password = ''
+            }
+
+            this.$store.dispatch('payByCurrentWallet', this2.payOption).then(()=>{
+                this2.$message('transaction submitted')
+                resetPayForm()
             }).catch(e => {
-                this.$message.error('err: ' + e)
+                this.$message.error('create transaction error: ' + e)
                 console.log(e)
             })
         },

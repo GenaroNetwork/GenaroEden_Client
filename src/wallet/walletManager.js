@@ -125,59 +125,42 @@ function initRawWallet(v3, pass) {
     return Wallet.fromV3(v3, pass)
 }
 
-function pay(myAddr, password, receiveAddr, amount, gas, gasLimit) {
-    debugger
+async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
     const myWallet = db.get('wallet').find({ address: myAddr }).value()
-    return new Promise((resolve, reject) => {
-        if(myWallet) {
-            loadSingleWallet(myAddr, password).then(rawWallet => {
-                const prikBuf = rawWallet.getPrivateKey()
-                var nonceval
-    
-                if (web3.currentProvider.connected !== true) {
-                    console.log('not ready')
-                } else {
-                    console.log('ready')
-                }
-    
-                web3.eth.getTransactionCount(myAddr).then((nb) => { nonceval = nb }).then(() => {
-    
-                    const weiAmount = utils.toWei(amount,'ether')
-                    debugger
-                    // 1. make transaction data
-                    let txOptions = {
-                        gasPrice: web3.utils.toHex(parseInt(gas)),
-                        gasLimit: web3.utils.toHex(gasLimit),
-                        value: web3.utils.toHex(weiAmount), 
-                        nonce: web3.utils.toHex(nonceval),
-                        from: myAddr,
-                        to: receiveAddr,
-                        chainId
-                    }
-    
-                    var tx = new Tx(txOptions)
-                    // 2. sign transaction
-                    tx.sign(prikBuf)
-                    var serializedTx = tx.serialize()
-    
-                    console.log(txOptions)
-                    console.log(serializedTx.toString('hex'))
-                    // 3. sign
-                    web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), (err, hash) => {
-    
-                        if (err) { 
-                            console.log(err)
-                             return 
-                            }
-    
-                        console.log('tx hash: ' + hash)
-                    })
-                })
-            })
+    if(myWallet) {
+        const rawWallet = await loadSingleWallet(myAddr, password)
+        const prikBuf = rawWallet.getPrivateKey()
+        const nonceval = await web3.eth.getTransactionCount(myAddr)
+
+        if (web3.currentProvider.connected !== true) {
+            throw('web3 not ready')
         } else {
-            reject('wallet not found')
+            console.log('ready')
         }
-    })
+
+        const weiAmount = utils.toWei(amount,'ether') // TODO: Please pass numbers as strings or BigNumber objects to avoid precision errors 
+        // 1. make transaction data
+        let txOptions = {
+            gasPrice: web3.utils.toHex(parseInt(gas)),
+            gasLimit: web3.utils.toHex(gasLimit),
+            value: web3.utils.toHex(weiAmount), 
+            nonce: web3.utils.toHex(nonceval),
+            from: myAddr,
+            to: receiveAddr,
+            chainId
+        }
+
+        var tx = new Tx(txOptions)
+        // 2. sign transaction
+        tx.sign(prikBuf)
+        var serializedTx = tx.serialize()
+        const rawTrans = '0x' + serializedTx.toString('hex')
+        console.log(txOptions)
+        return rawTrans
+
+    } else {
+        throw('wallet not found')
+    }
 }
 
 function payGnx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
@@ -188,6 +171,6 @@ export default{
     importFromV3Json,
     importFromMnemonic,
     initRawWallet,
-    pay
+    generateSignedTx
 }
   

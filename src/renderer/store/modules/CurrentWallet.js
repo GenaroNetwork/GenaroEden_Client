@@ -1,5 +1,6 @@
 import bridgeApi from '../../utils/StorjApiClient'
 import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager'
+import walletManager from '../../../wallet/walletManager'
 
 /*
     wallet: {
@@ -37,6 +38,12 @@ const actions = {
         const gba = await getBalanceGnx(state.wallet.address)
         commit('setEthBalance', ba)
         commit('setGnxBalance', gba)
+    },
+    async payByCurrentWallet({ commit, state, getters, rootState, dispatch }, payOption) {
+        const rawTransaction = await walletManager.generateSignedTx(state.wallet.address, payOption.password, payOption.recipient, payOption.amount, payOption.gasPrice, payOption.gasLimit)
+        payOption.from = state.wallet.address
+        delete payOption.password
+        dispatch('submitTransaction', {payOption, rawTransaction}, { root: true })
     }
 }
 

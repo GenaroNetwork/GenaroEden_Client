@@ -1,6 +1,6 @@
 import STROJ_CLIENT from '../../utils/StorjApiClient'
 import dbUtil from '../../utils/DbUtil'
-const uuidV1 = require('uuid/v1');
+const uuidV1 = require('uuid/v1')
 
 const state = {
     historyList: []
