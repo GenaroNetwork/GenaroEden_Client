@@ -3,7 +3,6 @@ const abi = require('./GNX.json').abi
 const Contract = new web3.eth.Contract(abi, GNXAddr);
 
 async function getBalance(address) {
-
     if (web3.currentProvider.connected !== true) {
         console.log('not ready')
     } else {

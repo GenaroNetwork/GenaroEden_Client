@@ -10,10 +10,10 @@
                         <el-input type="text" v-model="payOption.recipient" placeholder="Recippient Address">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="amount (ETH)" prop="amount">
+                    <el-form-item label="amount" prop="amount">
                         <el-input type="number" v-model="payOption.amount" placeholder="Amount">
                         </el-input>
-                        <el-select v-model="payOption.payType" placeholder="请选择">
+                        <el-select v-model="payOption.payType" placeholder="Please choose">
                             <el-option key="ETH" label="ETH" value="ETH"></el-option>
                             <el-option key="GNX" label="GNX" value="GNX"></el-option>
                         </el-select>
@@ -39,7 +39,8 @@
                     </el-form-item>
                     <div class=''>
                         <el-form-item>
-                            <el-button @click="pay()" class="sign-in" type="primary" :loading="false">Submit</el-button>
+                            <el-button @click="pay()" class="" type="primary" :loading="false">Submit</el-button>
+                            <el-button @click="resetPayForm()" class="" type="primary" :loading="false">Cancel</el-button>
                         </el-form-item>
                     </div>
                 </div>
@@ -73,12 +74,12 @@
         <div class="flex flex-grow">
             <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row" >
                 <el-table-column prop="state" label="State" width="55"></el-table-column>
-                <el-table-column prop="hash" label="Hash" min-width="200" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="receipt.blockNumber" label="Block" width="80" ></el-table-column>
-                <el-table-column prop="created" label="Created" width="180"  class-name="created-col"></el-table-column>
-                <el-table-column prop="from" label="From" width="250" class-name="id-col"></el-table-column>
-                <el-table-column prop="recipient" label="To" width="250" class-name="id-col"></el-table-column>
-                <el-table-column prop="amount" label="Amount" width="250" class-name="id-col"></el-table-column>
+                <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
+                <el-table-column prop="from" label="From" width="" class-name="id-col"></el-table-column>
+                <el-table-column prop="recipient" label="To" width="" class-name="id-col"></el-table-column>
+                <el-table-column prop="amount" label="Amount" width="" class-name="id-col"></el-table-column>
                 <span slot="empty">No Transactions yet</span>
             </el-table>
         </div>
@@ -141,22 +142,22 @@ export default {
         }
     },
     methods: {
+        resetPayForm() {
+            this.payFormPop = false
+            this.payStep = 0
+
+            this.payOption.recipient = ''
+            this.payOption.amount = 0
+            this.payOption.gasPrice = 0
+            this.payOption.gasLimit = 0
+            this.payOption.password = ''
+        },
         pay() {
             const this2 = this
-            function resetPayForm() {
-                this2.payFormPop = false
-                this2.payStep = 0
-
-                this2.payOption.recipient = ''
-                this2.payOption.amount = 0
-                this2.payOption.gasPrice = 0
-                this2.payOption.gasLimit = 0
-                this2.payOption.password = ''
-            }
 
             this.$store.dispatch('payByCurrentWallet', this2.payOption).then(()=>{
                 this2.$message('transaction submitted')
-                resetPayForm()
+                this2.resetPayForm()
             }).catch(e => {
                 this.$message.error('create transaction error: ' + e)
             })
