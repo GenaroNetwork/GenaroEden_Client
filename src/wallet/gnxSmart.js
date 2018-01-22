@@ -1,9 +1,9 @@
 import { web3, chainId, GNXAddr } from './web3Util'
 const abi = require('./GNX.json').abi
+const Contract = new web3.eth.Contract(abi, GNXAddr);
 
 async function getBalance(address) {
 
-    var Contract = new web3.eth.Contract(abi, GNXAddr);
     if (web3.currentProvider.connected !== true) {
         console.log('not ready')
     } else {
@@ -26,6 +26,10 @@ async function getBalance(address) {
     //Contract.methods.spendableBalanceOf(address).call(function (err, res) { console.log(res) })
 }
 
+function getTransferData(toAddress, tokenAmount) {
+    return Contract.methods.transfer(toAddress, tokenAmount).encodeABI()
+}
 export {
-    getBalance
+    getBalance,
+    getTransferData
 }

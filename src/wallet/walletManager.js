@@ -1,4 +1,5 @@
-import {web3, chainId, utils} from './web3Util'
+import {web3, chainId, utils, GNXAddr} from './web3Util'
+import * as gnx from './gnxSmart'
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -10,6 +11,7 @@ const hdkey = require('ethereumjs-wallet/hdkey')
 const Tx = require('ethereumjs-tx')
 
 const KEYCHAIN_WALLET = 'network.genaro.eden.wallet'
+const GXN_RATE = 10 ** 9
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
@@ -163,7 +165,41 @@ async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasL
     }
 }
 
-function payGnx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
+async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
+    const myWallet = db.get('wallet').find({ address: myAddr }).value()
+    if(myWallet) {
+        const rawWallet = await loadSingleWallet(myAddr, password)
+        const prikBuf = rawWallet.getPrivateKey()
+        const nonceval = await web3.eth.getTransactionCount(myAddr)
+
+        if (web3.currentProvider.connected !== true) {
+            throw('web3 not ready')
+        } else {
+            console.log('ready')
+        }
+
+        // 1. make transaction data
+        let txOptions = {
+            gasPrice: web3.utils.toHex(parseInt(gas)),
+            gasLimit: web3.utils.toHex(gasLimit),
+            value: 0, 
+            nonce: web3.utils.toHex(nonceval),
+            from: myAddr,
+            to: GNXAddr,
+            data: gnx.getTransferData(receiveAddr, amount * GXN_RATE),
+            chainId
+        }
+
+        var tx = new Tx(txOptions)
+        // 2. sign transaction
+        tx.sign(prikBuf)
+        var serializedTx = tx.serialize()
+        const rawTrans = '0x' + serializedTx.toString('hex')
+        return rawTrans
+
+    } else {
+        throw('wallet not found')
+    }
 }
 
 export default{
@@ -171,6 +207,7 @@ export default{
     importFromV3Json,
     importFromMnemonic,
     initRawWallet,
-    generateSignedTx
+    generateSignedTx,
+    generateSignedGnxTx
 }
   
