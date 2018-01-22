@@ -42,7 +42,7 @@
             </el-form>
         </el-popover>
 
-        <div class="flex">
+        <div class="flex flex-noshrink">
             <div class="flex">
                 <div class="v-flex balance">
                     <h2>Balance</h2>
@@ -65,6 +65,19 @@
                 <el-button type="primary" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
             </div>
         </div>
+        <!-- transaction -->
+        <div class="flex flex-grow">
+            <el-table :data="TxList" class="files-table" height="100%" row-class-name="file-row" >
+                <el-table-column prop="state" label="State" width="55"></el-table-column>
+                <el-table-column prop="hash" label="Hash" min-width="200" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="block" label="Block" width="80" ></el-table-column>
+                <el-table-column prop="created" label="Created" width="180"  class-name="created-col"></el-table-column>
+                <el-table-column prop="from" label="From" width="250" class-name="id-col"></el-table-column>
+                <el-table-column prop="recipient" label="To" width="250" class-name="id-col"></el-table-column>
+                <el-table-column prop="amount" label="Amount" width="250" class-name="id-col"></el-table-column>
+                <span slot="empty">No Transactions yet</span>
+            </el-table>
+        </div>
     </div>
 </template>
 
@@ -73,11 +86,13 @@ import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
 import {utils} from '../../../wallet/web3Util'
 
 export default {
+    created: function() {
+        this.$store.dispatch('loadTransactions')
+    },
     mounted: function (){
         // init balance
         this.$store.dispatch('loadBalance')
         this.calculateGas()
-        
     },
     data: function() {
         return {
@@ -116,6 +131,9 @@ export default {
         },
         balanceGnx() {
             return this.$store.state.CurrentWallet.balanceGnx
+        },
+        TxList() {
+            return this.$store.state.Transaction.transactions
         }
     },
     methods: {

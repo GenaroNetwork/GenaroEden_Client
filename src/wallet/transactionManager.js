@@ -30,16 +30,19 @@ const TXSTATE = Object.freeze({
 
 // logic begin:
 function getTransactions() {
-    return db.get('transaction').sortBy(item => -item.created).value()
+    return clone(db.get('transaction').sortBy(item => -item.created).value())
 }
 
 function addTransaction(data) {
     db.get('transaction').push(data).write()
 }
 
-function removeTransaction(id) {
-    
+function updateTransaction(transactionId, props) {
+    db.get('transaction').find({transactionId}).assign(props).write()
+    return clone(db.get('transaction').find({transactionId}).value())
 }
+
+function removeTransaction(id) {}
 
 
 function getBalanceEth(address) {
@@ -63,31 +66,34 @@ async function getGasLimit() {
     // return gasLimit
 }
 
-function sendTransaction(payOption, rawTx) {
+function sendTransaction(payOption, rawTx, txUpdateCb) {
     const txHistory = clone(payOption)
     txHistory.created = Date.now()
     txHistory.transactionId = uuidV1()
     txHistory.state = TXSTATE.INIT
     txHistory.message = ''
+    txHistory.hash = null
+    txHistory.error = null
+    txHistory.receipt = null
     addTransaction(txHistory)
+    // good: hash => confirmation => receipt got => receipt mined
+    // bad: error
+    // bad2: hash => error
     web3.eth.sendSignedTransaction(rawTx).once('transactionHash', function(hash){ 
         console.log('1 hash: '+hash)
         //var receipt = web3.eth.getTransactionReceipt(hash).then(console.log)
-    }).once('receipt', function(receipt){
-        
-        console.log('2 receipt got: ')
-        console.log(receipt)
-    }).on('confirmation', function(confNumber, receipt){
-        
-        console.log('3 confNumber: '+confNumber)
-        console.log(receipt)
+        const tx = updateTransaction(txHistory.transactionId, {hash, state: TXSTATE.INPROGRESS})
+        txUpdateCb(tx)
     }).on('error', function(error){ 
-        
         console.log('5 error: '+error)
+        const tx = updateTransaction(txHistory.transactionId, {error, state: TXSTATE.ERROR})
+        txUpdateCb(tx)
     }).then(function(receipt){
         // will be fired once the receipt its mined
         console.log('6 receipt mined: ')
         console.log(receipt)
+        const tx = updateTransaction(txHistory.transactionId, {receipt, state: TXSTATE.SUCCESS})
+        txUpdateCb(tx)
     })
 }
 export {
@@ -95,5 +101,7 @@ export {
     getBalanceGnx,
     getGasLimit,
     getGasPrics,
-    sendTransaction
+    sendTransaction,
+    getTransactions,
+    addTransaction
 }
