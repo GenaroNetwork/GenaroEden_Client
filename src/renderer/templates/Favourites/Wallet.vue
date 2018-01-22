@@ -13,6 +13,10 @@
                     <el-form-item label="amount (ETH)" prop="amount">
                         <el-input type="number" v-model="payOption.amount" placeholder="Amount">
                         </el-input>
+                        <el-select v-model="payOption.payType" placeholder="请选择">
+                            <el-option key="ETH" label="ETH" value="ETH"></el-option>
+                            <el-option key="GNX" label="GNX" value="GNX"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="gas pirce (Gwei)" prop="gasPrice">
                         <el-input type="number" v-model="payOption.gasPrice" placeholder="Gas">
@@ -67,10 +71,10 @@
         </div>
         <!-- transaction -->
         <div class="flex flex-grow">
-            <el-table :data="TxList" class="files-table" height="100%" row-class-name="file-row" >
+            <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row" >
                 <el-table-column prop="state" label="State" width="55"></el-table-column>
                 <el-table-column prop="hash" label="Hash" min-width="200" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="block" label="Block" width="80" ></el-table-column>
+                <el-table-column prop="receipt.blockNumber" label="Block" width="80" ></el-table-column>
                 <el-table-column prop="created" label="Created" width="180"  class-name="created-col"></el-table-column>
                 <el-table-column prop="from" label="From" width="250" class-name="id-col"></el-table-column>
                 <el-table-column prop="recipient" label="To" width="250" class-name="id-col"></el-table-column>
@@ -132,7 +136,7 @@ export default {
         balanceGnx() {
             return this.$store.state.CurrentWallet.balanceGnx
         },
-        TxList() {
+        txList() {
             return this.$store.state.Transaction.transactions
         }
     },
@@ -155,20 +159,17 @@ export default {
                 resetPayForm()
             }).catch(e => {
                 this.$message.error('create transaction error: ' + e)
-                console.log(e)
             })
         },
         calculateGas: async function() {
             this.defaultGas.price = await getGasPrics()
-            this.defaultGas.limit = 30000
+            this.defaultGas.limit = 21000
         },
         payPopped() {
 
             function wei2Gwei(wei) {
                 return utils.fromWei(wei, 'Gwei');
             }
-            console.log(this.defaultGas.price)
-            console.log(wei2Gwei(this.defaultGas.price))
             this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price))
             this.payOption.gasLimit = this.defaultGas.limit
         }

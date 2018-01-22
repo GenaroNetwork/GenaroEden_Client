@@ -18,7 +18,6 @@ const mutations = {
             return ele.transactionId === tx.transactionId
         })
         if(existTx) {
-            console.log('Object.assign(existTx, Tx)')
             Object.assign(existTx, tx)
         }
     }
@@ -27,7 +26,6 @@ const mutations = {
 const actions = {
     submitTransaction({ commit, state, getters, rootState, dispatch }, {payOption, rawTransaction}) {
         txManager.sendTransaction(payOption, rawTransaction, tx => {
-            console.log('updateSingleTransaction ')
             commit('updateSingleTransaction', tx)
         })
         dispatch('loadTransactions')
@@ -35,7 +33,6 @@ const actions = {
     },
     loadTransactions({ commit }) {
         const txs = txManager.getTransactions()
-        console.log('loadTransaction ' + txs)
         commit('setTransactions', txs)
     }
 }

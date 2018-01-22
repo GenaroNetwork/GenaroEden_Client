@@ -53,8 +53,16 @@ function getBalanceGnx(address) {
     return gnx.getBalance(address)
 }
 
-async function getGasPrics() {
-    return await web3.eth.getGasPrice()
+let GasPrice = 40
+function _getPrice(){
+    web3.eth.getGasPrice().then((p)=>{
+        GasPrice = p
+    })
+}
+_getPrice()
+setInterval(_getPrice, 5000)
+function getGasPrics() {
+    return GasPrice
 }
 
 async function getGasLimit() {
