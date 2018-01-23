@@ -44,7 +44,6 @@ const actions = {
         if(payOption.payType === 'ETH') {
             rawTransaction = await walletManager.generateSignedTx(state.wallet.address, payOption.password, payOption.recipient, payOption.amount, payOption.gasPrice, payOption.gasLimit)
         } else if(payOption.payType === 'GNX') {
-            debugger
             rawTransaction = await walletManager.generateSignedGnxTx(state.wallet.address, payOption.password, payOption.recipient, payOption.amount, payOption.gasPrice, payOption.gasLimit)
         }
         

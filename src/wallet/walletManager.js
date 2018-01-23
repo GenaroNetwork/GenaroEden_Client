@@ -70,13 +70,27 @@ function loadWallet() {
     })
 }
 
-function loadSingleWallet(address, password) {
+function loadRawWallet(address, password) {
     return new Promise((resolve, reject) => {
         keytar.getPassword(KEYCHAIN_WALLET, address).then(v3str => {
             const w = Wallet.fromV3(v3str, password)
             resolve(w)
         }).catch( e => reject(e) )
     })
+}
+
+async function validateWalletPassword(address, password) {
+    return new Promise((resolve, reject) => {
+        const w = loadRawWallet(address, password).then(()=>{
+            resolve(true)
+        }).catch(e => {
+            reject('incorrect password')
+        })
+    })
+}
+
+async function exportV3Json(address) {
+    return await keytar.getPassword(KEYCHAIN_WALLET, address)
 }
 
 function saveWallet(wa, name, pass) {
@@ -100,11 +114,29 @@ function saveWallet(wa, name, pass) {
     })
 }
 
-function importFromV3Json(json, password, name) {
+function updateWalletPassword(wa, newPass) {
     return new Promise((resolve, reject) => {
-        var w = Wallet.fromV3(json, password)
-        saveWallet(w, name, password).then(() => resolve()).catch(e => reject(e))
+        const v3 = wa.toV3(newPass)
+        const address = v3.address
+
+        const found = db.get('wallet').find({ address: address }).value()
+        if(!found) {
+            reject({message: `address ${address} not found`})
+            return
+        }
+        keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
+            resolve()
+        })
     })
+}
+
+async function importFromV3Json(json, password, name) {
+    if(!name) {
+        name = generateWalletName()
+    }
+    const jsonv3 = JSON.parse(json)
+    const w = Wallet.fromV3(json, password)
+    await saveWallet(w, name, password)
 }
 
 function importFromMnemonic(mnemonic, password) {
@@ -123,6 +155,17 @@ function importFromMnemonic(mnemonic, password) {
 function importFromPrivateKey() {
     // TODO:
 }
+
+async function forgetWallet(address) {
+    db.get('wallet').remove({ address }).write()
+    await keytar.deletePassword(KEYCHAIN_WALLET, address)
+}
+
+async function changePassword(address, passoword, newPassword) {
+    const w = await loadRawWallet(address, passoword)
+    await updateWalletPassword(w, newPassword)
+}
+
 function initRawWallet(v3, pass) {
     return Wallet.fromV3(v3, pass)
 }
@@ -130,7 +173,7 @@ function initRawWallet(v3, pass) {
 async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
     const myWallet = db.get('wallet').find({ address: myAddr }).value()
     if(myWallet) {
-        const rawWallet = await loadSingleWallet(myAddr, password)
+        const rawWallet = await loadRawWallet(myAddr, password)
         const prikBuf = rawWallet.getPrivateKey()
         const nonceval = await web3.eth.getTransactionCount(myAddr)
 
@@ -168,7 +211,7 @@ async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasL
 async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
     const myWallet = db.get('wallet').find({ address: myAddr }).value()
     if(myWallet) {
-        const rawWallet = await loadSingleWallet(myAddr, password)
+        const rawWallet = await loadRawWallet(myAddr, password)
         const prikBuf = rawWallet.getPrivateKey()
         const nonceval = await web3.eth.getTransactionCount(myAddr)
 
@@ -208,6 +251,10 @@ export default{
     importFromMnemonic,
     initRawWallet,
     generateSignedTx,
-    generateSignedGnxTx
+    generateSignedGnxTx,
+    forgetWallet,
+    changePassword,
+    validateWalletPassword,
+    exportV3Json
 }
   
