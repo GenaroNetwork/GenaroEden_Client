@@ -69,4 +69,18 @@
   .clearfix:after {
     clear: both
   }
+
+  .flex {
+    display: flex;
+  }
+  .v-flex {
+    display: flex;
+    flex-flow: column;
+  }
+  .flex-noshrink {
+    flex-shrink: 0;
+  }
+  .flex-grow {
+    flex-grow: 1;
+  }
 </style>

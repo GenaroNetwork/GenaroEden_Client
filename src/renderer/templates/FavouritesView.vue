@@ -41,6 +41,10 @@
                     <i class="material-icons">account_balance_wallet</i>
                     <span slot="title">My Wallet</span>
                 </el-menu-item>
+                <el-menu-item index="4" route="/wallet-manager">
+                    <i class="material-icons">account_balance_wallet</i>
+                    <span slot="title">Wallet Manage</span>
+                </el-menu-item>
                 <el-menu-item index="2" route="/share-my-storage">
                     <i class="el-icon-share"></i>
                     <span slot="title">Share My Storage</span>

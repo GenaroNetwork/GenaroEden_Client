@@ -1,7 +1,7 @@
-import { getBalanceEth, getBalanceGnx, sendTransaction } from '../../../wallet/transactionManager'
+import * as txManager from '../../../wallet/transactionManager'
 
 const state = {
-    transaction: []
+    transactions: []
 }
 
 const getters = {
@@ -9,15 +9,31 @@ const getters = {
 }
 
 const mutations = {
+
+    setTransactions(state, Txs) {
+        state.transactions = Txs
+    },
+    updateSingleTransaction(state, tx) {
+        let existTx = state.transactions.find((ele) => {
+            return ele.transactionId === tx.transactionId
+        })
+        if(existTx) {
+            Object.assign(existTx, tx)
+        }
+    }
 }
 
 const actions = {
     submitTransaction({ commit, state, getters, rootState, dispatch }, {payOption, rawTransaction}) {
-        sendTransaction(payOption, rawTransaction)
+        txManager.sendTransaction(payOption, rawTransaction, tx => {
+            commit('updateSingleTransaction', tx)
+        })
+        dispatch('loadTransactions')
         // TODO: observe transaction change and commit to state here, in order to update ui
     },
-    loadTransactions() {
-
+    loadTransactions({ commit }) {
+        const txs = txManager.getTransactions()
+        commit('setTransactions', txs)
     }
 }
 

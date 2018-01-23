@@ -10,9 +10,13 @@
                         <el-input type="text" v-model="payOption.recipient" placeholder="Recippient Address">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="amount (ETH)" prop="amount">
+                    <el-form-item label="amount" prop="amount">
                         <el-input type="number" v-model="payOption.amount" placeholder="Amount">
                         </el-input>
+                        <el-select v-model="payOption.payType" placeholder="Please choose">
+                            <el-option key="ETH" label="ETH" value="ETH"></el-option>
+                            <el-option key="GNX" label="GNX" value="GNX"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="gas pirce (Gwei)" prop="gasPrice">
                         <el-input type="number" v-model="payOption.gasPrice" placeholder="Gas">
@@ -35,14 +39,15 @@
                     </el-form-item>
                     <div class=''>
                         <el-form-item>
-                            <el-button @click="pay()" class="sign-in" type="primary" :loading="false">Submit</el-button>
+                            <el-button @click="pay()" class="" type="primary" :loading="false">Submit</el-button>
+                            <el-button @click="resetPayForm()" class="" type="primary" :loading="false">Cancel</el-button>
                         </el-form-item>
                     </div>
                 </div>
             </el-form>
         </el-popover>
 
-        <div class="flex">
+        <div class="flex flex-noshrink">
             <div class="flex">
                 <div class="v-flex balance">
                     <h2>Balance</h2>
@@ -65,6 +70,19 @@
                 <el-button type="primary" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
             </div>
         </div>
+        <!-- transaction -->
+        <div class="flex flex-grow">
+            <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row" >
+                <el-table-column prop="state" label="State" width="55"></el-table-column>
+                <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="receipt.blockNumber" label="Block" width="80" ></el-table-column>
+                <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
+                <el-table-column prop="from" label="From" width="" class-name="id-col"></el-table-column>
+                <el-table-column prop="recipient" label="To" width="" class-name="id-col"></el-table-column>
+                <el-table-column prop="amount" label="Amount" width="" class-name="id-col"></el-table-column>
+                <span slot="empty">No Transactions yet</span>
+            </el-table>
+        </div>
     </div>
 </template>
 
@@ -73,11 +91,13 @@ import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
 import {utils} from '../../../wallet/web3Util'
 
 export default {
+    created: function() {
+        this.$store.dispatch('loadTransactions')
+    },
     mounted: function (){
         // init balance
         this.$store.dispatch('loadBalance')
         this.calculateGas()
-        
     },
     data: function() {
         return {
@@ -116,41 +136,41 @@ export default {
         },
         balanceGnx() {
             return this.$store.state.CurrentWallet.balanceGnx
+        },
+        txList() {
+            return this.$store.state.Transaction.transactions
         }
     },
     methods: {
+        resetPayForm() {
+            this.payFormPop = false
+            this.payStep = 0
+
+            this.payOption.recipient = ''
+            this.payOption.amount = 0
+            this.payOption.gasPrice = 0
+            this.payOption.gasLimit = 0
+            this.payOption.password = ''
+        },
         pay() {
             const this2 = this
-            function resetPayForm() {
-                this2.payFormPop = false
-                this2.payStep = 0
-
-                this2.payOption.recipient = ''
-                this2.payOption.amount = 0
-                this2.payOption.gasPrice = 0
-                this2.payOption.gasLimit = 0
-                this2.payOption.password = ''
-            }
 
             this.$store.dispatch('payByCurrentWallet', this2.payOption).then(()=>{
                 this2.$message('transaction submitted')
-                resetPayForm()
+                this2.resetPayForm()
             }).catch(e => {
                 this.$message.error('create transaction error: ' + e)
-                console.log(e)
             })
         },
         calculateGas: async function() {
             this.defaultGas.price = await getGasPrics()
-            this.defaultGas.limit = 30000
+            this.defaultGas.limit = 21000
         },
         payPopped() {
 
             function wei2Gwei(wei) {
                 return utils.fromWei(wei, 'Gwei');
             }
-            console.log(this.defaultGas.price)
-            console.log(wei2Gwei(this.defaultGas.price))
             this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price))
             this.payOption.gasLimit = this.defaultGas.limit
         }

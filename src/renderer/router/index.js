@@ -58,6 +58,11 @@ export default new Router({
               path: '/wallet',
               name: 'wallet',
               component: require('@/templates/Favourites/Wallet').default
+            },
+            {
+              path: '/wallet-manager',
+              name: 'wallet-manager',
+              component: require('@/templates/Favourites/WalletManager').default
             }
           ]
         }
