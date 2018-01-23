@@ -15,11 +15,15 @@ if (!fs.existsSync(avatarFolder)){
     fs.mkdirSync(avatarFolder)
 }
 
+const qrFolder = path.join(dbFolder, 'qr')
+if (!fs.existsSync(qrFolder)){
+    fs.mkdirSync(qrFolder)
+}
+
 function registerAvatarProtocol() {
-    //registerStreamProtocol is not supported for 1.7.x electron
     protocol.registerBufferProtocol('avatar', (request, callback) => {
         const url = request.url
-        const id = url.substring(9)
+        const id = url.substring(9) // avatar://
         const avatarFilePath = path.join(avatarFolder, id + '.png')
         if (!fs.existsSync(avatarFilePath)){
             const png = jdenticon.toPng(id, 256)
@@ -33,8 +37,31 @@ function registerAvatarProtocol() {
     })
 }
 
+function registerQrProtocol() {
+    const QRCode = require('qrcode')
+    protocol.registerBufferProtocol('qr', (request, callback) => {
+        const url = request.url
+        const id = url.substring(5) // qr://
+        const filePath = path.join(qrFolder, id + '.png')
+        if (!fs.existsSync(filePath)){
+            QRCode.toFile(filePath, id, {}, err => {
+                fs.readFile(filePath,  (err, buf) => {
+                    callback({mimeType: 'image/png', data: buf})
+                })
+            })
+        } else {
+            fs.readFile(filePath,  (err, buf) => {
+                callback({mimeType: 'image/png', data: buf})
+            })
+        }
+    }, (error) => {
+        if (error) console.error('Failed to register protocol')
+    })
+}
+
 function registerProtocals() {
     registerAvatarProtocol()
+    registerQrProtocol()
 }
 
 export default registerProtocals
