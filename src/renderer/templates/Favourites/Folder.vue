@@ -1,8 +1,4 @@
 <style scoped>
-.right-container {
-    flex-direction: column;
-    display: flex;
-}
 .top-bar {
     flex-shrink: 0;
     display: flex;
@@ -81,7 +77,7 @@ td.right-td {
 </style>
 
 <template>
-    <div class="fullheight right-container">
+    <div class="fullheight v-flex">
         <div class="top-bar">
             <h2><router-link to="/folders">Folders</router-link> &gt; <span>{{ currentBucketName }}</span></h2>
             <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download<i class="material-icons">file_download</i></el-button>
