@@ -28,6 +28,10 @@ const actions = {
     },
     createBucket({ commit, dispatch }, {bucketName}) {
         return new Promise((resolve, reject) => {
+            if (/[/\\:*?"'<>|]/.test(bucketName)){
+                reject('Invaild symbol')
+                return
+            }
             bridgeApi.createBucket(bucketName, (err, data) => {
                 if (err) {
                     reject(err)
