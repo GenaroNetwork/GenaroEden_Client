@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron'
+import registerProtocals from './customProtocol'
 
 /**
  * Set `__static` path to static files in production
@@ -14,6 +15,7 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
+  registerProtocals()
   /**
    * Initial window options
    */
