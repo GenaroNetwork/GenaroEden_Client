@@ -2,12 +2,23 @@
     .el-select{
         width: 115px;
     }
+    .preview-label{
+        color: #999;
+        padding-left: 5px;
+        box-sizing: border-box;
+    }
+    .preview-value{
+        overflow: hidden;
+        padding-right: 5px;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+    }
 </style>
 <template>
     <div class="fullheight right-container v-flex">
         <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="400" trigger="click" @show="payPopped">
             <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline">
-                <div v-if="payStep === 0">
+                <template v-if="payStep === 0">
                     <el-form-item prop="recipient">
                         <el-input type="text" v-model="payOption.recipient" placeholder="Recippient Address" size="mini">
                         </el-input>
@@ -28,24 +39,32 @@
                         <el-input type="number" v-model="payOption.gasLimit" placeholder="Gas Limit" size="mini">
                         </el-input>
                     </el-form-item>
-                    <div class=''>
-                        <el-form-item>
-                            <el-button @click="payStep = 1" type="primary">Next</el-button>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div v-if="payStep === 1">
+                    <el-form-item>
+                        <el-button @click="nextStep" type="primary">Next</el-button>
+                    </el-form-item>
+                </template>
+                <template v-if="payStep === 1">
+                    <el-row>
+                        <el-col :span="10" class="preview-label">Sent Address:</el-col>
+                        <el-col :span="14" class="preview-value">{{ wallet.address }}</el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="10" class="preview-label">Recipient Address:</el-col>
+                        <el-col :span="14" class="preview-value">{{ payOption.recipient }}</el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="10" class="preview-label">Amount:</el-col>
+                        <el-col :span="14" class="preview-value">{{ payOption.amount }}</el-col>
+                    </el-row>
                     <el-form-item label="Wallet Password" prop="password" key="password">
                         <el-input type="password" v-model="payOption.password" placeholder="Wallet Password">
                         </el-input>
                     </el-form-item>
-                    <div class=''>
-                        <el-form-item>
-                            <el-button @click="pay()" class="" type="primary" :loading="false">Submit</el-button>
-                            <el-button @click="resetPayForm()" class="" type="primary" :loading="false">Cancel</el-button>
-                        </el-form-item>
-                    </div>
-                </div>
+                    <el-form-item>
+                        <el-button @click="pay()" class="" type="primary" :loading="false">Submit</el-button>
+                        <el-button @click="resetForm" class="" type="primary" :loading="false">Cancel</el-button>
+                    </el-form-item>
+                </template>
             </el-form>
         </el-popover>
 
@@ -67,7 +86,7 @@
                     <h2>{{wallet.name}}</h2>
                     <div>{{wallet.address}}</div>
                 </div>
-                <el-button class="btn" v-popover:payFormPop type="primary" size="small">Pay</el-button>
+                <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Pay</el-button>
                 <el-button class="btn" type="primary" size="small">Recieve</el-button>
                 <el-button type="primary" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
             </div>
@@ -123,7 +142,7 @@ export default {
                 switch (this.payOption.payType) {
                     case "ETH":
                     balance = this.balanceEth;
-                    if (utils.toWei(value) >= balance){
+                    if (utils.toWei(value) > balance){
                         callback(new Error('Amount must less than balance.'))
                     } else {
                         callback()
@@ -132,7 +151,7 @@ export default {
 
                     case "GNX":
                     balance = this.balanceGnx;
-                    if (value * Math.pow(10, 9) >= balance){
+                    if (value * Math.pow(10, 9) > balance){
                         callback(new Error('Amount must less than balance.'))
                     } else {
                         callback()
@@ -224,37 +243,39 @@ export default {
         } 
     },
     methods: {
-        resetPayForm() {
-            this.payFormPop = false
-            this.payStep = 0
+        async nextStep() {
+            try{
+                await this.$refs.payOption.validate();
+                this.payStep = 1;
+            }catch(e){
 
-            this.payOption.recipient = ''
-            this.payOption.amount = 0
-            this.payOption.gasPrice = 0
-            this.payOption.gasLimit = 0
-            this.payOption.password = ''
+            }
         },
-        pay() {
-            const this2 = this
-
-            this.$store.dispatch('payByCurrentWallet', this2.payOption).then(()=>{
-                this2.$message('transaction submitted')
-                this2.resetPayForm()
-            }).catch(e => {
-                this.$message.error('create transaction error: ' + e)
-            })
+        async pay() {
+            try{
+                await this.$refs.payOption.validate();
+                await this.$store.dispatch('payByCurrentWallet', this.payOption)
+                    this.$message('transaction submitted')
+                    this.resetForm()
+            }catch(e){
+                    this.$message.error('create transaction error: ' + e)
+            }
         },
         calculateGas: async function() {
             this.defaultGas.price = await getGasPrics()
             this.defaultGas.limit = ETH_SUGGEST;
         },
         payPopped() {
-
             function wei2Gwei(wei) {
                 return utils.fromWei(wei, 'Gwei');
             }
             this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price))
             this.payOption.gasLimit = this.defaultGas.limit
+        },
+        resetForm(){
+            this.payFormPop = false
+            this.payStep = 0
+            this.$refs.payOption.resetFields()
         }
     }
 }
