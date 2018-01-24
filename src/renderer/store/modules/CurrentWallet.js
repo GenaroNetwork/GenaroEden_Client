@@ -13,7 +13,7 @@ const state = {
     wallet: {
         "name": "Account 1",
         "created": 1516333259919,
-        "address": "b69f7afad452559d08bf0c4e975b73e478fe5ef2"
+        "address": "cb12C525590D59bED4476b8f2cA08C15F06a4aD8"
     },
     balanceEth: 0,
     balanceGnx: 0

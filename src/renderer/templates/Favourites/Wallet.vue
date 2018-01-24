@@ -1,29 +1,31 @@
 <style scoped>
-
+    .el-select{
+        width: 115px;
+    }
 </style>
 <template>
     <div class="fullheight right-container v-flex">
         <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="400" trigger="click" @show="payPopped">
-            <el-form ref="payOption" :model="payOption" :rules="ruleInline">
+            <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline">
                 <div v-if="payStep === 0">
-                    <el-form-item label="recipient" prop="recipient">
-                        <el-input type="text" v-model="payOption.recipient" placeholder="Recippient Address">
+                    <el-form-item prop="recipient">
+                        <el-input type="text" v-model="payOption.recipient" placeholder="Recippient Address" size="mini">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="amount" prop="amount">
-                        <el-input type="number" v-model="payOption.amount" placeholder="Amount">
+                    <el-form-item prop="amount">
+                        <el-input type="number" v-model="payOption.amount" placeholder="Amount" size="mini" min="0">
+                            <el-select v-model="payOption.payType" placeholder="Please choose" slot="append">
+                                <el-option key="ETH" label="ETH" value="ETH"></el-option>
+                                <el-option key="GNX" label="GNX" value="GNX"></el-option>
+                            </el-select>
                         </el-input>
-                        <el-select v-model="payOption.payType" placeholder="Please choose">
-                            <el-option key="ETH" label="ETH" value="ETH"></el-option>
-                            <el-option key="GNX" label="GNX" value="GNX"></el-option>
-                        </el-select>
                     </el-form-item>
                     <el-form-item label="gas pirce (Gwei)" prop="gasPrice">
-                        <el-input type="number" v-model="payOption.gasPrice" placeholder="Gas">
+                        <el-input type="number" v-model="payOption.gasPrice" placeholder="Gas" size="mini">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="gas limit (Unit)" prop="gasLimit">
-                        <el-input type="number" v-model="payOption.gasLimit" placeholder="Gas Limit">
+                        <el-input type="number" v-model="payOption.gasLimit" placeholder="Gas Limit" size="mini">
                         </el-input>
                     </el-form-item>
                     <div class=''>
@@ -33,7 +35,7 @@
                     </div>
                 </div>
                 <div v-if="payStep === 1">
-                    <el-form-item label="Wallet Password" prop="password">
+                    <el-form-item label="Wallet Password" prop="password" key="password">
                         <el-input type="password" v-model="payOption.password" placeholder="Wallet Password">
                         </el-input>
                     </el-form-item>
@@ -90,6 +92,11 @@
 import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
 import {utils} from '../../../wallet/web3Util'
 
+const GNX_LIMIT = 120000;
+const GNX_SUGGEST = 150000;
+const ETH_LIMIT = 21000;
+const ETH_SUGGEST = 21000;
+
 export default {
     created: function() {
         this.$store.dispatch('loadTransactions')
@@ -100,12 +107,68 @@ export default {
         this.calculateGas()
     },
     data: function() {
+
+        var validator = {
+            recipient: (rule, value, callback) => {
+                if (!/^0x[a-zA-Z0-9]{40}$/.test(value)){
+                    callback(new Error('Incorrect account address.'))
+                }
+                else{
+                    callback()
+                }
+            },
+            amount: (rule, value, callback) => {
+                let balance;
+                switch (this.payOption.payType) {
+                    case "ETH":
+                    balance = this.balanceEth;
+                    if (utils.toWei(value) >= balance){
+                        callback(new Error('Amount must less than balance.'))
+                    } else {
+                        callback()
+                    }
+                    break;
+
+                    case "GNX":
+                    balance = this.balanceGnx;
+                    if (value * Math.pow(10, 9) >= balance){
+                        callback(new Error('Amount must less than balance.'))
+                    } else {
+                        callback()
+                    }
+                    break;
+
+                    default:
+                    callback(new Error('Incorrect pat type'))
+                    break;
+                }
+            },
+            gasPrice: async (rule, value, callback) => {
+                let price = await getGasPrics();
+                price = utils.fromWei(price, "Gwei");
+                if (value < price) {
+                    callback(new Error("gas price should greater than " + price));
+                }else{
+                    callback()
+                }
+            },
+            gasLimit: (rule, value, callback) => {
+                if (this.payOption.payType === 'ETH' && value < ETH_LIMIT){
+                    callback("gas limit should greater than " + ETH_LIMIT)
+                } else if(this.payOption.payType === 'GNX' && value < GNX_LIMIT) {
+                    callback("gas limit should greater than " + GNX_LIMIT)
+                } else {
+                    callback()
+                }
+            }
+        }
+
         return {
             payFormPop: false,
             payOption: {
                 payType: 'ETH',
-                recipient: '',
-                amount: 0,
+                recipient: null,
+                amount: null,
                 gasPrice: 0,
                 gasLimit: 0,
                 password: ''
@@ -116,13 +179,25 @@ export default {
             },
             payStep: 0,
             ruleInline: {
-                username: [
-                    { required: true, message: 'Please input username', trigger: 'blur' },
-                    { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+                recipient: [
+                    { required: true, message: 'Please input recipient', trigger: 'blur' },
+                    { validator: validator.recipient , trigger: 'blur'}
+                ],
+                amount: [
+                    { required: true, message: 'Please input amount', trigger: 'blur' },
+                    { validator: validator.amount , trigger: 'blur'}
+                ],
+                gasPrice: [
+                    { required: true, message: 'Please input gasPrice', trigger: 'blur' },
+                    { validator: validator.gasPrice , trigger: 'blur'}
+                ],
+                gasLimit: [
+                    { required: true, message: 'Please input gasLimit', trigger: 'blur' },
+                    { validator: validator.gasLimit , trigger: 'blur'}
                 ],
                 password: [
                     { required: true, message: 'Please input password', trigger: 'blur' },
-                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    { min: 6 , message: 'Password length must not be less than 6 bits'  ,trigger: 'blur'}
                 ]
             }
         }
@@ -140,6 +215,12 @@ export default {
         txList() {
             return this.$store.state.Transaction.transactions
         }
+    },
+    watch: {
+        "payOption.payType"(newValue){
+            if (newValue === "ETH") this.payOption.gasLimit = ETH_SUGGEST;
+            else this.payOption.gasLimit = GNX_SUGGEST;
+        } 
     },
     methods: {
         resetPayForm() {
@@ -164,7 +245,7 @@ export default {
         },
         calculateGas: async function() {
             this.defaultGas.price = await getGasPrics()
-            this.defaultGas.limit = 21000
+            this.defaultGas.limit = ETH_SUGGEST;
         },
         payPopped() {
 
