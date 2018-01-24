@@ -1,4 +1,6 @@
 <style scoped>
+
+    /* popup style */
     .el-select{
         width: 115px;
     }
@@ -13,6 +15,122 @@
         text-overflow: ellipsis;
         box-sizing: border-box;
     }
+
+
+    /* banner style */
+    .banner{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .banner > div{
+        flex: 1;
+        margin: 30px;
+        height: 200px;
+        box-sizing: border-box;
+    }
+
+    .banner .balance{
+        border-radius: 4px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,.2);
+        padding-top: 100px;
+        color: #FFF;
+        padding-left: 23px;
+        position: relative;
+        overflow: hidden;
+    }    
+
+    .banner .balance div:nth-child(1){
+        height: 45px;
+        font-size: 15px;
+        line-height: calc(40px * 2 - 15px);
+    }
+
+    .banner .balance div:nth-child(1) span{
+        font-size: 28px;
+        line-height: calc(40px * 2 - 28px);
+    }
+
+    .banner .balance div:nth-child(2){
+        height: 30px;
+        font-size: 18px;
+        line-height: 30px;
+    }
+
+    .banner .balance:before,
+    .banner .balance:after{
+        pointer-events: none;
+        content: "";
+        position: absolute;
+        left: 25px;
+        top: 20px;
+        height: 100px;
+        width: 100px;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+    }
+
+    .banner .balance:after{
+        left: auto;
+        top: auto;
+        right: -20px;
+        bottom: -20px;
+        height: 200px;
+        width: 200px;
+        background-position: 100% 100%;
+    }
+
+    .banner .gnx{
+        background: linear-gradient(to right bottom, #409EFF, #188BE2);
+    }
+
+    .banner .gnx:before{
+        background-image: url(../../../static/gnx_white.svg);
+        background-size: 50px auto;
+    }
+
+    .banner .gnx:after{
+        background-image: url(../../../static/gnx_blue.svg);
+        background-size: 180px auto;
+    }
+
+    .banner .eth{
+        background-image: linear-gradient(to right bottom, #C4C4C4, #A2A2A2);
+    }
+
+    .banner .eth:before{
+        background-image: url(../../../static/eth_white.svg);
+        background-size: 28px auto;
+    }
+
+    .banner .eth:after{
+        background-image: url(../../../static/eth_gray.svg);
+        right: 10px;
+        bottom: -10px;
+        background-size: 120px auto;
+    }
+
+
+    /* list style */
+    .state-icon{
+        text-align: center;
+        display: block;
+        margin: auto;
+    }
+
+    .state-icon[state='1'],
+    .state-icon[state='2']{
+        color: #f6a725;
+    }
+
+    .state-icon[state='3']{
+        color: #f56167;
+    }
+
+    .state-icon[state='4']{
+        color: #8bc34a;
+    }
+    
 </style>
 <template>
     <div class="fullheight right-container v-flex">
@@ -68,38 +186,41 @@
             </el-form>
         </el-popover>
 
-        <div class="flex flex-noshrink">
-            <div class="flex">
-                <div class="v-flex balance">
-                    <h2>Balance</h2>
-                    <span>{{balanceGnx}} GNX</span>
-                    <span>= $9,999,999</span>
-                </div>
-                <div class="v-flex balance">
-                    <h2>Balance</h2>
-                    <span>{{balanceEth}} ETH</span>
-                    <span>= $9,999,999</span>
-                </div>
+        <div class="banner">
+            <div class="balance gnx">
+                <div><span>{{balanceGnx}}</span> GNX</div>
+                <div>= $9,999,999</div>
+            </div>
+            <div class="balance eth">
+                <div><span>{{balanceEth}}</span> ETH</div>
+                <div>= $9,999,999</div>
             </div>
             <div>
                 <div>
                     <h2>{{wallet.name}}</h2>
                     <div>{{wallet.address}}</div>
                 </div>
-                <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Pay</el-button>
-                <el-button class="btn" type="primary" size="small">Recieve</el-button>
-                <el-button type="primary" size="small">Upload<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-button class="btn" type="primary" size="small">Deposit ETH</el-button>
+                <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Transfer</el-button>
             </div>
         </div>
         <!-- transaction -->
         <div class="flex flex-grow">
             <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row" >
-                <el-table-column prop="state" label="State" width="55"></el-table-column>
+                <el-table-column prop="state" label="" width="60">
+                    <template slot-scope="scope">
+                        <i class="material-icons state-icon" :state="scope.row.state">
+                            {{ scope.row.state === 1 || scope.row.state === 2 ? "remove_circle_outline" : ""}}
+                            {{ scope.row.state === 3 ? "error_outline" : ""}}
+                            {{ scope.row.state === 4 ? "add_circle_outline" : ""}}
+                        </i>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="receipt.blockNumber" label="Block" width="80" ></el-table-column>
                 <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
-                <el-table-column prop="from" label="From" width="" class-name="id-col"></el-table-column>
-                <el-table-column prop="recipient" label="To" width="" class-name="id-col"></el-table-column>
+                <el-table-column prop="from" label="From" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="recipient" label="To" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="amount" label="Amount" width="" class-name="id-col"></el-table-column>
                 <span slot="empty">No Transactions yet</span>
             </el-table>
