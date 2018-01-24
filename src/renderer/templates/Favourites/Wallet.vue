@@ -100,10 +100,11 @@ const ETH_SUGGEST = 21000;
 export default {
     created: function() {
         this.$store.dispatch('loadTransactions')
+        const address = this.$route.params.walletAddress
+        this.$store.dispatch('initWallet')
     },
     mounted: function (){
         // init balance
-        this.$store.dispatch('loadBalance')
         this.calculateGas()
     },
     data: function() {
