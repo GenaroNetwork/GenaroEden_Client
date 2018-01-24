@@ -98,7 +98,6 @@ export default {
     },
     mounted: function (){
         // init balance
-        this.$store.dispatch('loadBalance')
         this.calculateGas()
     },
     data: function() {
