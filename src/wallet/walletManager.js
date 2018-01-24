@@ -70,6 +70,15 @@ function loadWallet() {
     })
 }
 
+function loadFirstWallet() {
+    const wallets = db.get('wallet').cloneDeep().sortBy(item => item.created).value()
+    if(wallets && wallets[0]) {
+        return wallets[0]
+    } else {
+        return null
+    }
+}
+
 function loadRawWallet(address, password) {
     return new Promise((resolve, reject) => {
         keytar.getPassword(KEYCHAIN_WALLET, address).then(v3str => {
@@ -255,6 +264,7 @@ export default{
     forgetWallet,
     changePassword,
     validateWalletPassword,
-    exportV3Json
+    exportV3Json,
+    loadFirstWallet
 }
   

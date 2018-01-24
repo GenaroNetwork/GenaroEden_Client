@@ -2,18 +2,11 @@ import bridgeApi from '../../utils/StorjApiClient'
 import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager'
 import walletManager from '../../../wallet/walletManager'
 
-/*
-    wallet: {
-      "name": "Account 1",
-      "created": 1516333259919,
-      "address": "b69f7afad452559d08bf0c4e975b73e478fe5ef2"
-    }
-*/
 const state = {
     wallet: {
-        "name": "Account 1",
-        "created": 1516333259919,
-        "address": "b69f7afad452559d08bf0c4e975b73e478fe5ef2"
+      "name": "",
+      "created": 0,
+      "address": ""
     },
     balanceEth: 0,
     balanceGnx: 0
@@ -29,6 +22,9 @@ const mutations = {
     },
     setGnxBalance(state, balance) {
         state.balanceGnx = balance
+    },
+    setWallet(state, wallet) {
+        state.wallet = wallet
     }
 }
 
@@ -50,6 +46,11 @@ const actions = {
         payOption.from = state.wallet.address
         delete payOption.password
         dispatch('submitTransaction', {payOption, rawTransaction}, { root: true })
+    },
+    async initWallet({ commit, state, getters, rootState, dispatch }) {
+        const w = walletManager.loadFirstWallet()
+        commit('setWallet', w)
+        dispatch('loadBalance')
     }
 }
 
