@@ -24,10 +24,14 @@
     }
 
     .banner > div{
-        flex: 1;
-        margin: 30px;
+        flex: 20;
+        margin: 30px 0;
         height: 200px;
         box-sizing: border-box;
+    }
+    
+    .banner .blank{
+        flex: 1;
     }
 
     .banner .balance{
@@ -36,25 +40,51 @@
         padding-top: 100px;
         color: #FFF;
         padding-left: 23px;
+        padding-right: 23px;
         position: relative;
         overflow: hidden;
-    }    
+    }
+
+    .banner .balance div{
+        position: relative;
+        z-index: 1;
+    }
 
     .banner .balance div:nth-child(1){
         height: 45px;
-        font-size: 15px;
-        line-height: calc(40px * 2 - 15px);
+        font-size: 0;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: relative;
+        box-sizing: border-box;
+        white-space: nowrap;
     }
 
     .banner .balance div:nth-child(1) span{
+        height: 45px;
         font-size: 28px;
         line-height: calc(40px * 2 - 28px);
+        max-width: calc(100% - 60px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+
+    .banner .balance div:nth-child(1) .unit{
+        font-size: 15px;
+        line-height: calc(40px * 2 - 18px);
+        margin-left: 10px;
     }
 
     .banner .balance div:nth-child(2){
         height: 30px;
         font-size: 18px;
         line-height: 30px;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .banner .balance:before,
@@ -110,6 +140,60 @@
         background-size: 120px auto;
     }
 
+    .banner .account{
+        flex: 25;
+        max-width: 400px;
+        overflow: hidden;
+        border-radius: 0;
+    }
+
+    .banner .account .info{
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .banner .account .info img{
+        float: left;
+        height: 88px;
+        width: 88px;
+        border-radius: 50%;
+        background-image: linear-gradient(to bottom, #a1e9fe, #8ed8fb);
+    }
+
+    .banner .account .info h2,
+    .banner .account .info div{
+        width: calc(100% - 100px);
+        box-sizing: border-box;
+        margin-left: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .banner .account .info div{
+        position: relative;
+        padding-right: 50px;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .banner .account .info div .copy{
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 30px;
+        line-break: 30px;
+    }
+
+    .banner .account .info div .copy i {
+        cursor: pointer;
+    }
+
+    .banner .account .actions{
+        display: flex;
+        padding: 0 20%;
+        justify-content: space-around;
+    }
+
 
     /* list style */
     .state-icon{
@@ -130,11 +214,25 @@
     .state-icon[state='4']{
         color: #8bc34a;
     }
-    
+
+    /* deposit popup style */
+    .deposit-pop img{
+        display: block;
+        margin: 0 auto;
+    }
+
+    .deposit-pop .actions{
+        padding: 0 10%;
+        display: flex;
+        justify-content: space-around;
+
+    }
 </style>
 <template>
     <div class="fullheight right-container v-flex">
-        <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="400" trigger="click" @show="payPopped">
+
+        <!-- transfer popup --> 
+        <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="350" trigger="click" @show="payPopped">
             <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline">
                 <template v-if="payStep === 0">
                     <el-form-item prop="recipient">
@@ -185,26 +283,66 @@
                 </template>
             </el-form>
         </el-popover>
+        
 
-        <div class="banner">
-            <div class="balance gnx">
-                <div><span>{{balanceGnx}}</span> GNX</div>
-                <div>= $9,999,999</div>
-            </div>
-            <div class="balance eth">
-                <div><span>{{balanceEth}}</span> ETH</div>
-                <div>= $9,999,999</div>
-            </div>
-            <div>
-                <div>
-                    <h2>{{wallet.name}}</h2>
-                    <div>{{wallet.address}}</div>
+
+        <!-- Deposit popup -->
+        <el-popover ref="depositPop" placement="bottom" width="350" trigger="click" v-model="depositPop">
+            <div class="deposit-pop">
+                <el-input type="text" :disabled="true" v-model="wallet.address">
+                </el-input>
+                <img :src="'qr://' + wallet.address">
+                <div class="actions">
+                    <el-button class="btn" size="small" @click="depositPop=false">Cancel</el-button>
+                    <el-button class="btn" type="primary" size="small" @click="copy(wallet.address)">Copy The Address</el-button>
                 </div>
-                <el-button class="btn" type="primary" size="small">Deposit ETH</el-button>
-                <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Transfer</el-button>
             </div>
+        </el-popover>
+
+        <!-- afterCopyTip -->
+        <el-popover ref="afterCopyTip" trigger="click" content="Address Copyed to ClipBoard."></el-popover>
+
+
+        <!-- banner info -->
+        <div class="banner">
+            <div class="blank"></div>
+            <div class="balance gnx">
+                <div>
+                    <span :title="balanceGnx">{{balanceGnx}}</span>
+                    <span class="unit"> GNX</span>
+                </div>
+                <div>≈${{ dollarGnx }}</div>
+            </div>
+            <div class="blank"></div>
+            <div class="balance eth">
+                <div>
+                    <span :title="balanceEth">{{balanceEth}}</span>
+                    <span class="unit"> ETH</span>
+                </div>
+                <div>≈${{ dollarEth }}</div>
+            </div>
+            <div class="blank"></div>
+            <div class="account">
+                <div class="info">
+                    <img :src="avatarUrl(wallet.address)">
+                    <h2>{{wallet.name}}</h2>
+                    <div>
+                        <span :title="wallet.address" >{{wallet.address}}</span>
+                        <span class="copy">
+                            <i class="material-icons" @click="copy(wallet.address)" v-popover:afterCopyTip>content_copy</i>
+                        </span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <el-button class="btn" v-popover:depositPop type="primary" size="small">Deposit ETH</el-button>
+                    <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Transfer</el-button>
+                </div>
+            </div>
+            <div class="blank"></div>
         </div>
-        <!-- transaction -->
+
+
+        <!-- transaction history -->
         <div class="flex flex-grow">
             <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row" >
                 <el-table-column prop="state" label="" width="60">
@@ -231,6 +369,7 @@
 <script>
 import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
 import {utils} from '../../../wallet/web3Util'
+import {clipboard} from 'electron'
 
 const GNX_LIMIT = 120000;
 const GNX_SUGGEST = 150000;
@@ -306,6 +445,7 @@ export default {
 
         return {
             payFormPop: false,
+            depositPop: false,
             payOption: {
                 payType: 'ETH',
                 recipient: null,
@@ -350,8 +490,14 @@ export default {
         balanceEth() {
             return this.$store.state.CurrentWallet.balanceEth
         },
+        dollarEth() {
+            return "9,999,999.00";
+        },
         balanceGnx() {
             return this.$store.state.CurrentWallet.balanceGnx
+        },
+        dollarGnx() {
+            return "9,999,999.00";
         },
         txList() {
             return this.$store.state.Transaction.transactions
@@ -397,6 +543,15 @@ export default {
             this.payFormPop = false
             this.payStep = 0
             this.$refs.payOption.resetFields()
+        },
+        avatarUrl(id) {
+            return 'avatar://'+id
+        },
+        qrUrl(id) {
+            return 'qr://'+id
+        },
+        copy(value) {
+            clipboard.writeText(value);
         }
     }
 }
