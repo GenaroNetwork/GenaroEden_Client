@@ -301,7 +301,7 @@
             <div class="blank"></div>
             <div class="balance gnx">
                 <div>
-                    <span :title="balanceGnx">{{balanceGnx}}</span>
+                    <span :title="balanceGnx">{{balanceGnx | wei2gnx}}</span>
                     <span class="unit"> GNX</span>
                 </div>
                 <div>≈${{ dollarGnx }}</div>
@@ -309,7 +309,7 @@
             <div class="blank"></div>
             <div class="balance eth">
                 <div>
-                    <span :title="balanceEth">{{balanceEth}}</span>
+                    <span :title="balanceEth">{{balanceEth | wei2eth}}</span>
                     <span class="unit"> ETH</span>
                 </div>
                 <div>≈${{ dollarEth }}</div>
@@ -367,186 +367,186 @@ const ETH_LIMIT = 21000;
 const ETH_SUGGEST = 21000;
 
 export default {
-  created: function() {
-    this.$store.dispatch("loadTransactions");
-    const address = this.$route.params.walletAddress;
-    this.$store.dispatch("initWallet");
-  },
-  mounted: function() {
-    // init balance
-    this.calculateGas();
-  },
-  data: function() {
-    var validator = {
-      recipient: (rule, value, callback) => {
-        if (!/^0x[a-zA-Z0-9]{40}$/.test(value)) {
-          callback(new Error("Incorrect account address."));
-        } else {
-          callback();
-        }
-      },
-      amount: (rule, value, callback) => {
-        let balance;
-        switch (this.payOption.payType) {
-          case "ETH":
-            balance = this.balanceEth;
-            if (utils.toWei(value) > balance) {
-              callback(new Error("Amount must less than balance."));
-            } else {
-              callback();
+    created: function () {
+        this.$store.dispatch("loadTransactions");
+        const address = this.$route.params.walletAddress;
+        this.$store.dispatch("initWallet");
+    },
+    mounted: function () {
+        // init balance
+        this.calculateGas();
+    },
+    data: function () {
+        var validator = {
+            recipient: (rule, value, callback) => {
+                if (!/^0x[a-zA-Z0-9]{40}$/.test(value)) {
+                    callback(new Error("Incorrect account address."));
+                } else {
+                    callback();
+                }
+            },
+            amount: (rule, value, callback) => {
+                let balance;
+                switch (this.payOption.payType) {
+                    case "ETH":
+                        balance = this.balanceEth;
+                        if (utils.toWei(value) > balance) {
+                            callback(new Error("Amount must less than balance."));
+                        } else {
+                            callback();
+                        }
+                        break;
+
+                    case "GNX":
+                        balance = this.balanceGnx;
+                        if (value * Math.pow(10, 9) > balance) {
+                            callback(new Error("Amount must less than balance."));
+                        } else {
+                            callback();
+                        }
+                        break;
+
+                    default:
+                        callback(new Error("Incorrect pat type"));
+                        break;
+                }
+            },
+            gasPrice: async (rule, value, callback) => {
+                let price = await getGasPrics();
+                price = utils.fromWei(price, "Gwei");
+                if (value < price) {
+                    callback(new Error("gas price should greater than " + price));
+                } else {
+                    callback();
+                }
+            },
+            gasLimit: (rule, value, callback) => {
+                if (this.payOption.payType === "ETH" && value < ETH_LIMIT) {
+                    callback("gas limit should greater than " + ETH_LIMIT);
+                } else if (this.payOption.payType === "GNX" && value < GNX_LIMIT) {
+                    callback("gas limit should greater than " + GNX_LIMIT);
+                } else {
+                    callback();
+                }
             }
-            break;
+        };
 
-          case "GNX":
-            balance = this.balanceGnx;
-            if (value * Math.pow(10, 9) > balance) {
-              callback(new Error("Amount must less than balance."));
-            } else {
-              callback();
+        return {
+            payFormPop: false,
+            depositPop: false,
+            payOption: {
+                payType: "ETH",
+                recipient: null,
+                amount: null,
+                gasPrice: 0,
+                gasLimit: 0,
+                password: ""
+            },
+            defaultGas: {
+                price: 0,
+                limit: 0
+            },
+            payStep: 0,
+            ruleInline: {
+                recipient: [
+                    {
+                        required: true,
+                        message: "Please input recipient",
+                        trigger: "blur"
+                    },
+                    { validator: validator.recipient, trigger: "blur" }
+                ],
+                amount: [
+                    { required: true, message: "Please input amount", trigger: "blur" },
+                    { validator: validator.amount, trigger: "blur" }
+                ],
+                gasPrice: [
+                    { required: true, message: "Please input gasPrice", trigger: "blur" },
+                    { validator: validator.gasPrice, trigger: "blur" }
+                ],
+                gasLimit: [
+                    { required: true, message: "Please input gasLimit", trigger: "blur" },
+                    { validator: validator.gasLimit, trigger: "blur" }
+                ],
+                password: [
+                    { required: true, message: "Please input password", trigger: "blur" },
+                    {
+                        min: 6,
+                        message: "Password length must not be less than 6 bits",
+                        trigger: "blur"
+                    }
+                ]
             }
-            break;
-
-          default:
-            callback(new Error("Incorrect pat type"));
-            break;
+        };
+    },
+    computed: {
+        wallet() {
+            return this.$store.state.CurrentWallet.wallet;
+        },
+        balanceEth() {
+            return this.$store.state.CurrentWallet.balanceEth;
+        },
+        dollarEth() {
+            return "9,999,999.00";
+        },
+        balanceGnx() {
+            return this.$store.state.CurrentWallet.balanceGnx;
+        },
+        dollarGnx() {
+            return "9,999,999.00";
+        },
+        txList() {
+            return this.$store.state.Transaction.transactions;
         }
-      },
-      gasPrice: async (rule, value, callback) => {
-        let price = await getGasPrics();
-        price = utils.fromWei(price, "Gwei");
-        if (value < price) {
-          callback(new Error("gas price should greater than " + price));
-        } else {
-          callback();
+    },
+    watch: {
+        "payOption.payType"(newValue) {
+            if (newValue === "ETH") this.payOption.gasLimit = ETH_SUGGEST;
+            else this.payOption.gasLimit = GNX_SUGGEST;
         }
-      },
-      gasLimit: (rule, value, callback) => {
-        if (this.payOption.payType === "ETH" && value < ETH_LIMIT) {
-          callback("gas limit should greater than " + ETH_LIMIT);
-        } else if (this.payOption.payType === "GNX" && value < GNX_LIMIT) {
-          callback("gas limit should greater than " + GNX_LIMIT);
-        } else {
-          callback();
+    },
+    methods: {
+        async nextStep() {
+            try {
+                await this.$refs.payOption.validate();
+                this.payStep = 1;
+            } catch (e) { }
+        },
+        async pay() {
+            try {
+                await this.$refs.payOption.validate();
+                await this.$store.dispatch("payByCurrentWallet", this.payOption);
+                this.$message("transaction submitted");
+                this.resetForm();
+            } catch (e) {
+                this.$message.error("create transaction error: " + e);
+            }
+        },
+        calculateGas: async function () {
+            this.defaultGas.price = await getGasPrics();
+            this.defaultGas.limit = ETH_SUGGEST;
+        },
+        payPopped() {
+            function wei2Gwei(wei) {
+                return utils.fromWei(wei, "Gwei");
+            }
+            this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price));
+            this.payOption.gasLimit = this.defaultGas.limit;
+        },
+        resetForm() {
+            this.payFormPop = false;
+            this.payStep = 0;
+            this.$refs.payOption.resetFields();
+        },
+        avatarUrl(id) {
+            return "avatar://" + id;
+        },
+        qrUrl(id) {
+            return "qr://" + id;
+        },
+        copy(value) {
+            clipboard.writeText(value);
         }
-      }
-    };
-
-    return {
-      payFormPop: false,
-      depositPop: false,
-      payOption: {
-        payType: "ETH",
-        recipient: null,
-        amount: null,
-        gasPrice: 0,
-        gasLimit: 0,
-        password: ""
-      },
-      defaultGas: {
-        price: 0,
-        limit: 0
-      },
-      payStep: 0,
-      ruleInline: {
-        recipient: [
-          {
-            required: true,
-            message: "Please input recipient",
-            trigger: "blur"
-          },
-          { validator: validator.recipient, trigger: "blur" }
-        ],
-        amount: [
-          { required: true, message: "Please input amount", trigger: "blur" },
-          { validator: validator.amount, trigger: "blur" }
-        ],
-        gasPrice: [
-          { required: true, message: "Please input gasPrice", trigger: "blur" },
-          { validator: validator.gasPrice, trigger: "blur" }
-        ],
-        gasLimit: [
-          { required: true, message: "Please input gasLimit", trigger: "blur" },
-          { validator: validator.gasLimit, trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "Please input password", trigger: "blur" },
-          {
-            min: 6,
-            message: "Password length must not be less than 6 bits",
-            trigger: "blur"
-          }
-        ]
-      }
-    };
-  },
-  computed: {
-    wallet() {
-      return this.$store.state.CurrentWallet.wallet;
-    },
-    balanceEth() {
-      return this.$store.state.CurrentWallet.balanceEth;
-    },
-    dollarEth() {
-      return "9,999,999.00";
-    },
-    balanceGnx() {
-      return this.$store.state.CurrentWallet.balanceGnx;
-    },
-    dollarGnx() {
-      return "9,999,999.00";
-    },
-    txList() {
-      return this.$store.state.Transaction.transactions;
     }
-  },
-  watch: {
-    "payOption.payType"(newValue) {
-      if (newValue === "ETH") this.payOption.gasLimit = ETH_SUGGEST;
-      else this.payOption.gasLimit = GNX_SUGGEST;
-    }
-  },
-  methods: {
-    async nextStep() {
-      try {
-        await this.$refs.payOption.validate();
-        this.payStep = 1;
-      } catch (e) {}
-    },
-    async pay() {
-      try {
-        await this.$refs.payOption.validate();
-        await this.$store.dispatch("payByCurrentWallet", this.payOption);
-        this.$message("transaction submitted");
-        this.resetForm();
-      } catch (e) {
-        this.$message.error("create transaction error: " + e);
-      }
-    },
-    calculateGas: async function() {
-      this.defaultGas.price = await getGasPrics();
-      this.defaultGas.limit = ETH_SUGGEST;
-    },
-    payPopped() {
-      function wei2Gwei(wei) {
-        return utils.fromWei(wei, "Gwei");
-      }
-      this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price));
-      this.payOption.gasLimit = this.defaultGas.limit;
-    },
-    resetForm() {
-      this.payFormPop = false;
-      this.payStep = 0;
-      this.$refs.payOption.resetFields();
-    },
-    avatarUrl(id) {
-      return "avatar://" + id;
-    },
-    qrUrl(id) {
-      return "qr://" + id;
-    },
-    copy(value) {
-      clipboard.writeText(value);
-    }
-  }
 };
 </script>
