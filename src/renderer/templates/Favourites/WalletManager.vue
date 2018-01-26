@@ -1,64 +1,172 @@
 <style scoped>
 .top-bar {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    padding: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px;
 }
-.top-bar button i{
-    margin-left: 5px;
-    font-size: 12px;
-    vertical-align: bottom;
+.top-bar button i {
+  margin-left: 5px;
+  font-size: 12px;
+  vertical-align: bottom;
 }
 .top-bar h2 {
-    margin: 0;
-    font-weight: normal;
-    font-size: 1rem;
-    flex-grow: 1;
+  margin: 0;
+  font-weight: normal;
+  font-size: 1rem;
+  flex-grow: 1;
 }
-.top-bar h2 a{
-    color: unset;
-    text-decoration:unset;
+.top-bar h2 a {
+  color: unset;
+  text-decoration: unset;
 }
 .top-bar .folder-action {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-.wallet-list {
-    flex-wrap: wrap;
-    align-content: flex-start;
-    padding: 10px;
-    overflow: auto;
-    overflow-x: hidden;
-    flex-wrap: wrap;
-}
-.wallet {
-  flex: 0 50%;
-  height: 100px;
-  position: relative;
-}
-.row1 {
-    background-color: #e9eaec;
-}
-.avatar {
-    border-radius: 50%;
-    width: 128px;
-    height: 128px;
-}
+
 .qr {
-    width: 64px;
-    height: 64px;
+  width: 64px;
+  height: 64px;
 }
 .actions {
-    position: absolute;
-    right: 0;
-    top: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
-.actions a{
-    cursor: pointer;
+.actions a {
+  cursor: pointer;
+}
+
+/* wallets style */
+.wallet-list {
+  display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 5px;
+  overflow: visible;
+}
+
+.wallet {
+  width: 50%;
+  height: 210px;
+  margin-bottom: 35px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  overflow: visible;
+}
+
+.wallet.import-wallet {
+  cursor: pointer;
+  border-radius: 5px;
+  border: 2px dashed rgb(117, 117, 117);
+  line-height: 206px;
+  font-size: 30px;
+  text-align: center;
+  color: rgb(126, 126, 126);
+}
+
+.wallet.import-wallet i {
+  margin-right: 30px;
+  vertical-align: middle;
+}
+
+.wallet .card {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgb(231, 231, 231);
+}
+
+.wallet.current .card {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-color: rgb(88, 158, 248);
+}
+
+.wallet .card .account {
+  height: 115px;
+  background-image: linear-gradient(
+    to right,
+    rgb(234, 235, 236),
+    rgb(243, 245, 248)
+  );
+}
+
+.wallet .card .avatar {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  float: left;
+  margin: 20px auto auto 20px;
+}
+
+.wallet .card .info {
+  margin-left: 120px;
+  margin-right: 20px;
+  padding: 20px 0;
+}
+
+.wallet .card .info > div {
+  line-height: 35px;
+  overflow: hidden;
+}
+
+.wallet .card .info div > * {
+  margin-right: 20px;
+  float: left;
+  width: auto;
+}
+
+.wallet .card .info div i {
+  display: none;
+  cursor: pointer;
+}
+
+.wallet .card .info div:hover i {
+  display: block;
+}
+
+.wallet .card .actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  overflow: hidden;
+}
+
+.wallet .card .actions i {
+  float: left;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.wallet .card .detail .balance {
+  float: left;
+}
+
+.wallet .card .detail .qr {
+  float: right;
+  height: 75px;
+  width: 75px;
+  margin: 10px 20px;
+}
+
+/* large QRCode popover */
+.large-qrcode {
+  display: block;
+  margin: 0 auto;
 }
 </style>
 <template>
+
     <div class="fullheight v-flex">
+
+        <el-dialog title="QR Code" @close="largeQRCode=null" :visible="largeQRCode!==null" center width="200px">
+            <img class="large-qrcode" :src="largeQRCode">
+        </el-dialog>
 
         <el-dialog :visible.sync="changePass.show" width="500" :close-on-click-modal="true">
             <el-form ref="changePassFormRef" :model="changePass" :rules="ruleInline">
@@ -84,189 +192,253 @@
                 </div>
             </el-form>
         </el-dialog>
-        
+
         <div class="top-bar">
             <h2>Wallet Manage</h2>
-            <el-button type="primary" @click="importV3Wallet" size="small">Import Json<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-button type="primary" @click="importV3Wallet" size="small">Import Json
+                <i class="el-icon-upload el-icon--right"></i>
+            </el-button>
+            <!-- 
             <el-button type="primary" @click="restore" size="small">Restore<i class="el-icon-upload el-icon--right"></i></el-button>
+            -->
         </div>
-        <!-- transaction -->
-        <div class="flex flex-grow wallet-list">
-            <div v-for="item in wallets" class="wallet" @click="">
-                <div class="actions flex">
-                    <a class="" @click.stop.prevent="forgetWallet(item)"><i class="material-icons">close</i></a>
-                    <a class="" @click.stop.prevent="popChangePass(item)"><i class="material-icons">vpn_key</i></a>
-                    <a class="" @click.stop.prevent="exportWalletV3(item)"><i class="material-icons">open_in_new</i></a>
-                </div>
-                <div class="flex row1">
-                    <img class="avatar" :src="avatarUrl(item.address)" >
-                    <div class="v-flex">
-                        <span>{{item.name}}</span>
-                        <span>{{item.address}}</span>
+
+        <!-- wallet list -->
+        <div class="wallet-list">
+            <div v-for="item, index in wallets" :class="{wallet: true, current: index === 0}">
+                <div class="card">
+                    <div class="account">
+                        <img class="avatar" :src="avatarUrl(item.address)">
+                        <div class="info">
+                            <div>
+                                <el-input size="small" v-model="item.name" @blur="saveName(index)" v-if="editNameIndex === index"></el-input>
+                                <div v-else>{{ item.name }}</div>
+                                <i class="material-icons" @click="editNameIndex = index" v-if="editNameIndex !== index">content_copy</i>
+                            </div>
+                            <div>{{item.address}}</div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <i @click.stop.prevent="forgetWallet(item)" class="material-icons">delete</i>
+                        <i @click.stop.prevent="popChangePass(item)" class="material-icons">vpn_key</i>
+                        <i @click.stop.prevent="exportWalletV3(item)" class="material-icons">open_in_new</i>
+                    </div>
+                    <div class="detail">
+                        <div class="balance eth">
+                            <img src="">
+                            <div class="h1"> {{ balanceEth(item.address) | wei2eth}} </div>
+                            <div class="p"> {{ balanceEth(item.address) | wei2gnx}} </div>
+                        </div>
+                        <!-- large QRCODE -->
+                        <img class="qr" :src="qrUrl(item.address)" @click="largeQRCode=qrUrl(item.address)">
                     </div>
                 </div>
-                <div class="flex row2">
-                    <!-- balance -->
-                    <div></div>
-                    <!-- qr -->
-                    <img class="qr" :src="qrUrl(item.address)" >
-                </div>
+            </div>
+            <div class="wallet import-wallet" @click.stop.prevent="importV3Wallet">
+                <i class="material-icons">add</i>import wallet
             </div>
         </div>
+
     </div>
 </template>
 
 <script>
-import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
-import walletManager from '../../../wallet/walletManager'
-import {utils} from '../../../wallet/web3Util'
-const {dialog} = require('electron').remote
-const fs = require('fs')
+import { getGasPrics, getGasLimit, getBalanceEth, getBalanceGnx } from "../../../wallet/transactionManager";
+import walletManager from "../../../wallet/walletManager";
+import { utils } from "../../../wallet/web3Util";
+const { dialog } = require("electron").remote;
+const fs = require("fs");
 
 export default {
-    created: function() {
-        this.$store.dispatch('loadAllWallets')
+    created: async function () {
+        await this.$store.dispatch("loadAllWallets");
+        await this.$store.dispatch("loadAllWalletsBalances");
     },
-    mounted: function (){
+    mounted: function () {
         // init balance
         //this.$store.dispatch('loadBalance')
     },
-    data: function() {
+    data: function () {
         return {
+            editNameIndex: -1,
+            largeQRCode: null,
             changePass: {
                 show: false,
-                address: '',
-                password: '',
-                newPassword: '',
-                newPasswordRepeat: ''
+                address: "",
+                password: "",
+                newPassword: "",
+                newPasswordRepeat: ""
             },
             ruleInline: {
                 password: [
-                    { required: true, message: 'Please input password', trigger: 'blur' },
-                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    { required: true, message: "Please input password", trigger: "blur" },
+                    {
+                        type: "string",
+                        min: 6,
+                        message: "Password length must not be less than 6 bits",
+                        trigger: "blur"
+                    }
                 ],
                 newPassword: [
-                    { required: true, message: 'Please input password', trigger: 'blur' },
-                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    { required: true, message: "Please input password", trigger: "blur" },
+                    {
+                        type: "string",
+                        min: 6,
+                        message: "Password length must not be less than 6 bits",
+                        trigger: "blur"
+                    }
                 ],
                 newPasswordRepeat: [
-                    { validator: (rule, value, callback) => {
-                        if (value === '') {
-                            callback(new Error('Please enter your password again'));
-                        } else if (value !== this.changePass.newPassword) {
-                            callback(new Error('The two input passwords do not match!'));
-                        } else {
-                            callback();
-                        }
-                    }, trigger: 'blur' }
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value === "") {
+                                callback(new Error("Please enter your password again"));
+                            } else if (value !== this.changePass.newPassword) {
+                                callback(new Error("The two input passwords do not match!"));
+                            } else {
+                                callback();
+                            }
+                        },
+                        trigger: "blur"
+                    }
                 ]
             }
-        }
+        };
     },
     computed: {
         wallets() {
-            return this.$store.state.WalletManage.wallets
+            return this.$store.state.WalletManage.wallets;
+        },
+        balanceEth() {
+            return address => this.$store.state.WalletManage.balances.eth[address];
+        },
+        dollarEth() {
+            return "9,999,999.00";
+        },
+        balanceGnx() {
+            return address => this.$store.state.WalletManage.balances.gnx[address];
+        },
+        dollarGnx() {
+            return "9,999,999.00";
         }
     },
     methods: {
-        restore() {
-        },
+        restore() { },
         importV3Wallet() {
-            let this2 = this
-            const {dialog} = require('electron').remote
-            const files = dialog.showOpenDialog({properties: ['openFile']})
+            let this2 = this;
+            const { dialog } = require("electron").remote;
+            const files = dialog.showOpenDialog({ properties: ["openFile"] });
 
             if (files && files.length > 0) {
-                const filePath = files[0]
-                this.$prompt('Password:', 'Import Wallet', {
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Cancel',
-                    inputType: 'password'
+                const filePath = files[0];
+                this.$prompt("Password:", "Import Wallet", {
+                    confirmButtonText: "OK",
+                    cancelButtonText: "Cancel",
+                    inputType: "password"
                 }).then(({ value }) => {
-                    this.$store.dispatch('importV3Wallet', {filePath, password: value}).then(() => {
-                        this.$message({
-                            type: 'success',
-                            message: 'import success: '
+                    this.$store
+                        .dispatch("importV3Wallet", { filePath, password: value })
+                        .then(() => {
+                            this.$message({
+                                type: "success",
+                                message: "import success: "
+                            });
+                        })
+                        .catch(e => {
+                            this.$message.error("Error: " + e);
                         });
-                    }).catch( e => {
-                        this.$message.error('Error: ' + e);
-                    })
-                })
+                });
             }
         },
         forgetWallet(item) {
-            const this2 = this
+            const this2 = this;
 
-            this.$prompt('Password:', 'Forget Wallet', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
-                inputType: 'password'
+            this.$prompt("Password:", "Forget Wallet", {
+                confirmButtonText: "OK",
+                cancelButtonText: "Cancel",
+                inputType: "password"
             }).then(({ value }) => {
-                this.$store.dispatch('forgetWallet', {address: item.address, password: value}).catch(e => {
-                    this2.$message.error(e)
-                })
-            })
+                this.$store
+                    .dispatch("forgetWallet", { address: item.address, password: value })
+                    .catch(e => {
+                        this2.$message.error(e);
+                    });
+            });
+        },
+        saveName(index) {
+            this.editNameIndex = -1;
         },
         popChangePass(item) {
-            this.changePass.show = true
-            this.changePass.address = item.address
+            this.changePass.show = true;
+            this.changePass.address = item.address;
         },
         resetPasswordForm() {
-            this.changePass.show = false
-            this.changePass.address = ''
-            this.changePass.password = ''
-            this.changePass.newPassword = ''
-            this.changePass.newPasswordRepeat = ''
+            this.changePass.show = false;
+            this.changePass.address = "";
+            this.changePass.password = "";
+            this.changePass.newPassword = "";
+            this.changePass.newPasswordRepeat = "";
         },
         submitChangePassword() {
-            const this2 = this
-            this.$store.dispatch('changePassword', {
-                address: this.changePass.address, 
-                password: this.changePass.password, 
-                newPassword: this.changePass.newPassword
-            }).then(()=>{
-                this2.$message.success('Password Changed')
-                this2.resetPasswordForm()
-            }).catch( e => {
-                console.log(e)
-                this2.$message.error(e.message)
-            })
+            const this2 = this;
+            this.$store
+                .dispatch("changePassword", {
+                    address: this.changePass.address,
+                    password: this.changePass.password,
+                    newPassword: this.changePass.newPassword
+                })
+                .then(() => {
+                    this2.$message.success("Password Changed");
+                    this2.resetPasswordForm();
+                })
+                .catch(e => {
+                    console.log(e);
+                    this2.$message.error(e.message);
+                });
         },
-        exportWalletV3: async function(item) {
-            const this2 = this
-            this.$prompt('Password:', 'Export Wallet', {
-                confirmButtonText: 'Export',
-                cancelButtonText: 'Cancel',
-                inputType: 'password'
-            }).then(async ({ value }) => {
-                const passwordOk = await walletManager.validateWalletPassword(item.address, value)
-                if(passwordOk) {
-                    const v3 = await walletManager.exportV3Json(item.address)
-                    dialog.showSaveDialog({
-                        title: 'Export Wallet',
-                        defaultPath: './' + item.name +'.wallet.json'
-                    }, (path) => {
-                        if(path != undefined && path.length > 0) {
-                            fs.writeFile(path, v3, function(err) {
-                                if(err) {
-                                    this2.$message.error(err)
-                                } else {
-                                    this2.$message.success('Wallet exported')
-                                }
-                            }); 
-                        }
-                    })
-                }
-            }).catch(e => {
-                this2.$message.error(e)
+        exportWalletV3: async function (item) {
+            const this2 = this;
+            this.$prompt("Password:", "Export Wallet", {
+                confirmButtonText: "Export",
+                cancelButtonText: "Cancel",
+                inputType: "password"
             })
+                .then(async ({ value }) => {
+                    const passwordOk = await walletManager.validateWalletPassword(
+                        item.address,
+                        value
+                    );
+                    if (passwordOk) {
+                        const v3 = await walletManager.exportV3Json(item.address);
+                        dialog.showSaveDialog(
+                            {
+                                title: "Export Wallet",
+                                defaultPath: "./" + item.name + ".wallet.json"
+                            },
+                            path => {
+                                if (path != undefined && path.length > 0) {
+                                    fs.writeFile(path, v3, function (err) {
+                                        if (err) {
+                                            this2.$message.error(err);
+                                        } else {
+                                            this2.$message.success("Wallet exported");
+                                        }
+                                    });
+                                }
+                            }
+                        );
+                    }
+                })
+                .catch(e => {
+                    this2.$message.error(e);
+                });
         },
         avatarUrl(id) {
-            return 'avatar://'+id
+            return "avatar://" + id;
         },
         qrUrl(id) {
-            return 'qr://'+id
+            return "qr://" + id;
         }
     }
-}
+};
 </script>

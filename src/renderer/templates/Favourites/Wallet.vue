@@ -1,237 +1,233 @@
 <style scoped>
+/* popup style */
+.el-select {
+  width: 115px;
+}
+.preview-label {
+  color: #999;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+.preview-value {
+  overflow: hidden;
+  padding-right: 5px;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
 
-    /* popup style */
-    .el-select{
-        width: 115px;
-    }
-    .preview-label{
-        color: #999;
-        padding-left: 5px;
-        box-sizing: border-box;
-    }
-    .preview-value{
-        overflow: hidden;
-        padding-right: 5px;
-        text-overflow: ellipsis;
-        box-sizing: border-box;
-    }
+/* banner style */
+.banner {
+  display: flex;
+  flex-direction: row;
+}
 
+.banner > div {
+  flex: 20;
+  margin: 30px 0;
+  height: 200px;
+  box-sizing: border-box;
+}
 
-    /* banner style */
-    .banner{
-        display: flex;
-        flex-direction: row;
-    }
+.banner .blank {
+  flex: 1;
+}
 
-    .banner > div{
-        flex: 20;
-        margin: 30px 0;
-        height: 200px;
-        box-sizing: border-box;
-    }
-    
-    .banner .blank{
-        flex: 1;
-    }
+.banner .balance {
+  border-radius: 4px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  padding-top: 100px;
+  color: #fff;
+  padding-left: 23px;
+  padding-right: 23px;
+  position: relative;
+  overflow: hidden;
+}
 
-    .banner .balance{
-        border-radius: 4px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,.2);
-        padding-top: 100px;
-        color: #FFF;
-        padding-left: 23px;
-        padding-right: 23px;
-        position: relative;
-        overflow: hidden;
-    }
+.banner .balance div {
+  position: relative;
+  z-index: 1;
+}
 
-    .banner .balance div{
-        position: relative;
-        z-index: 1;
-    }
+.banner .balance div:nth-child(1) {
+  height: 45px;
+  font-size: 0;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
 
-    .banner .balance div:nth-child(1){
-        height: 45px;
-        font-size: 0;
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        position: relative;
-        box-sizing: border-box;
-        white-space: nowrap;
-    }
+.banner .balance div:nth-child(1) span {
+  height: 45px;
+  font-size: 28px;
+  line-height: calc(40px * 2 - 28px);
+  max-width: calc(100% - 60px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
 
-    .banner .balance div:nth-child(1) span{
-        height: 45px;
-        font-size: 28px;
-        line-height: calc(40px * 2 - 28px);
-        max-width: calc(100% - 60px);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-    }
+.banner .balance div:nth-child(1) .unit {
+  font-size: 15px;
+  line-height: calc(40px * 2 - 18px);
+  margin-left: 10px;
+}
 
-    .banner .balance div:nth-child(1) .unit{
-        font-size: 15px;
-        line-height: calc(40px * 2 - 18px);
-        margin-left: 10px;
-    }
+.banner .balance div:nth-child(2) {
+  height: 30px;
+  font-size: 18px;
+  line-height: 30px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-    .banner .balance div:nth-child(2){
-        height: 30px;
-        font-size: 18px;
-        line-height: 30px;
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+.banner .balance:before,
+.banner .balance:after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  left: 25px;
+  top: 20px;
+  height: 100px;
+  width: 100px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
 
-    .banner .balance:before,
-    .banner .balance:after{
-        pointer-events: none;
-        content: "";
-        position: absolute;
-        left: 25px;
-        top: 20px;
-        height: 100px;
-        width: 100px;
-        background-repeat: no-repeat;
-        background-position: 0 0;
-    }
+.banner .balance:after {
+  left: auto;
+  top: auto;
+  right: -20px;
+  bottom: -20px;
+  height: 200px;
+  width: 200px;
+  background-position: 100% 100%;
+}
 
-    .banner .balance:after{
-        left: auto;
-        top: auto;
-        right: -20px;
-        bottom: -20px;
-        height: 200px;
-        width: 200px;
-        background-position: 100% 100%;
-    }
+.banner .gnx {
+  background: linear-gradient(to right bottom, #409eff, #188be2);
+}
 
-    .banner .gnx{
-        background: linear-gradient(to right bottom, #409EFF, #188BE2);
-    }
+.banner .gnx:before {
+  background-image: url(../../../static/gnx_white.svg);
+  background-size: 50px auto;
+}
 
-    .banner .gnx:before{
-        background-image: url(../../../static/gnx_white.svg);
-        background-size: 50px auto;
-    }
+.banner .gnx:after {
+  background-image: url(../../../static/gnx_blue.svg);
+  background-size: 180px auto;
+}
 
-    .banner .gnx:after{
-        background-image: url(../../../static/gnx_blue.svg);
-        background-size: 180px auto;
-    }
+.banner .eth {
+  background-image: linear-gradient(to right bottom, #c4c4c4, #a2a2a2);
+}
 
-    .banner .eth{
-        background-image: linear-gradient(to right bottom, #C4C4C4, #A2A2A2);
-    }
+.banner .eth:before {
+  background-image: url(../../../static/eth_white.svg);
+  background-size: 28px auto;
+}
 
-    .banner .eth:before{
-        background-image: url(../../../static/eth_white.svg);
-        background-size: 28px auto;
-    }
+.banner .eth:after {
+  background-image: url(../../../static/eth_gray.svg);
+  right: 10px;
+  bottom: -10px;
+  background-size: 120px auto;
+}
 
-    .banner .eth:after{
-        background-image: url(../../../static/eth_gray.svg);
-        right: 10px;
-        bottom: -10px;
-        background-size: 120px auto;
-    }
+.banner .account {
+  flex: 25;
+  max-width: 400px;
+  overflow: hidden;
+  border-radius: 0;
+}
 
-    .banner .account{
-        flex: 25;
-        max-width: 400px;
-        overflow: hidden;
-        border-radius: 0;
-    }
+.banner .account .info {
+  overflow: hidden;
+  margin-bottom: 40px;
+}
 
-    .banner .account .info{
-        overflow: hidden;
-        margin-bottom: 40px;
-    }
+.banner .account .info img {
+  float: left;
+  height: 88px;
+  width: 88px;
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom, #a1e9fe, #8ed8fb);
+}
 
-    .banner .account .info img{
-        float: left;
-        height: 88px;
-        width: 88px;
-        border-radius: 50%;
-        background-image: linear-gradient(to bottom, #a1e9fe, #8ed8fb);
-    }
+.banner .account .info h2,
+.banner .account .info div {
+  width: calc(100% - 100px);
+  box-sizing: border-box;
+  margin-left: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-    .banner .account .info h2,
-    .banner .account .info div{
-        width: calc(100% - 100px);
-        box-sizing: border-box;
-        margin-left: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.banner .account .info div {
+  position: relative;
+  padding-right: 50px;
+  height: 30px;
+  line-height: 30px;
+}
 
-    .banner .account .info div{
-        position: relative;
-        padding-right: 50px;
-        height: 30px;
-        line-height: 30px;
-    }
+.banner .account .info div .copy {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 30px;
+  line-break: 30px;
+}
 
-    .banner .account .info div .copy{
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 30px;
-        line-break: 30px;
-    }
+.banner .account .info div .copy i {
+  cursor: pointer;
+}
 
-    .banner .account .info div .copy i {
-        cursor: pointer;
-    }
+.banner .account .actions {
+  display: flex;
+  padding: 0 20%;
+  justify-content: space-around;
+}
 
-    .banner .account .actions{
-        display: flex;
-        padding: 0 20%;
-        justify-content: space-around;
-    }
+/* list style */
+.state-icon {
+  text-align: center;
+  display: block;
+  margin: auto;
+}
 
+.state-icon[state="1"],
+.state-icon[state="2"] {
+  color: #f6a725;
+}
 
-    /* list style */
-    .state-icon{
-        text-align: center;
-        display: block;
-        margin: auto;
-    }
+.state-icon[state="3"] {
+  color: #f56167;
+}
 
-    .state-icon[state='1'],
-    .state-icon[state='2']{
-        color: #f6a725;
-    }
+.state-icon[state="4"] {
+  color: #8bc34a;
+}
 
-    .state-icon[state='3']{
-        color: #f56167;
-    }
+/* deposit popup style */
+.deposit-pop img {
+  display: block;
+  margin: 0 auto;
+}
 
-    .state-icon[state='4']{
-        color: #8bc34a;
-    }
-
-    /* deposit popup style */
-    .deposit-pop img{
-        display: block;
-        margin: 0 auto;
-    }
-
-    .deposit-pop .actions{
-        padding: 0 10%;
-        display: flex;
-        justify-content: space-around;
-
-    }
+.deposit-pop .actions {
+  padding: 0 10%;
+  display: flex;
+  justify-content: space-around;
+}
 </style>
 <template>
     <div class="fullheight right-container v-flex">
 
-        <!-- transfer popup --> 
+        <!-- transfer popup -->
         <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="350" trigger="click" @show="payPopped">
             <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline">
                 <template v-if="payStep === 0">
@@ -283,8 +279,6 @@
                 </template>
             </el-form>
         </el-popover>
-        
-
 
         <!-- Deposit popup -->
         <el-popover ref="depositPop" placement="bottom" width="350" trigger="click" v-model="depositPop">
@@ -301,7 +295,6 @@
 
         <!-- afterCopyTip -->
         <el-popover ref="afterCopyTip" trigger="click" content="Address Copyed to ClipBoard."></el-popover>
-
 
         <!-- banner info -->
         <div class="banner">
@@ -327,7 +320,7 @@
                     <img :src="avatarUrl(wallet.address)">
                     <h2>{{wallet.name}}</h2>
                     <div>
-                        <span :title="wallet.address" >{{wallet.address}}</span>
+                        <span :title="wallet.address">{{wallet.address}}</span>
                         <span class="copy">
                             <i class="material-icons" @click="copy(wallet.address)" v-popover:afterCopyTip>content_copy</i>
                         </span>
@@ -341,21 +334,18 @@
             <div class="blank"></div>
         </div>
 
-
         <!-- transaction history -->
         <div class="flex flex-grow">
-            <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row" >
+            <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row">
                 <el-table-column prop="state" label="" width="60">
                     <template slot-scope="scope">
                         <i class="material-icons state-icon" :state="scope.row.state">
-                            {{ scope.row.state === 1 || scope.row.state === 2 ? "remove_circle_outline" : ""}}
-                            {{ scope.row.state === 3 ? "error_outline" : ""}}
-                            {{ scope.row.state === 4 ? "add_circle_outline" : ""}}
+                            {{ scope.row.state === 1 || scope.row.state === 2 ? "remove_circle_outline" : ""}} {{ scope.row.state === 3 ? "error_outline" : ""}} {{ scope.row.state === 4 ? "add_circle_outline" : ""}}
                         </i>
                     </template>
                 </el-table-column>
                 <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="receipt.blockNumber" label="Block" width="80" ></el-table-column>
+                <el-table-column prop="receipt.blockNumber" label="Block" width="80"></el-table-column>
                 <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
                 <el-table-column prop="from" label="From" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="recipient" label="To" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
@@ -367,9 +357,9 @@
 </template>
 
 <script>
-import {getGasPrics, getGasLimit} from '../../../wallet/transactionManager'
-import {utils} from '../../../wallet/web3Util'
-import {clipboard} from 'electron'
+import { getGasPrics, getGasLimit } from "../../../wallet/transactionManager";
+import { utils } from "../../../wallet/web3Util";
+import { clipboard } from "electron";
 
 const GNX_LIMIT = 120000;
 const GNX_SUGGEST = 150000;
@@ -377,182 +367,186 @@ const ETH_LIMIT = 21000;
 const ETH_SUGGEST = 21000;
 
 export default {
-    created: function() {
-        this.$store.dispatch('loadTransactions')
-        const address = this.$route.params.walletAddress
-        this.$store.dispatch('initWallet')
-    },
-    mounted: function (){
-        // init balance
-        this.calculateGas()
-    },
-    data: function() {
-
-        var validator = {
-            recipient: (rule, value, callback) => {
-                if (!/^0x[a-zA-Z0-9]{40}$/.test(value)){
-                    callback(new Error('Incorrect account address.'))
-                }
-                else{
-                    callback()
-                }
-            },
-            amount: (rule, value, callback) => {
-                let balance;
-                switch (this.payOption.payType) {
-                    case "ETH":
-                    balance = this.balanceEth;
-                    if (utils.toWei(value) > balance){
-                        callback(new Error('Amount must less than balance.'))
-                    } else {
-                        callback()
-                    }
-                    break;
-
-                    case "GNX":
-                    balance = this.balanceGnx;
-                    if (value * Math.pow(10, 9) > balance){
-                        callback(new Error('Amount must less than balance.'))
-                    } else {
-                        callback()
-                    }
-                    break;
-
-                    default:
-                    callback(new Error('Incorrect pat type'))
-                    break;
-                }
-            },
-            gasPrice: async (rule, value, callback) => {
-                let price = await getGasPrics();
-                price = utils.fromWei(price, "Gwei");
-                if (value < price) {
-                    callback(new Error("gas price should greater than " + price));
-                }else{
-                    callback()
-                }
-            },
-            gasLimit: (rule, value, callback) => {
-                if (this.payOption.payType === 'ETH' && value < ETH_LIMIT){
-                    callback("gas limit should greater than " + ETH_LIMIT)
-                } else if(this.payOption.payType === 'GNX' && value < GNX_LIMIT) {
-                    callback("gas limit should greater than " + GNX_LIMIT)
-                } else {
-                    callback()
-                }
-            }
+  created: function() {
+    this.$store.dispatch("loadTransactions");
+    const address = this.$route.params.walletAddress;
+    this.$store.dispatch("initWallet");
+  },
+  mounted: function() {
+    // init balance
+    this.calculateGas();
+  },
+  data: function() {
+    var validator = {
+      recipient: (rule, value, callback) => {
+        if (!/^0x[a-zA-Z0-9]{40}$/.test(value)) {
+          callback(new Error("Incorrect account address."));
+        } else {
+          callback();
         }
+      },
+      amount: (rule, value, callback) => {
+        let balance;
+        switch (this.payOption.payType) {
+          case "ETH":
+            balance = this.balanceEth;
+            if (utils.toWei(value) > balance) {
+              callback(new Error("Amount must less than balance."));
+            } else {
+              callback();
+            }
+            break;
 
-        return {
-            payFormPop: false,
-            depositPop: false,
-            payOption: {
-                payType: 'ETH',
-                recipient: null,
-                amount: null,
-                gasPrice: 0,
-                gasLimit: 0,
-                password: ''
-            },
-            defaultGas: {
-                price: 0,
-                limit: 0
-            },
-            payStep: 0,
-            ruleInline: {
-                recipient: [
-                    { required: true, message: 'Please input recipient', trigger: 'blur' },
-                    { validator: validator.recipient , trigger: 'blur'}
-                ],
-                amount: [
-                    { required: true, message: 'Please input amount', trigger: 'blur' },
-                    { validator: validator.amount , trigger: 'blur'}
-                ],
-                gasPrice: [
-                    { required: true, message: 'Please input gasPrice', trigger: 'blur' },
-                    { validator: validator.gasPrice , trigger: 'blur'}
-                ],
-                gasLimit: [
-                    { required: true, message: 'Please input gasLimit', trigger: 'blur' },
-                    { validator: validator.gasLimit , trigger: 'blur'}
-                ],
-                password: [
-                    { required: true, message: 'Please input password', trigger: 'blur' },
-                    { min: 6 , message: 'Password length must not be less than 6 bits'  ,trigger: 'blur'}
-                ]
+          case "GNX":
+            balance = this.balanceGnx;
+            if (value * Math.pow(10, 9) > balance) {
+              callback(new Error("Amount must less than balance."));
+            } else {
+              callback();
             }
-        }
-    },
-    computed: {
-        wallet() {
-            return this.$store.state.CurrentWallet.wallet
-        },
-        balanceEth() {
-            return this.$store.state.CurrentWallet.balanceEth
-        },
-        dollarEth() {
-            return "9,999,999.00";
-        },
-        balanceGnx() {
-            return this.$store.state.CurrentWallet.balanceGnx
-        },
-        dollarGnx() {
-            return "9,999,999.00";
-        },
-        txList() {
-            return this.$store.state.Transaction.transactions
-        }
-    },
-    watch: {
-        "payOption.payType"(newValue){
-            if (newValue === "ETH") this.payOption.gasLimit = ETH_SUGGEST;
-            else this.payOption.gasLimit = GNX_SUGGEST;
-        } 
-    },
-    methods: {
-        async nextStep() {
-            try{
-                await this.$refs.payOption.validate();
-                this.payStep = 1;
-            }catch(e){
+            break;
 
-            }
-        },
-        async pay() {
-            try{
-                await this.$refs.payOption.validate();
-                await this.$store.dispatch('payByCurrentWallet', this.payOption)
-                    this.$message('transaction submitted')
-                    this.resetForm()
-            }catch(e){
-                    this.$message.error('create transaction error: ' + e)
-            }
-        },
-        calculateGas: async function() {
-            this.defaultGas.price = await getGasPrics()
-            this.defaultGas.limit = ETH_SUGGEST;
-        },
-        payPopped() {
-            function wei2Gwei(wei) {
-                return utils.fromWei(wei, 'Gwei');
-            }
-            this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price))
-            this.payOption.gasLimit = this.defaultGas.limit
-        },
-        resetForm(){
-            this.payFormPop = false
-            this.payStep = 0
-            this.$refs.payOption.resetFields()
-        },
-        avatarUrl(id) {
-            return 'avatar://'+id
-        },
-        qrUrl(id) {
-            return 'qr://'+id
-        },
-        copy(value) {
-            clipboard.writeText(value);
+          default:
+            callback(new Error("Incorrect pat type"));
+            break;
         }
+      },
+      gasPrice: async (rule, value, callback) => {
+        let price = await getGasPrics();
+        price = utils.fromWei(price, "Gwei");
+        if (value < price) {
+          callback(new Error("gas price should greater than " + price));
+        } else {
+          callback();
+        }
+      },
+      gasLimit: (rule, value, callback) => {
+        if (this.payOption.payType === "ETH" && value < ETH_LIMIT) {
+          callback("gas limit should greater than " + ETH_LIMIT);
+        } else if (this.payOption.payType === "GNX" && value < GNX_LIMIT) {
+          callback("gas limit should greater than " + GNX_LIMIT);
+        } else {
+          callback();
+        }
+      }
+    };
+
+    return {
+      payFormPop: false,
+      depositPop: false,
+      payOption: {
+        payType: "ETH",
+        recipient: null,
+        amount: null,
+        gasPrice: 0,
+        gasLimit: 0,
+        password: ""
+      },
+      defaultGas: {
+        price: 0,
+        limit: 0
+      },
+      payStep: 0,
+      ruleInline: {
+        recipient: [
+          {
+            required: true,
+            message: "Please input recipient",
+            trigger: "blur"
+          },
+          { validator: validator.recipient, trigger: "blur" }
+        ],
+        amount: [
+          { required: true, message: "Please input amount", trigger: "blur" },
+          { validator: validator.amount, trigger: "blur" }
+        ],
+        gasPrice: [
+          { required: true, message: "Please input gasPrice", trigger: "blur" },
+          { validator: validator.gasPrice, trigger: "blur" }
+        ],
+        gasLimit: [
+          { required: true, message: "Please input gasLimit", trigger: "blur" },
+          { validator: validator.gasLimit, trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "Please input password", trigger: "blur" },
+          {
+            min: 6,
+            message: "Password length must not be less than 6 bits",
+            trigger: "blur"
+          }
+        ]
+      }
+    };
+  },
+  computed: {
+    wallet() {
+      return this.$store.state.CurrentWallet.wallet;
+    },
+    balanceEth() {
+      return this.$store.state.CurrentWallet.balanceEth;
+    },
+    dollarEth() {
+      return "9,999,999.00";
+    },
+    balanceGnx() {
+      return this.$store.state.CurrentWallet.balanceGnx;
+    },
+    dollarGnx() {
+      return "9,999,999.00";
+    },
+    txList() {
+      return this.$store.state.Transaction.transactions;
     }
-}
+  },
+  watch: {
+    "payOption.payType"(newValue) {
+      if (newValue === "ETH") this.payOption.gasLimit = ETH_SUGGEST;
+      else this.payOption.gasLimit = GNX_SUGGEST;
+    }
+  },
+  methods: {
+    async nextStep() {
+      try {
+        await this.$refs.payOption.validate();
+        this.payStep = 1;
+      } catch (e) {}
+    },
+    async pay() {
+      try {
+        await this.$refs.payOption.validate();
+        await this.$store.dispatch("payByCurrentWallet", this.payOption);
+        this.$message("transaction submitted");
+        this.resetForm();
+      } catch (e) {
+        this.$message.error("create transaction error: " + e);
+      }
+    },
+    calculateGas: async function() {
+      this.defaultGas.price = await getGasPrics();
+      this.defaultGas.limit = ETH_SUGGEST;
+    },
+    payPopped() {
+      function wei2Gwei(wei) {
+        return utils.fromWei(wei, "Gwei");
+      }
+      this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price));
+      this.payOption.gasLimit = this.defaultGas.limit;
+    },
+    resetForm() {
+      this.payFormPop = false;
+      this.payStep = 0;
+      this.$refs.payOption.resetFields();
+    },
+    avatarUrl(id) {
+      return "avatar://" + id;
+    },
+    qrUrl(id) {
+      return "qr://" + id;
+    },
+    copy(value) {
+      clipboard.writeText(value);
+    }
+  }
+};
 </script>

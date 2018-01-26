@@ -1,28 +1,28 @@
 <style scoped>
-    .layout-favourites-enum {
-        width: 200px;
-        background: #fff;
-        overflow: hidden;
-        border-radius: 8px;
-        flex-shrink: 0;
-    }
-    .layout-favourites-content {
-        flex-grow: 1;
-        margin-left: 20px;
-        background: #fff;
-        border-radius: 8px;
-    }
-    .colcontainer {
-        display: flex;
-        width: 100%;
-    }
-    i {    
-        margin-right: 5px;
-        width: 24px;
-        text-align: center;
-        font-size: 18px;
-        vertical-align: middle;
-    }
+.layout-favourites-enum {
+  width: 200px;
+  background: #fff;
+  overflow: hidden;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.layout-favourites-content {
+  flex-grow: 1;
+  margin-left: 20px;
+  background: #fff;
+  border-radius: 8px;
+}
+.colcontainer {
+  display: flex;
+  width: 100%;
+}
+i {
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+  vertical-align: middle;
+}
 </style>
 
 <template>
@@ -37,15 +37,19 @@
                     <i class="el-icon-time"></i>
                     <span slot="title">Recent</span>
                 </el-menu-item>
-                <el-menu-item index="3" route="/wallet">
-                    <i class="material-icons">account_balance_wallet</i>
-                    <span slot="title">My Wallet</span>
-                </el-menu-item>
-                <el-menu-item index="4" route="/wallet-manager">
-                    <i class="material-icons">account_balance_wallet</i>
-                    <span slot="title">Wallet Manage</span>
-                </el-menu-item>
-                <el-menu-item index="2" route="/share-my-storage">
+                <el-submenu index="2" default-active="2-0">
+                    <template slot="title">
+                        <i class="material-icons">account_balance_wallet</i>
+                        <span slot="title">My Wallet</span>
+                    </template>
+                    <el-menu-item index="2-0" route="/wallet">
+                        <span slot="title">My Wallet</span>
+                    </el-menu-item>
+                    <el-menu-item index="2-1" route="/wallet-manager">
+                        <span slot="title">Wallet Manage</span>
+                    </el-menu-item>
+                </el-submenu>
+                <el-menu-item index="3" route="/share-my-storage">
                     <i class="el-icon-share"></i>
                     <span slot="title">Share My Storage</span>
                 </el-menu-item>
@@ -60,19 +64,18 @@
 </template>
 
 <script>
-    import {stepReady} from "../utils/guide"
-    export default {
-        data() {
-            return {
-            }
-        },
-        created: function () {
-            this.$router.push({ path: '/folders'});
-        },
-        mounted: function (){
-            stepReady('My Folder')
-            stepReady('Upload')
-            stepReady('download-history')
-        }
-    }
+import { stepReady } from "../utils/guide";
+export default {
+  data() {
+    return {};
+  },
+  created: function() {
+    this.$router.push({ path: "/folders" });
+  },
+  mounted: function() {
+    stepReady("My Folder");
+    stepReady("Upload");
+    stepReady("download-history");
+  }
+};
 </script>

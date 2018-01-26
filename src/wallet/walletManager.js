@@ -1,4 +1,4 @@
-import {web3, chainId, utils, GNXAddr} from './web3Util'
+import { web3, chainId, utils, GNXAddr } from './web3Util'
 import * as gnx from './gnxSmart'
 const fs = require('fs')
 const path = require('path')
@@ -15,7 +15,7 @@ const GXN_RATE = 10 ** 9
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
-if (!fs.existsSync(dbFolder)){
+if (!fs.existsSync(dbFolder)) {
     fs.mkdirSync(dbFolder)
     isFirstTime = true
 }
@@ -32,10 +32,10 @@ function generateWalletName() {
         names.add(e.name)
     })
     var i = 0
-    while(true) {
-        i ++
+    while (true) {
+        i++
         var tmpname = `Account ${i}`
-        if(!names.has(tmpname)) {
+        if (!names.has(tmpname)) {
             return tmpname
         }
     }
@@ -52,19 +52,19 @@ function loadWallet() {
     return new Promise((resolve, reject) => {
         const wallets = db.get('wallet').cloneDeep().sortBy(item => -item.created).value()
         let count = wallets.length
-        if(count === 0) {
+        if (count === 0) {
             resolve([])
         } else {
             wallets.forEach(w => {
                 keytar.getPassword(KEYCHAIN_WALLET, w.address).then(v3str => {
-                    count --
+                    count--
                     w.v3 = JSON.parse(v3str)
                     w.address = w.v3.address
                     w.rawWallet = null
-                    if(count === 0) {
+                    if (count === 0) {
                         resolve(wallets)
                     }
-                }).catch( e => reject(e) )
+                }).catch(e => reject(e))
             })
         }
     })
@@ -72,7 +72,7 @@ function loadWallet() {
 
 function loadFirstWallet() {
     const wallets = db.get('wallet').cloneDeep().sortBy(item => item.created).value()
-    if(wallets && wallets[0]) {
+    if (wallets && wallets[0]) {
         return wallets[0]
     } else {
         return null
@@ -84,13 +84,13 @@ function loadRawWallet(address, password) {
         keytar.getPassword(KEYCHAIN_WALLET, address).then(v3str => {
             const w = Wallet.fromV3(v3str, password)
             resolve(w)
-        }).catch( e => reject(e) )
+        }).catch(e => reject(e))
     })
 }
 
 async function validateWalletPassword(address, password) {
     return new Promise((resolve, reject) => {
-        const w = loadRawWallet(address, password).then(()=>{
+        const w = loadRawWallet(address, password).then(() => {
             resolve(true)
         }).catch(e => {
             reject('incorrect password')
@@ -108,8 +108,8 @@ function saveWallet(wa, name, pass) {
         const address = v3.address
 
         const found = db.get('wallet').find({ address: address }).value()
-        if(found) {
-            reject({message: `address ${address} already exists. Please delete it first.`})
+        if (found) {
+            reject({ message: `address ${address} already exists. Please delete it first.` })
             return
         }
         keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
@@ -129,8 +129,8 @@ function updateWalletPassword(wa, newPass) {
         const address = v3.address
 
         const found = db.get('wallet').find({ address: address }).value()
-        if(!found) {
-            reject({message: `address ${address} not found`})
+        if (!found) {
+            reject({ message: `address ${address} not found` })
             return
         }
         keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
@@ -140,7 +140,7 @@ function updateWalletPassword(wa, newPass) {
 }
 
 async function importFromV3Json(json, password, name) {
-    if(!name) {
+    if (!name) {
         name = generateWalletName()
     }
     const jsonv3 = JSON.parse(json)
@@ -181,23 +181,23 @@ function initRawWallet(v3, pass) {
 
 async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
     const myWallet = db.get('wallet').find({ address: myAddr }).value()
-    if(myWallet) {
+    if (myWallet) {
         const rawWallet = await loadRawWallet(myAddr, password)
         const prikBuf = rawWallet.getPrivateKey()
         const nonceval = await web3.eth.getTransactionCount(myAddr)
 
         if (web3.currentProvider.connected !== true) {
-            throw('web3 not ready')
+            throw ('web3 not ready')
         } else {
             console.log('ready')
         }
 
-        const weiAmount = utils.toWei(amount,'ether') // TODO: Please pass numbers as strings or BigNumber objects to avoid precision errors 
+        const weiAmount = utils.toWei(amount, 'ether') // TODO: Please pass numbers as strings or BigNumber objects to avoid precision errors 
         // 1. make transaction data
         let txOptions = {
             gasPrice: web3.utils.toHex(parseInt(gas)),
             gasLimit: web3.utils.toHex(gasLimit),
-            value: web3.utils.toHex(weiAmount), 
+            value: web3.utils.toHex(weiAmount),
             nonce: web3.utils.toHex(nonceval),
             from: myAddr,
             to: receiveAddr,
@@ -213,19 +213,19 @@ async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasL
         return rawTrans
 
     } else {
-        throw('wallet not found')
+        throw ('wallet not found')
     }
 }
 
 async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
     const myWallet = db.get('wallet').find({ address: myAddr }).value()
-    if(myWallet) {
+    if (myWallet) {
         const rawWallet = await loadRawWallet(myAddr, password)
         const prikBuf = rawWallet.getPrivateKey()
         const nonceval = await web3.eth.getTransactionCount(myAddr)
 
         if (web3.currentProvider.connected !== true) {
-            throw('web3 not ready')
+            throw ('web3 not ready')
         } else {
             console.log('ready')
         }
@@ -234,7 +234,7 @@ async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, g
         let txOptions = {
             gasPrice: web3.utils.toHex(parseInt(gas)),
             gasLimit: web3.utils.toHex(gasLimit),
-            value: 0, 
+            value: 0,
             nonce: web3.utils.toHex(nonceval),
             from: myAddr,
             to: GNXAddr,
@@ -250,11 +250,11 @@ async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, g
         return rawTrans
 
     } else {
-        throw('wallet not found')
+        throw ('wallet not found')
     }
 }
 
-export default{
+export default {
     loadWallet,
     importFromV3Json,
     importFromMnemonic,
@@ -267,4 +267,3 @@ export default{
     exportV3Json,
     loadFirstWallet
 }
-  
