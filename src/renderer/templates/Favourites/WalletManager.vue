@@ -115,15 +115,20 @@
   overflow: hidden;
 }
 
-.wallet .card .info div > * {
-  margin-right: 20px;
+.wallet .card .info > div > div {
   float: left;
   width: auto;
+  max-width: calc(100% - 30px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.wallet .card .info div i {
+.wallet .card .info > div > i {
   display: none;
   cursor: pointer;
+  float: left;
+  line-height: inherit;
+  margin-left: 10px;
 }
 
 .wallet .card .info div:hover i {
@@ -168,29 +173,27 @@
             <img class="large-qrcode" :src="largeQRCode">
         </el-dialog>
 
-        <el-dialog :visible.sync="changePass.show" width="500" :close-on-click-modal="true">
+        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="500" :close-on-click-modal="true" center>
             <el-form ref="changePassFormRef" :model="changePass" :rules="ruleInline">
                 <div>
-                    <el-form-item label="Wallet Password" prop="password">
-                        <el-input type="password" v-model="changePass.password" placeholder="Wallet Password">
+                    <el-form-item prop="password">
+                        <el-input type="password" v-model="changePass.password" placeholder="Wallet Password" size="small">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="New Password" prop="newPassword">
-                        <el-input type="password" v-model="changePass.newPassword" placeholder="New Password">
+                    <el-form-item prop="newPassword">
+                        <el-input type="password" v-model="changePass.newPassword" placeholder="New Password" size="small">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="New Password Again" prop="newPasswordRepeat">
-                        <el-input type="password" v-model="changePass.newPasswordRepeat" placeholder="New Password Again">
+                    <el-form-item prop="newPasswordRepeat">
+                        <el-input type="password" v-model="changePass.newPasswordRepeat" placeholder="New Password Again" size="small">
                         </el-input>
                     </el-form-item>
-                    <div>
-                        <el-form-item>
-                            <el-button @click="submitChangePassword()" class="" type="primary" :loading="false">Submit</el-button>
-                            <el-button @click="resetPasswordForm()" class="" type="primary" :loading="false">Cancel</el-button>
-                        </el-form-item>
-                    </div>
                 </div>
             </el-form>
+            <div slot="footer">
+                <el-button @click="resetPasswordForm()" :loading="false">Cancel</el-button>
+                <el-button @click="submitChangePassword()" type="primary" :loading="false">Submit</el-button>
+            </div>
         </el-dialog>
 
         <div class="top-bar">
@@ -213,9 +216,12 @@
                             <div>
                                 <el-input size="small" v-model="item.name" @blur="saveName(index)" v-if="editNameIndex === index"></el-input>
                                 <div v-else>{{ item.name }}</div>
-                                <i class="material-icons" @click="editNameIndex = index" v-if="editNameIndex !== index">content_copy</i>
+                                <i class="material-icons" @click="editNameIndex = index" v-if="editNameIndex !== index">edit</i>
                             </div>
-                            <div>{{item.address}}</div>
+                            <div>
+                                <div :title="item.address">{{item.address}}</div>
+                                <i class="material-icons" @click="copy(item.address)">content_copy</i>
+                            </div>
                         </div>
                     </div>
                     <div class="actions">
@@ -246,6 +252,7 @@
 import { getGasPrics, getGasLimit, getBalanceEth, getBalanceGnx } from "../../../wallet/transactionManager";
 import walletManager from "../../../wallet/walletManager";
 import { utils } from "../../../wallet/web3Util";
+import { clipboard } from "electron";
 const { dialog } = require("electron").remote;
 const fs = require("fs");
 
@@ -395,6 +402,9 @@ export default {
                     console.log(e);
                     this2.$message.error(e.message);
                 });
+        },
+        copy(value) {
+            clipboard.writeText(value);
         },
         exportWalletV3: async function (item) {
             const this2 = this;
