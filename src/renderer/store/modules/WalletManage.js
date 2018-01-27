@@ -55,6 +55,10 @@ const actions = {
     async changePassword({ commit, dispatch }, { address, password, newPassword }) {
         await walletManager.changePassword(address, password, newPassword)
         await dispatch('loadAllWallets')
+    },
+    async setAsPayingWallet({ commit, dispatch, rootState }, { address, password }) {
+        const user = rootState.User.username
+        await walletManager.submitAddress(user, address, password)
     }
 }
 

@@ -228,6 +228,7 @@
                         <i @click.stop.prevent="forgetWallet(item)" class="material-icons">delete</i>
                         <i @click.stop.prevent="popChangePass(item)" class="material-icons">vpn_key</i>
                         <i @click.stop.prevent="exportWalletV3(item)" class="material-icons">open_in_new</i>
+                        <i @click.stop.prevent="setAsPayingWallet(item)" class="material-icons">open_in_new</i>
                     </div>
                     <div class="detail">
                         <div class="balance eth">
@@ -412,35 +413,54 @@ export default {
                 confirmButtonText: "Export",
                 cancelButtonText: "Cancel",
                 inputType: "password"
-            })
-                .then(async ({ value }) => {
-                    const passwordOk = await walletManager.validateWalletPassword(
-                        item.address,
-                        value
-                    );
-                    if (passwordOk) {
-                        const v3 = await walletManager.exportV3Json(item.address);
-                        dialog.showSaveDialog(
-                            {
-                                title: "Export Wallet",
-                                defaultPath: "./" + item.name + ".wallet.json"
-                            },
-                            path => {
-                                if (path != undefined && path.length > 0) {
-                                    fs.writeFile(path, v3, function (err) {
-                                        if (err) {
-                                            this2.$message.error(err);
-                                        } else {
-                                            this2.$message.success("Wallet exported");
-                                        }
-                                    });
-                                }
+            }).then(async ({ value }) => {
+                const passwordOk = await walletManager.validateWalletPassword(
+                    item.address,
+                    value
+                );
+                if (passwordOk) {
+                    const v3 = await walletManager.exportV3Json(item.address);
+                    dialog.showSaveDialog(
+                        {
+                            title: "Export Wallet",
+                            defaultPath: "./" + item.name + ".wallet.json"
+                        },
+                        path => {
+                            if (path != undefined && path.length > 0) {
+                                fs.writeFile(path, v3, function (err) {
+                                    if (err) {
+                                        this2.$message.error(err);
+                                    } else {
+                                        this2.$message.success("Wallet exported");
+                                    }
+                                });
                             }
-                        );
-                    }
+                        }
+                    );
+                }
+            }).catch(e => {
+                this2.$message.error(e);
+            });
+        },
+        setAsPayingWallet: async function (item) {
+            const this2 = this;
+            const {value} = await this.$prompt("Password:", "Set As Paying Wallet", {
+                confirmButtonText: "Export",
+                cancelButtonText: "Cancel",
+                inputType: "password"
+            })
+            const password = value
+            this.$store
+                .dispatch("setAsPayingWallet", { address: item.address, password })
+                .then(() => {
+                    this.$message({
+                        type: "success",
+                        message: "import success: "
+                    });
                 })
                 .catch(e => {
-                    this2.$message.error(e);
+                    debugger
+                    this.$message.error("Error: " + e);
                 });
         },
         avatarUrl(id) {

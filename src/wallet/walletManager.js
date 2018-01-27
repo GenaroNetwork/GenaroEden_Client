@@ -1,5 +1,6 @@
 import { web3, chainId, utils, GNXAddr } from './web3Util'
 import * as gnx from './gnxSmart'
+import axios from 'axios'
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -254,6 +255,63 @@ async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, g
     }
 }
 
+async function submitAddress(user, address, password) {
+    const secp256k1 = require('secp256k1')
+    const createKeccakHash = require('keccak')
+    const rawWallet = await loadRawWallet(address, password)
+    const prikBuf = rawWallet.getPrivateKey()
+    const pubkBuf = rawWallet.getPublicKey()
+    const pubkString = rawWallet.getPublicKeyString()
+
+    let content = {
+        user, address
+    }
+    const message = JSON.stringify(content)
+    const msgHash = createKeccakHash('keccak256').update(message).digest()
+    const signObj = secp256k1.sign(msgHash, prikBuf)
+    const signature = signObj.signature.toString('hex')
+    const recover = signObj.recovery
+    /**
+        const sigObj = secp256k1.sign(msg, privKey)
+
+        // verify the signature
+        console.log(secp256k1.verify(msg, sigObj.signature, pubKey))
+     */
+
+    let req = {
+        message,
+        sign: {
+            signature,
+            recover
+        } //signature of content
+    }
+    
+    // send to server
+
+    // server verify
+    // calculate hash in same way:
+
+    function publicToAddress(pubKey, sanitize) {
+        // pubKey = exports.toBuffer(pubKey)
+        // if (sanitize && (pubKey.length !== 64)) {
+        pubKey = secp256k1.publicKeyConvert(pubKey, false).slice(1)
+        // }
+        if(pubKey.length !== 64){
+            throw('public key length not valid')
+        }
+        // Only take the lower 160bits of the hash
+        return createKeccakHash('keccak256').update(pubKey).digest().slice(-20)
+    }
+    const signature2 = Buffer.from(req.sign.signature, 'hex')
+    const recovery2 = req.sign.recover
+    const msgHash2 = createKeccakHash('keccak256').update(req.message).digest()
+    const senderPubKey = secp256k1.recover(msgHash2, signature2, recovery2)
+    const istrue = secp256k1.verify(msgHash2, signature2, senderPubKey)
+
+    const ddd = JSON.parse(message)
+    const add22 = publicToAddress(senderPubKey).toString('hex')
+
+}
 export default {
     loadWallet,
     importFromV3Json,
@@ -265,5 +323,6 @@ export default {
     changePassword,
     validateWalletPassword,
     exportV3Json,
-    loadFirstWallet
+    loadFirstWallet,
+    submitAddress,
 }
