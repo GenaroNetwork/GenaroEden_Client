@@ -6,6 +6,7 @@
 const bridgeApiUrl = 'http://47.100.33.60:8080'
 const passwordResetRedirect = 'https://genaro.network/en/password-reset-success'
 const registerRedirect = 'https://genaro.network/en/register-success'
+const paymentUrl = 'http://127.0.0.1:3000'
 
 const TASKSTATE = Object.freeze({
   INIT: 1,
@@ -24,6 +25,7 @@ const TASKTYPE = Object.freeze({
 
 export default {
   bridgeApiUrl,
+  paymentUrl,
   passwordResetRedirect,
   registerRedirect,
   TASKSTATE,

@@ -1,6 +1,7 @@
 import { web3, chainId, utils, GNXAddr } from './web3Util'
 import * as gnx from './gnxSmart'
 import axios from 'axios'
+import config from '../config'
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -287,29 +288,12 @@ async function submitAddress(user, address, password) {
     }
     
     // send to server
-
+    const url = config.paymentUrl + '/payments'
+    axios.defaults.adapter = require('axios/lib/adapters/http')
+    const result = await axios.post(url, req)
     // server verify
     // calculate hash in same way:
-
-    function publicToAddress(pubKey, sanitize) {
-        // pubKey = exports.toBuffer(pubKey)
-        // if (sanitize && (pubKey.length !== 64)) {
-        pubKey = secp256k1.publicKeyConvert(pubKey, false).slice(1)
-        // }
-        if(pubKey.length !== 64){
-            throw('public key length not valid')
-        }
-        // Only take the lower 160bits of the hash
-        return createKeccakHash('keccak256').update(pubKey).digest().slice(-20)
-    }
-    const signature2 = Buffer.from(req.sign.signature, 'hex')
-    const recovery2 = req.sign.recover
-    const msgHash2 = createKeccakHash('keccak256').update(req.message).digest()
-    const senderPubKey = secp256k1.recover(msgHash2, signature2, recovery2)
-    const istrue = secp256k1.verify(msgHash2, signature2, senderPubKey)
-
-    const ddd = JSON.parse(message)
-    const add22 = publicToAddress(senderPubKey).toString('hex')
+    console.log(result)
 
 }
 export default {
