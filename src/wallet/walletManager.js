@@ -295,8 +295,8 @@ async function submitAddress(user, address, password) {
         } //signature of content
     }
 
-    // send to server
-    const url = config.paymentUrl + '/payments'
+    // send to server http://47.100.33.60:8080/users/simon@tedxsuzhou.com/payment
+    const url = config.bridgeApiUrl + `/users/${user}/payment`
     axios.defaults.adapter = require('axios/lib/adapters/http')
     const result = await axios.post(url, req)
     // server verify
