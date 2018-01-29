@@ -24,23 +24,11 @@
   flex-shrink: 0;
 }
 
-.qr {
-  width: 64px;
-  height: 64px;
-}
-.actions {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.actions a {
-  cursor: pointer;
-}
-
 /* wallets style */
 .wallet-list {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-content: flex-start;
   align-items: flex-start;
   justify-content: flex-start;
@@ -57,7 +45,7 @@
   overflow: visible;
 }
 
-.wallet.import-wallet {
+.wallet .import-wallet {
   cursor: pointer;
   border-radius: 5px;
   border: 2px dashed rgb(117, 117, 117);
@@ -67,7 +55,7 @@
   color: rgb(126, 126, 126);
 }
 
-.wallet.import-wallet i {
+.wallet .import-wallet i {
   margin-right: 30px;
   vertical-align: middle;
 }
@@ -118,7 +106,7 @@
 .wallet .card .info > div > div {
   float: left;
   width: auto;
-  max-width: calc(100% - 30px);
+  max-width: calc(100% - 40px);
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -149,7 +137,21 @@
 }
 
 .wallet .card .detail .balance {
+  width: 30%;
   float: left;
+  white-space: nowrap;
+}
+.wallet .card .detail .balance img {
+  float: left;
+  display: block;
+  height: 50px;
+  margin: 20px;
+  width: auto;
+}
+.wallet .card .detail .balance div {
+  line-height: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .wallet .card .detail .qr {
@@ -164,41 +166,101 @@
   display: block;
   margin: 0 auto;
 }
+
+/* import wallet style */
+.choose-file {
+  height: 125px;
+  background: rgb(249, 249, 249);
+  border: 1px dashed rgb(202, 202, 202);
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.choose-file,
+.choose-file + * {
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.choose-file i {
+  font-size: 40px;
+  vertical-align: middle;
+  line-height: 80px;
+}
+.choose-file div {
+  line-height: 30px;
+}
+
+.import-success i {
+  color: rgb(122, 186, 58);
+  display: block;
+  margin: 0 auto;
+  line-height: 100px;
+  font-size: 100px;
+  text-align: center;
+}
 </style>
 <template>
 
     <div class="fullheight v-flex">
 
+        <!-- large QRCode dialog -->
         <el-dialog title="QR Code" @close="largeQRCode=null" :visible="largeQRCode!==null" center width="200px">
             <img class="large-qrcode" :src="largeQRCode">
         </el-dialog>
 
-        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="500" :close-on-click-modal="true" center>
+        <!-- reset Password dialog -->
+        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center>
             <el-form ref="changePassFormRef" :model="changePass" :rules="ruleInline">
-                <div>
-                    <el-form-item prop="password">
-                        <el-input type="password" v-model="changePass.password" placeholder="Wallet Password" size="small">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item prop="newPassword">
-                        <el-input type="password" v-model="changePass.newPassword" placeholder="New Password" size="small">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item prop="newPasswordRepeat">
-                        <el-input type="password" v-model="changePass.newPasswordRepeat" placeholder="New Password Again" size="small">
-                        </el-input>
-                    </el-form-item>
-                </div>
+                <el-form-item prop="password">
+                    <el-input type="password" v-model="changePass.password" placeholder="Wallet Password" size="small">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="newPassword">
+                    <el-input type="password" v-model="changePass.newPassword" placeholder="New Password" size="small">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="newPasswordRepeat">
+                    <el-input type="password" v-model="changePass.newPasswordRepeat" placeholder="New Password Again" size="small">
+                    </el-input>
+                </el-form-item>
             </el-form>
             <div slot="footer">
                 <el-button @click="resetPasswordForm()" :loading="false">Cancel</el-button>
-                <el-button @click="submitChangePassword()" type="primary" :loading="false">Submit</el-button>
+                <el-button @click="submitChangePassword()" type="primary">Submit</el-button>
             </div>
+        </el-dialog>
+
+        <!-- import wallet dialog -->
+        <el-dialog title="Import Wallet" :visible.sync="importV3WalletDialog.shown" width="590px" center>
+            <template v-if="importV3WalletDialog.step === 0">
+                <div class="choose-file" @click="importV3Wallet().selectFile($event)">
+                    <i class="material-icons">add</i>
+                    <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0].fileName : "Upload JSON File" }}</div>
+                </div>
+                <el-input type="text" v-model="importV3WalletDialog.password" placeholder="please input the password of wallet file." size="small"></el-input>
+                <div slot="footer">
+                    <el-button @click="importV3Wallet().cancel($event)">Cancel</el-button>
+                    <el-button @click="importV3Wallet().submit($event)" type="primary">Submit</el-button>
+                </div>
+            </template>
+            <template v-else>
+                <div class="import-success">
+                    <i class="material-icons">check_circle</i>
+                </div>
+                <div slot="footer">
+                    <el-button @click="importV3Wallet().cancel($event)" type="primary">done</el-button>
+                </div>
+            </template>
         </el-dialog>
 
         <div class="top-bar">
             <h2>Wallet Manage</h2>
-            <el-button type="primary" @click="importV3Wallet" size="small">Import Json
+            <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">Import Json
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
             <!-- 
@@ -214,7 +276,7 @@
                         <img class="avatar" :src="avatarUrl(item.address)">
                         <div class="info">
                             <div>
-                                <el-input size="small" v-model="item.name" @blur="saveName(index)" v-if="editNameIndex === index"></el-input>
+                                <el-input size="small" :value="item.name" @blur="saveName(index, $event)" v-if="editNameIndex === index"></el-input>
                                 <div v-else>{{ item.name }}</div>
                                 <i class="material-icons" @click="editNameIndex = index" v-if="editNameIndex !== index">edit</i>
                             </div>
@@ -228,21 +290,26 @@
                         <i @click.stop.prevent="forgetWallet(item)" class="material-icons">delete</i>
                         <i @click.stop.prevent="popChangePass(item)" class="material-icons">vpn_key</i>
                         <i @click.stop.prevent="exportWalletV3(item)" class="material-icons">open_in_new</i>
-                        <i @click.stop.prevent="setAsPayingWallet(item)" class="material-icons">open_in_new</i>
+                        <i @click.stop.prevent="setAsPayingWallet(item)" class="material-icons">account_balance_wallet</i>
                     </div>
                     <div class="detail">
                         <div class="balance eth">
-                            <img src="">
-                            <div class="h1"> {{ balanceEth(item.address) | wei2eth}} </div>
-                            <div class="p"> {{ balanceEth(item.address) | wei2gnx}} </div>
+                            <img src="../../../static/eth_colorful.svg">
+                            <div class="h1" :title="balanceEth(item.address) | wei2eth"> {{ balanceEth(item.address) | wei2eth }} </div>
+                        </div>
+                        <div class="balance gnx">
+                            <img src="../../../static/gnx_colorful.svg">
+                            <div class="h1" :title="balanceGnx(item.address) | wei2gnx "> {{ balanceGnx(item.address) | wei2gnx }} </div>
                         </div>
                         <!-- large QRCODE -->
                         <img class="qr" :src="qrUrl(item.address)" @click="largeQRCode=qrUrl(item.address)">
                     </div>
                 </div>
             </div>
-            <div class="wallet import-wallet" @click.stop.prevent="importV3Wallet">
-                <i class="material-icons">add</i>import wallet
+            <div class="wallet" @click.stop.prevent="importV3WalletDialog.shown=true">
+                <div class="import-wallet">
+                    <i class="material-icons">add</i>import wallet
+                </div>
             </div>
         </div>
 
@@ -276,6 +343,12 @@ export default {
                 password: "",
                 newPassword: "",
                 newPasswordRepeat: ""
+            },
+            importV3WalletDialog: {
+                shown: false,
+                step: 0,
+                password: null,
+                files: null,
             },
             ruleInline: {
                 password: [
@@ -333,29 +406,27 @@ export default {
     methods: {
         restore() { },
         importV3Wallet() {
-            let this2 = this;
-            const { dialog } = require("electron").remote;
-            const files = dialog.showOpenDialog({ properties: ["openFile"] });
-
-            if (files && files.length > 0) {
-                const filePath = files[0];
-                this.$prompt("Password:", "Import Wallet", {
-                    confirmButtonText: "OK",
-                    cancelButtonText: "Cancel",
-                    inputType: "password"
-                }).then(({ value }) => {
-                    this.$store
-                        .dispatch("importV3Wallet", { filePath, password: value })
-                        .then(() => {
-                            this.$message({
-                                type: "success",
-                                message: "import success: "
+            return {
+                selectFile: () => {
+                    this.importV3WalletDialog.files = dialog.showOpenDialog({ properties: ["openFile"] });
+                },
+                submit: () => {
+                    if (this.importV3WalletDialog.files && this.importV3WalletDialog.files > 0) {
+                        const filePath = files[0];
+                        this.$store
+                            .dispatch("importV3Wallet", { filePath, password: this.importV3WalletDialog.password })
+                            .then(() => {
+                                this.importV3WalletDialog.step = 1;
+                            })
+                            .catch(e => {
+                                this.$message.error("Error: " + e);
                             });
-                        })
-                        .catch(e => {
-                            this.$message.error("Error: " + e);
-                        });
-                });
+                    }
+                },
+                cancel: () => {
+                    this.importV3WalletDialog.password = null;
+                    this.importV3WalletDialog.shown = false;
+                }
             }
         },
         forgetWallet(item) {
@@ -373,8 +444,12 @@ export default {
                     });
             });
         },
-        saveName(index) {
+        saveName(index, event) {
             this.editNameIndex = -1;
+            this.$store.dispatch("updateWalletName", {
+                address: this.wallets[index].address,
+                name: event.target.value,
+            });
         },
         popChangePass(item) {
             this.changePass.show = true;
@@ -444,7 +519,7 @@ export default {
         },
         setAsPayingWallet: async function (item) {
             const this2 = this;
-            const {value} = await this.$prompt("Password:", "Set As Paying Wallet", {
+            const { value } = await this.$prompt("Password:", "Set As Paying Wallet", {
                 confirmButtonText: "Export",
                 cancelButtonText: "Cancel",
                 inputType: "password"

@@ -14,8 +14,11 @@ const getters = {
 }
 
 const mutations = {
-    updateWallet(state, wallet) {
-
+    updateWalletName(state, { address, name }) {
+        let newWallets = state.wallets.forEach(oldWallet => {
+            if (oldWallet.address !== address) return true;
+            oldWallet.name = name;
+        });
     },
     setWallets(state, wallets) {
         state.wallets = wallets
@@ -59,7 +62,11 @@ const actions = {
     async setAsPayingWallet({ commit, dispatch, rootState }, { address, password }) {
         const user = rootState.User.username
         await walletManager.submitAddress(user, address, password)
-    }
+    },
+    async updateWalletName({ commit }, { address, name }) {
+        await walletManager.updateWalletName({ address, name });
+        commit("updateWalletName", { address, name });
+    },
 }
 
 export default {

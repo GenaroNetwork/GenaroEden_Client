@@ -50,6 +50,14 @@ function generateWalletName() {
     source: 'imported' // derieved
   }
 */
+async function updateWalletName({ address, name }) {
+    db.get("wallet")
+        .find({ address })
+        .assign({ name })
+        .write();
+
+}
+
 function loadWallet() {
     return new Promise((resolve, reject) => {
         const wallets = db.get('wallet').cloneDeep().sortBy(item => -item.created).value()
@@ -286,7 +294,7 @@ async function submitAddress(user, address, password) {
             recover
         } //signature of content
     }
-    
+
     // send to server
     const url = config.paymentUrl + '/payments'
     axios.defaults.adapter = require('axios/lib/adapters/http')
@@ -309,4 +317,5 @@ export default {
     exportV3Json,
     loadFirstWallet,
     submitAddress,
+    updateWalletName,
 }

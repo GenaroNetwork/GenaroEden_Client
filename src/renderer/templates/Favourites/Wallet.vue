@@ -1,4 +1,9 @@
 <style scoped>
+/* common-style */
+.common-link {
+  cursor: pointer;
+}
+
 /* popup style */
 .el-select {
   width: 115px;
@@ -304,7 +309,7 @@
                     <span :title="balanceGnx">{{balanceGnx | wei2gnx}}</span>
                     <span class="unit"> GNX</span>
                 </div>
-                <div>≈${{ dollarGnx }}</div>
+                <!-- <div>≈${{ dollarGnx }}</div> -->
             </div>
             <div class="blank"></div>
             <div class="balance eth">
@@ -312,7 +317,7 @@
                     <span :title="balanceEth">{{balanceEth | wei2eth}}</span>
                     <span class="unit"> ETH</span>
                 </div>
-                <div>≈${{ dollarEth }}</div>
+                <!-- <div>≈${{ dollarEth }}</div> -->
             </div>
             <div class="blank"></div>
             <div class="account">
@@ -339,12 +344,26 @@
             <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row">
                 <el-table-column prop="state" label="" width="60">
                     <template slot-scope="scope">
-                        <i class="material-icons state-icon" :state="scope.row.state">
-                            {{ scope.row.state === 1 || scope.row.state === 2 ? "remove_circle_outline" : ""}} {{ scope.row.state === 3 ? "error_outline" : ""}} {{ scope.row.state === 4 ? "add_circle_outline" : ""}}
+                        <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === taskstate.INIT || scope.row.state === taskstate.INPROGRESS">
+                            remove_circle_outline
                         </i>
+                        <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === taskstate.ERROR">
+                            error_outline
+                        </i>
+                        <i class="material-icons state-icon" :state="scope.row.state" v-else>
+                            add_circle_outline
+                        </i>
+                        <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === taskstate.ERROR">
+                            refresh
+                        </i>
+
                     </template>
                 </el-table-column>
-                <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true">
+                    <template slot-scope="scope">
+                        <span class="common-link" @click="hashCheck(scope.row.hash)">{{ scope.row.hash }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="receipt.blockNumber" label="Block" width="80"></el-table-column>
                 <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
                 <el-table-column prop="from" label="From" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
@@ -358,8 +377,9 @@
 
 <script>
 import { getGasPrics, getGasLimit } from "../../../wallet/transactionManager";
-import { utils } from "../../../wallet/web3Util";
-import { clipboard } from "electron";
+import { utils, EtherscanURL, web3 } from "../../../wallet/web3Util";
+import { clipboard, shell } from "electron";
+import config from "../../../config.js";
 
 const GNX_LIMIT = 120000;
 const GNX_SUGGEST = 150000;
@@ -367,16 +387,20 @@ const ETH_LIMIT = 21000;
 const ETH_SUGGEST = 21000;
 
 export default {
-    created: function () {
+    created() {
         this.$store.dispatch("loadTransactions");
         const address = this.$route.params.walletAddress;
         this.$store.dispatch("initWallet");
     },
-    mounted: function () {
+    mounted() {
         // init balance
         this.calculateGas();
+        web3.eth.subscribe("newBlockHeaders", this.calculateGas);
     },
-    data: function () {
+    beforeDestroyed() {
+        web3.eth.clearSubscriptions();
+    },
+    data() {
         var validator = {
             recipient: (rule, value, callback) => {
                 if (!/^0x[a-zA-Z0-9]{40}$/.test(value)) {
@@ -430,7 +454,6 @@ export default {
                 }
             }
         };
-
         return {
             payFormPop: false,
             depositPop: false,
@@ -442,6 +465,7 @@ export default {
                 gasLimit: 0,
                 password: ""
             },
+            taskstate: config.TASKSTATE,
             defaultGas: {
                 price: 0,
                 limit: 0
@@ -521,6 +545,18 @@ export default {
             } catch (e) {
                 this.$message.error("create transaction error: " + e);
             }
+        },
+        refreshStatus(row) {
+            this.$store.commit("updateSingleTransaction", {
+                transactionId: row.transactionId,
+                state: config.TASKSTATE.INPROGRESS,
+            });
+            this.$store.dispatch("updateSingleTransactionOnline", {
+                transactionId: row.transactionId,
+            });
+        },
+        hashCheck(hash) {
+            shell.openExternal(EtherscanURL + hash);
         },
         calculateGas: async function () {
             this.defaultGas.price = await getGasPrics();

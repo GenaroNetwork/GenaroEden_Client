@@ -1,4 +1,4 @@
-import {web3, chainId} from './web3Util'
+import { web3, chainId } from './web3Util'
 import * as gnx from './gnxSmart'
 const fs = require('fs')
 const path = require('path')
@@ -10,7 +10,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
-if (!fs.existsSync(dbFolder)){
+if (!fs.existsSync(dbFolder)) {
     fs.mkdirSync(dbFolder)
     isFirstTime = true
 }
@@ -38,11 +38,11 @@ function addTransaction(data) {
 }
 
 function updateTransaction(transactionId, props) {
-    db.get('transaction').find({transactionId}).assign(props).write()
-    return clone(db.get('transaction').find({transactionId}).value())
+    db.get('transaction').find({ transactionId }).assign(props).write()
+    return clone(db.get('transaction').find({ transactionId }).value())
 }
 
-function removeTransaction(id) {}
+function removeTransaction(id) { }
 
 
 function getBalanceEth(address) {
@@ -54,8 +54,8 @@ function getBalanceGnx(address) {
 }
 
 let GasPrice = 40
-function _getPrice(){
-    web3.eth.getGasPrice().then((p)=>{
+function _getPrice() {
+    web3.eth.getGasPrice().then((p) => {
         GasPrice = p
     })
 }
@@ -87,20 +87,20 @@ function sendTransaction(payOption, rawTx, txUpdateCb) {
     // good: hash => confirmation => receipt got => receipt mined
     // bad: error
     // bad2: hash => error
-    web3.eth.sendSignedTransaction(rawTx).once('transactionHash', function(hash){ 
-        console.log('1 hash: '+hash)
+    web3.eth.sendSignedTransaction(rawTx).once('transactionHash', function (hash) {
+        console.log('1 hash: ' + hash)
         //var receipt = web3.eth.getTransactionReceipt(hash).then(console.log)
-        const tx = updateTransaction(txHistory.transactionId, {hash, state: TXSTATE.INPROGRESS})
+        const tx = updateTransaction(txHistory.transactionId, { hash, state: TXSTATE.INPROGRESS })
         txUpdateCb(tx)
-    }).on('error', function(error){ 
-        console.log('5 error: '+error)
-        const tx = updateTransaction(txHistory.transactionId, {error, state: TXSTATE.ERROR})
+    }).on('error', function (error) {
+        console.log('5 error: ' + error)
+        const tx = updateTransaction(txHistory.transactionId, { error, state: TXSTATE.ERROR })
         txUpdateCb(tx)
-    }).then(function(receipt){
+    }).then(function (receipt) {
         // will be fired once the receipt its mined
         console.log('6 receipt mined: ')
         console.log(receipt)
-        const tx = updateTransaction(txHistory.transactionId, {receipt, state: TXSTATE.SUCCESS})
+        const tx = updateTransaction(txHistory.transactionId, { receipt, state: TXSTATE.SUCCESS })
         txUpdateCb(tx)
     })
 }
@@ -111,5 +111,6 @@ export {
     getGasPrics,
     sendTransaction,
     getTransactions,
-    addTransaction
+    addTransaction,
+    updateTransaction,
 }
