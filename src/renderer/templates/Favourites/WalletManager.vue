@@ -352,13 +352,7 @@ export default {
             },
             ruleInline: {
                 password: [
-                    { required: true, message: "Please input password", trigger: "blur" },
-                    {
-                        type: "string",
-                        min: 6,
-                        message: "Password length must not be less than 6 bits",
-                        trigger: "blur"
-                    }
+                    { required: true, message: "Please input password", trigger: "blur" }
                 ],
                 newPassword: [
                     { required: true, message: "Please input password", trigger: "blur" },
