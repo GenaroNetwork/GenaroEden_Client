@@ -242,7 +242,7 @@
                     <i class="material-icons">add</i>
                     <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0].fileName : "Upload JSON File" }}</div>
                 </div>
-                <el-input type="text" v-model="importV3WalletDialog.password" placeholder="please input the password of wallet file." size="small"></el-input>
+                <el-input type="password" v-model="importV3WalletDialog.password" placeholder="please input the password of wallet file." size="small"></el-input>
                 <div slot="footer">
                     <el-button @click="importV3Wallet().cancel($event)">Cancel</el-button>
                     <el-button @click="importV3Wallet().submit($event)" type="primary">Submit</el-button>
@@ -411,8 +411,8 @@ export default {
                     this.importV3WalletDialog.files = dialog.showOpenDialog({ properties: ["openFile"] });
                 },
                 submit: () => {
-                    if (this.importV3WalletDialog.files && this.importV3WalletDialog.files > 0) {
-                        const filePath = files[0];
+                    if (this.importV3WalletDialog.files && this.importV3WalletDialog.files.length > 0) {
+                        const filePath = this.importV3WalletDialog.files[0]
                         this.$store
                             .dispatch("importV3Wallet", { filePath, password: this.importV3WalletDialog.password })
                             .then(() => {
