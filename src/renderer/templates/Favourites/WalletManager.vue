@@ -455,11 +455,10 @@ export default {
                 .then(() => {
                     this.$message({
                         type: "success",
-                        message: "import success: "
+                        message: `now your payment wallet is 0x${item.address}`
                     });
                 })
                 .catch(e => {
-                    debugger
                     this.$message.error("Error: " + e);
                 });
         },

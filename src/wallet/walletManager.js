@@ -293,7 +293,12 @@ async function submitAddress(user, address, password) {
     const result = await axios.post(url, req)
     // server verify
     // calculate hash in same way:
-    console.log(result)
+    if(result && result.data && result.data.wallet === address) {
+        console.log(result)
+        return result
+    } else {
+        throw('unable to submit wallet address')
+    }
 
 }
 export default {
