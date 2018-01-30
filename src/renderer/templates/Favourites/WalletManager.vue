@@ -176,6 +176,7 @@
   text-align: center;
   box-sizing: border-box;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .choose-file,
@@ -240,7 +241,7 @@
             <template v-if="importV3WalletDialog.step === 0">
                 <div class="choose-file" @click="importV3Wallet().selectFile($event)">
                     <i class="material-icons">add</i>
-                    <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0].fileName : "Upload JSON File" }}</div>
+                    <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0] : "Upload JSON File" }}</div>
                 </div>
                 <el-input type="password" v-model="importV3WalletDialog.password" placeholder="please input the password of wallet file." size="small"></el-input>
                 <div slot="footer">
@@ -308,7 +309,7 @@
             </div>
             <div class="wallet" @click.stop.prevent="importV3WalletDialog.shown=true">
                 <div class="import-wallet">
-                    <i class="material-icons">add</i>import wallet
+                    <i class="material-icons">add</i>Import JSON
                 </div>
             </div>
         </div>
