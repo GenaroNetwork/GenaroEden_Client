@@ -318,7 +318,7 @@
             <div class="blank"></div>
             <div class="balance eth">
                 <div>
-                    <span :title="balanceEth">{{balanceEth | wei2eth}}</span>
+                    <span :title="balanceEth">{{balanceEth | wei2eth | numslice}}</span>
                     <span class="unit"> ETH</span>
                 </div>
                 <!-- <div>≈${{ dollarEth }}</div> -->

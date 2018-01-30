@@ -125,8 +125,8 @@
 
 .wallet .card .actions {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 25px;
+  right: 0;
   overflow: hidden;
 }
 
@@ -144,8 +144,8 @@
 .wallet .card .detail .balance img {
   float: left;
   display: block;
-  height: 50px;
-  margin: 20px;
+  height: 40px;
+  margin: 25px 20px;
   width: auto;
 }
 .wallet .card .detail .balance div {
@@ -288,15 +288,31 @@
                         </div>
                     </div>
                     <div class="actions">
-                        <i @click.stop.prevent="forgetWallet(item)" class="material-icons">delete</i>
-                        <i @click.stop.prevent="popChangePass(item)" class="material-icons">vpn_key</i>
-                        <i @click.stop.prevent="exportWalletV3(item)" class="material-icons">open_in_new</i>
-                        <i @click.stop.prevent="setAsPayingWallet(item)" class="material-icons">account_balance_wallet</i>
+
+                        <el-dropdown trigger="click" @command="moreActions">
+                            <span class="el-dropdown-link">
+                                <i class="material-icons">more_vert</i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item :command="{item,action:'forgetWallet'}">
+                                    Delete wallet
+                                </el-dropdown-item>
+                                <el-dropdown-item :command="{item,action:'popChangePass'}">
+                                    Change password (of wallet)
+                                </el-dropdown-item>
+                                <el-dropdown-item :command="{item,action:'exportWalletV3'}">
+                                    Export wallet as json
+                                </el-dropdown-item>
+                                <el-dropdown-item :command="{item,action:'setAsPayingWallet'}">
+                                    Set as default payment
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
                     </div>
                     <div class="detail">
                         <div class="balance eth">
                             <img src="../../../static/eth_colorful.svg">
-                            <div class="h1" :title="balanceEth(item.address) | wei2eth"> {{ balanceEth(item.address) | wei2eth }} </div>
+                            <div class="h1" :title="balanceEth(item.address) | wei2eth | numslice"> {{ balanceEth(item.address) | wei2eth | numslice}} </div>
                         </div>
                         <div class="balance gnx">
                             <img src="../../../static/gnx_colorful.svg">
@@ -399,6 +415,9 @@ export default {
         }
     },
     methods: {
+        moreActions({ action, item }) {
+            this[action](item);
+        },
         restore() { },
         importV3Wallet() {
             return {
