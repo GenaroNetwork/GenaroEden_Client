@@ -1,6 +1,6 @@
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, shell } from 'electron'
 import registerProtocals from './customProtocol'
-
+const defaultMenu = require('./appMenu');
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -14,8 +14,17 @@ const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
     : `file://${__dirname}/index.html`
 
+function addMenu() {
+    // Get template for default menu 
+    const menu = defaultMenu(app, shell);
+ 
+    // Set top-level application menu, using modified template 
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+}
+
 function createWindow() {
     registerProtocals()
+    addMenu()
     /**
      * Initial window options
      */
@@ -25,29 +34,6 @@ function createWindow() {
         width: 1200,
     })
 
-    /* set menu */
-    let menuTemplate = [
-        {
-            label: "Application",
-            submenu: [
-                { label: "Quit", accelerator: "Command+Q", click: function () { app.quit(); } }
-            ],
-        },
-        {
-            label: "Edit",
-            submenu: [
-                { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-                { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-                { type: "separator" },
-                { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-                { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-                { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-                { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" },
-            ]
-        }
-    ]
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
-
     mainWindow.loadURL(winURL)
     // mainWindow.webContents.openDevTools()
     mainWindow.on('closed', () => {
@@ -56,7 +42,7 @@ function createWindow() {
 
     mainWindow.webContents.on('new-window', function (e, url) {
         e.preventDefault();
-        require('electron').shell.openExternal(url);
+        shell.openExternal(url);
     });
 
 }

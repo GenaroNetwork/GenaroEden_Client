@@ -2,6 +2,8 @@
 /* common-style */
 .common-link {
   cursor: pointer;
+  text-decoration: none;
+  color: #3498db
 }
 
 /* popup style */
@@ -348,7 +350,7 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <el-button class="btn" v-popover:depositPop type="primary" size="small">Deposit ETH</el-button>
+                    <el-button class="btn" v-popover:depositPop type="primary" size="small">Deposit</el-button>
                     <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Transfer</el-button>
                 </div>
             </div>
@@ -377,7 +379,7 @@
                 </el-table-column>
                 <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
-                        <span class="common-link" @click="hashCheck(scope.row.hash)">{{ scope.row.hash }}</span>
+                        <a class="common-link" href="#" @click="hashCheck(scope.row.hash)">{{ scope.row.hash }}</a>
                     </template>
                 </el-table-column>
                 <el-table-column prop="receipt.blockNumber" label="Block" width="80"></el-table-column>

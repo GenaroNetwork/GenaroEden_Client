@@ -172,7 +172,11 @@ export default {
                 this.submitLogin()
             }).catch((e)=>{
                 console.error(e)
-                this.$message.error('generate wallet error, is your phrase correct?')
+                if(e.code === 1) {
+                    this.submitLogin()
+                } else {
+                    this.$message.error('generate wallet error, ' + e.message || e)
+                }
             })
         },
         confirm() {

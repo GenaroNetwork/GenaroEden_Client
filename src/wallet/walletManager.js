@@ -125,7 +125,7 @@ function saveWallet(wa, name, pass) {
 
         const found = db.get('wallet').find({ address: address }).value()
         if (found) {
-            reject({ message: `address ${address} already exists. Please delete it first.` })
+            reject({ code: 1, message: `address ${address} already exists. Please delete it first.` })
             return
         }
         keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
