@@ -164,12 +164,16 @@
 }
 
 .banner .account .info h2,
-.banner .account .info div {
+.banner .account .info > div {
   width: calc(100% - 100px);
   box-sizing: border-box;
   margin-left: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.banner .account .info h2 {
+  cursor: pointer;
 }
 
 .banner .account .info div {
@@ -323,7 +327,19 @@
             <div class="account">
                 <div class="info">
                     <img :src="avatarUrl(wallet.address)">
-                    <h2>{{wallet.name}}</h2>
+                    <h2>
+                        <el-dropdown trigger="click" @command="changeWallet">
+                            <span class="el-dropdown-link">
+                                {{wallet.name}}
+                                <i class="el-icon-arrow-down el-icon--right"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="wallet of wallets" :command="wallet.address">
+                                    {{ wallet.name }}
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </h2>
                     <div>
                         <span :title="wallet.address">{{wallet.address}}</span>
                         <span class="copy">
@@ -387,10 +403,11 @@ const ETH_LIMIT = 21000;
 const ETH_SUGGEST = 21000;
 
 export default {
-    created() {
-        this.$store.dispatch("loadTransactions");
+    async created() {
         const address = this.$route.params.walletAddress;
+        this.$store.dispatch("loadTransactions");
         this.$store.dispatch("initWallet");
+        await this.$store.dispatch("loadAllWallets");
     },
     mounted() {
         // init balance
@@ -504,6 +521,9 @@ export default {
         };
     },
     computed: {
+        wallets() {
+            return this.$store.state.WalletManage.wallets;
+        },
         wallet() {
             return this.$store.state.CurrentWallet.wallet;
         },
@@ -545,6 +565,9 @@ export default {
             } catch (e) {
                 this.$message.error("create transaction error: " + e);
             }
+        },
+        changeWallet(address) {
+            this.$store.dispatch("initWallet", { address });
         },
         refreshStatus(row) {
             this.$store.commit("updateSingleTransaction", {

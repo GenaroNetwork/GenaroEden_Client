@@ -89,6 +89,12 @@ function loadFirstWallet() {
     }
 }
 
+function loadWalletFromAddr(address) {
+    const wallet = db.get('wallet').find({ address: address }).cloneDeep().value()
+    if (wallet) return wallet
+    return null;
+}
+
 function loadRawWallet(address, password) {
     return new Promise((resolve, reject) => {
         keytar.getPassword(KEYCHAIN_WALLET, address).then(v3str => {
@@ -301,11 +307,11 @@ async function submitAddress(user, address, password) {
     const result = await axios.post(url, req)
     // server verify
     // calculate hash in same way:
-    if(result && result.data && result.data.wallet === address) {
+    if (result && result.data && result.data.wallet === address) {
         console.log(result)
         return result
     } else {
-        throw('unable to submit wallet address')
+        throw ('unable to submit wallet address')
     }
 
 }
@@ -321,6 +327,7 @@ export default {
     validateWalletPassword,
     exportV3Json,
     loadFirstWallet,
+    loadWalletFromAddr,
     submitAddress,
     updateWalletName,
 }
