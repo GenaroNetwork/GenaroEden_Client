@@ -1,3 +1,11 @@
+/*
+ *  NOTE: This is a old version of History List
+ *        Do not add any feature in this file
+ *        The only reason to edit this file is bug fix
+ *        Use `TaskList.js` instead
+ */
+
+
 import STROJ_CLIENT from '../../utils/StorjApiClient'
 import dbUtil from '../../utils/DbUtil'
 const uuidV1 = require('uuid/v1')

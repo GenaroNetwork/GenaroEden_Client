@@ -221,7 +221,6 @@ export default {
         }
     },
     mounted: function () {
-        console.log(this.$store)
         this.$store.dispatch('loadHistory')
     },
     components: {

@@ -433,13 +433,14 @@ export default {
                                 this.importV3WalletDialog.step = 1;
                             })
                             .catch(e => {
-                                this.$message.error("Error: " + e);
+                                this.$message.error("Error: " + e.message);
                             });
                     }
                 },
                 cancel: () => {
-                    this.importV3WalletDialog.password = null;
                     this.importV3WalletDialog.shown = false;
+                    this.importV3WalletDialog.step = 0;
+                    this.importV3WalletDialog.password = null;
                 }
             }
         },

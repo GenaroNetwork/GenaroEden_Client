@@ -4,11 +4,11 @@ const os = require('os')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const keytar = require('keytar')
-const {encryptText2Json, decryptJson2Text} = require('./encryptUtil')
+const { encryptText2Json, decryptJson2Text } = require('./encryptUtil')
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
-if (!fs.existsSync(dbFolder)){
+if (!fs.existsSync(dbFolder)) {
     fs.mkdirSync(dbFolder)
     isFirstTime = true
 }
@@ -29,16 +29,57 @@ function getUploadSize() {
     return db.get('uploadSize').value()
 }
 
+// use task list instead
 function getHistory() {
     return db.get('history').sortBy(item => -item.created).value()
 }
 
+// use task list instead
 function addHistory(data) {
     db.get('history').push(data).write()
 }
 
+// use task list instaed
 function removeHistoryById(id) {
-    db.get('history').remove({historyId: id}).write()
+    db.get('history').remove({ historyId: id }).write()
+}
+
+// instead history
+function taskListList({
+    sort = item => -item.created,
+} = {}) {
+    db.get("tasks")
+        .sortBy(sort)
+        .value();
+}
+
+function taskListAppend(commitTask) {
+    db.get("tasks")
+        .push(commitTask)
+        .write();
+}
+
+function taskListGet(taskId) {
+    db.get("tasks")
+        .find({ taskId })
+        .value();
+}
+
+function taskListUpdate(commitTask) {
+    db.get("tasks")
+        .find({ taskId: commitTask.taskId })
+        .assign(commitTask).write();
+}
+
+function taskListRemove(taskId) {
+    db.get("tasks")
+        .remove({ taskId })
+        .write();
+}
+
+function taskListClear() {
+    db.set("tasks", [])
+        .write();
 }
 
 function saveCredentials(username, password) {
@@ -51,9 +92,9 @@ function saveCredentials(username, password) {
 function getCredentials() {
     return new Promise((resolve, reject) => {
         const account = db.get('username').value()
-        if(account) {
+        if (account) {
             keytar.getPassword(KEYCHAIN_LOGIN, account).then((password) => {
-                resolve({account, password})
+                resolve({ account, password })
             }).catch(() => {
                 console.error('getCredentials from keyChain error!')
                 resolve(null)
@@ -82,8 +123,8 @@ function saveEncryptionKey(key, password) {
 function getEncryptionKey(password) {
     return new Promise((resolve, reject) => {
         const ek = db.get('encryptionKey').value()
-        if(ek) {
-            resolve( decryptJson2Text(ek, password) )
+        if (ek) {
+            resolve(decryptJson2Text(ek, password))
         } else {
             resolve(null)
         }
@@ -101,5 +142,11 @@ export default {
     getCredentials,
     deleteCredentials,
     saveEncryptionKey,
-    getEncryptionKey
+    getEncryptionKey,
+    taskListGet,
+    taskListAppend,
+    taskListList,
+    taskListRemove,
+    taskListUpdate,
+    taskListClear,
 }
