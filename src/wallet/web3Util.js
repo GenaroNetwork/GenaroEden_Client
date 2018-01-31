@@ -4,7 +4,7 @@ const utils = Web3.utils;
 
 let web3Provider, chainId, web3Instance, GNXAddr, EtherscanURL;
 
-if (false) {
+if (isDev) {
     web3Provider = 'https://ropsten.infura.io/CPKlwMsRTFVy6idI23Yb';
     chainId = 3;
     GNXAddr = "0x1F84118c3B0f3f97c63B8e125456d76C78baBed5" //ropsten;
