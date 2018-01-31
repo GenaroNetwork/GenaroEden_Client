@@ -31,8 +31,8 @@ const mutations = {
 const actions = {
     async loadBalance({ commit, state, getters, rootState, dispatch }) {
         const ba = await getBalanceEth(state.wallet.address)
-        const gba = await getBalanceGnx(state.wallet.address)
         commit('setEthBalance', ba)
+        const gba = await getBalanceGnx(state.wallet.address)
         commit('setGnxBalance', gba)
     },
     async payByCurrentWallet({ commit, state, getters, rootState, dispatch }, payOption) {
