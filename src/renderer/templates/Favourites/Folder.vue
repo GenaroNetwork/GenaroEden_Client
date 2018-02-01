@@ -161,9 +161,9 @@ td.right-td {
 </template>
 
 <script>
-import STROJ_CLIENT from '../../utils/StorjApiClient'
-import QR_CODE from '../../utils/QrCodeUtil'
-import ELECTRON_DIALOG from '../../utils/ElectronDialog'
+import STROJ_CLIENT from '../../utils/storjApiClient'
+import QR_CODE from '../../utils/qrCodeUtil'
+import ELECTRON_DIALOG from '../../utils/electronDialog'
 import store from '../../store'
 import { stepReady } from "../../utils/guide"
 import { fileName2Icon } from "../../utils/file2icon"

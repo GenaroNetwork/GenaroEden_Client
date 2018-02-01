@@ -1,4 +1,4 @@
-import bridgeApi from '../../utils/StorjApiClient'
+import bridgeApi from '../../utils/storjApiClient'
 const state = {
     bucket: null,
     fileList: []
@@ -30,9 +30,9 @@ const actions = {
     },
     reloadBucketData({ commit, state }) {
         return new Promise((resolve, reject) => {
-            if(state.bucket) {
-                bridgeApi.getFileList(state.bucket.id, function(err, data) {
-                    if(err) {
+            if (state.bucket) {
+                bridgeApi.getFileList(state.bucket.id, function (err, data) {
+                    if (err) {
                         reject()
                     } else {
                         commit('setFileList', data)
@@ -47,7 +47,7 @@ const actions = {
     deleteFile({ commit, getters }, { bucketId, fileId }) {
         return new Promise((resolve, reject) => {
             bridgeApi.deleteFile(bucketId, fileId, (err, result) => {
-                if(err) {
+                if (err) {
                     reject(err)
                 } else {
                     commit('deleteFile', fileId)

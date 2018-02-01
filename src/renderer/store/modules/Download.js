@@ -1,4 +1,4 @@
-import STROJ_CLIENT from '../../utils/StorjApiClient'
+import STROJ_CLIENT from '../../utils/storjApiClient'
 const state = {
     downloadList: []
 }
@@ -11,7 +11,7 @@ const mutations = {
         let existTask = state.downloadList.find((ele) => {
             return ele.taskId === task.taskId
         })
-        if(existTask) {
+        if (existTask) {
             existTask.progress = task.progress
             existTask.downloadedBytes = task.downloadedBytes
             existTask.totalBytes = task.totalBytes
@@ -46,13 +46,13 @@ const mutations = {
 }
 
 const actions = {
-    fireDownload({ commit, rootState, dispatch }, {folderId, fileId, filePath, folderName}) {
+    fireDownload({ commit, rootState, dispatch }, { folderId, fileId, filePath, folderName }) {
         return new Promise((resolve, reject) => {
             let task = STROJ_CLIENT.downloadFile(folderId, fileId, filePath, (err) => {
                 // error
                 commit('updateRunningDownloadTask', task)
                 const fs = require('fs')
-                fs.unlink(filePath, function(){})
+                fs.unlink(filePath, function () { })
                 reject(err)
             }, () => { // success
                 commit('updateRunningDownloadTask', task)
@@ -65,14 +65,14 @@ const actions = {
             commit('appendNewDownloadTask', task)
         })
     },
-    cancelDownload({ commit, state, dispatch }, {taskId}) {
+    cancelDownload({ commit, state, dispatch }, { taskId }) {
         const task = state.downloadList.find(t => t.taskId === taskId)
         if (task) {
             STROJ_CLIENT.cancelDownload(task.state)
             commit('removeState', task) // storj may crash when cancel task multipile times. set state to null to prevent.
         }
     },
-    removeDownloadTask({ commit, state, dispatch }, {taskId}) {
+    removeDownloadTask({ commit, state, dispatch }, { taskId }) {
         commit('removeDownloadTask', taskId)
     }
 }

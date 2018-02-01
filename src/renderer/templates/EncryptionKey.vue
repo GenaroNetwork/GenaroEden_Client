@@ -1,55 +1,55 @@
 <style scoped>
 .content {
-    width: 700px;
-    margin: 100px auto;
-    text-align: center;
-    font-size: 16px;
+  width: 700px;
+  margin: 100px auto;
+  text-align: center;
+  font-size: 16px;
 }
 .content img.explain-img {
-    width: 200px;
-    height: auto;
-    margin: 40px auto;
+  width: 200px;
+  height: auto;
+  margin: 40px auto;
 }
-.back-btn { 
-   left: 3px;
-   position: absolute;
-   top: 50%;
-   transform: translate(0, -50%)
+.back-btn {
+  left: 3px;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 .navigation {
-    position: relative;
+  position: relative;
 }
-h1{
-    font-weight: normal;
-    font-size: 16px;
+h1 {
+  font-weight: normal;
+  font-size: 16px;
 }
 h2 {
-    font-weight: normal;
-    font-size: 20px;
+  font-weight: normal;
+  font-size: 20px;
 }
 .desc {
-    margin: 2em auto;
+  margin: 2em auto;
 }
 .desc p {
-    text-align: left;
-    margin: 30px auto;
-    color: #949494;
+  text-align: left;
+  margin: 30px auto;
+  color: #949494;
 }
 .main-area {
-    padding: 0 60px;
+  padding: 0 60px;
 }
 div.key-area {
-    background-color: #ececec;
-    padding: 10px;
-    border-radius: 4px;
-    text-align: left;
+  background-color: #ececec;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: left;
 }
 .action-area {
-    margin: 30px auto;
+  margin: 30px auto;
 }
 .key-action {
-    margin-top: 10px;
-    text-align: center;
+  margin-top: 10px;
+  text-align: center;
 }
 </style>
 
@@ -74,7 +74,9 @@ div.key-area {
             </div>
             <div class='main-area'>
                 <div class="desc">
-                    <h2>Step 1. <strong>Generate a new Encryption Key</strong></h2>
+                    <h2>Step 1.
+                        <strong>Generate a new Encryption Key</strong>
+                    </h2>
                     <p>The Encryption Key is used to encrypt/decrypt your files. Once it's lost, so are your files. Please keep it safe and secret!</p>
                 </div>
 
@@ -100,7 +102,9 @@ div.key-area {
             </div>
             <div class="main-area">
                 <div class="desc">
-                    <h2>Step 2. <strong>Confirm Your Encryption Key</strong></h2>
+                    <h2>Step 2.
+                        <strong>Confirm Your Encryption Key</strong>
+                    </h2>
                     <p>Please Retype your encryption key to confirm</p>
                 </div>
                 <div class="key-area">
@@ -119,7 +123,9 @@ div.key-area {
             </div>
             <div class='main-area'>
                 <div class="desc">
-                    <h2><strong>input existing Encryption Key</strong></h2>
+                    <h2>
+                        <strong>input existing Encryption Key</strong>
+                    </h2>
                     <p>Use existing Encryption Key to encrypt/decrypt files.</p>
                 </div>
                 <div class="key-area">
@@ -131,19 +137,19 @@ div.key-area {
                 </div>
             </div>
         </el-card>
-        
+
     </div>
 </template>
 
 <script>
 import dbUtil from '../utils/DbUtil'
 import router from '../router'
-import bridgeApi from '../utils/StorjApiClient'
+import bridgeApi from '../utils/storjApiClient'
 import walletManager from '../../wallet/walletManager'
 
 export default {
-    name : 'encryption-key',
-    data: function() {
+    name: 'encryption-key',
+    data: function () {
         return {
             showPage: 'newOrReturn',
             encryptionKey: '',
@@ -153,14 +159,14 @@ export default {
     created: function () {
         this.checkKeyOkAndContinue()
     },
-    methods:{
+    methods: {
         checkKeyOkAndContinue() {
             const name = this.$store.state.User.username
             const pwd = this.$store.state.User.password
             dbUtil.getEncryptionKey(pwd).then((c) => {
-                if(c) {
+                if (c) {
                     bridgeApi.setEnvironment(name, pwd, c)
-                    router.push({ path: '/index'})
+                    router.push({ path: '/index' })
                 } else {
                     console.log('no key found')
                 }
@@ -170,9 +176,9 @@ export default {
             // generate an HD wallet
             walletManager.importFromMnemonic(mnemonic, password).then(() => {
                 this.submitLogin()
-            }).catch((e)=>{
+            }).catch((e) => {
                 console.error(e)
-                if(e.code === 1) {
+                if (e.code === 1) {
                     this.submitLogin()
                 } else {
                     this.$message.error('generate wallet error, ' + e.message || e)
@@ -183,7 +189,7 @@ export default {
             const this2 = this
             const valid = bridgeApi.mnemonicCheck(this.encryptionKey)
             const pwd = this.$store.state.User.password
-            if(valid) {
+            if (valid) {
                 this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
                 console.error('bad key')
@@ -218,9 +224,9 @@ export default {
         submitLogin() {
             const this2 = this
             const pwd = this.$store.state.User.password
-            dbUtil.saveEncryptionKey(this.encryptionKey, pwd).then(()=>{
+            dbUtil.saveEncryptionKey(this.encryptionKey, pwd).then(() => {
                 this2.checkKeyOkAndContinue()
-            }).catch((e)=>{
+            }).catch((e) => {
                 console.error(e)
             })
         },
@@ -229,24 +235,24 @@ export default {
         },
         saveKey() {
             const theKey = this.encryptionKey
-            const {dialog} = require('electron').remote
+            const { dialog } = require('electron').remote
             dialog.showSaveDialog({
                 title: 'Save Key',
                 defaultPath: './key'
             }, (path) => {
-                if(path != undefined && path.length > 0) {
+                if (path != undefined && path.length > 0) {
                     var fs = require('fs');
-                    fs.writeFile(path, theKey, function(err) {
-                        if(err) {
+                    fs.writeFile(path, theKey, function (err) {
+                        if (err) {
                             return console.log(err);
                         }
                         console.log("The key file was saved!");
-                    }); 
+                    });
                 }
             })
         },
         copyKey() {
-            const {clipboard} = require('electron')
+            const { clipboard } = require('electron')
             clipboard.writeText(this.encryptionKey)
         }
     }

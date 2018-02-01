@@ -1,11 +1,23 @@
 /* This is the new version of tasklist (include history list and upload list) */
+import UUID from "uuid/v1";
 import {
     taskListList,
     taskListClear,
     taskListRemove,
     taskListUpdate,
     taskListAppend,
-} from "../../utils/Dbutil";
+} from "../../utils/dbutil";
+
+let taskMatch = (savedTask, commitTask) => {
+    let result = true;
+    Object.keys(commitTask).every(key => {
+        if (savedTask[key] === commitTask[key]) return true;
+        result = false;
+        return false;
+    });
+    return result;
+}
+
 
 let state = {
     tasks: []
@@ -14,14 +26,10 @@ let state = {
 let getters = {
     task: state => {
         return (commitTask) => {
-            let taskId;
-            if (typeof commitTask === "object") taskId = commitTask.taskId;
-            else taskId = commitTask;
-            return state.tasks.find(task => taskId === commitTask.taskId);
+            return state.tasks.find(savedTask => taskMatch(savedTask, commitTask));
         }
     }
 }
-
 
 let mutations = {
     taskListInit(state, tasks) {
@@ -33,16 +41,16 @@ let mutations = {
     },
 
     taskListUpdate(state, commitTask) {
-        let oldTask = state.tasks.find(task => task.taskId === commitTask.taskId);
+        let savedTask = state.tasks.find(savedTask => taskMatch(savedTask, commitTask));
         Object.keys(commitTask).forEach(key => {
             if (key === "taskId") return;
-            oldTask[key] = commitTask;
+            savedTask[key] = commitTask;
         });
     },
 
-    taskListRemove(state, taskId) {
-        let index = state.tasks.findIndex(task => taskId === task.taskId);
-        state.tasks.splice(index, 1);
+    taskListRemove(state, commitTask) {
+        let taskIndex = state.tasks.findIndex(savedTask => taskMatch(savedTask, commitTask));
+        state.tasks.splice(taskIndex, 1);
     },
 
     taskListClear(state) {
@@ -56,6 +64,7 @@ let actions = {
         commit("taskListInit", tasks);
     },
     taskListAppend({ commit }, commitTask) {
+        commitTask.UUID = UUID();
         taskListAppend(commitTask);
         commit("taskListAppend", commitTask);
     },
@@ -63,9 +72,9 @@ let actions = {
         taskListUpdate(commitTask);
         commit("taskListUpdate", commitTask);
     },
-    taskListRemove({ commit }, taskId) {
-        taskListRemove(taskId);
-        commit("taskListRemove", taskId);
+    taskListRemove({ commit }, commitTask) {
+        taskListRemove(commitTask);
+        commit("taskListRemove", commitTask);
     },
     taskListClear({ commit }, commitTask) {
         taskListClear();

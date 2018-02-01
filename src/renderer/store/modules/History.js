@@ -6,7 +6,7 @@
  */
 
 
-import STROJ_CLIENT from '../../utils/StorjApiClient'
+import STROJ_CLIENT from '../../utils/storjApiClient'
 import dbUtil from '../../utils/DbUtil'
 const uuidV1 = require('uuid/v1')
 

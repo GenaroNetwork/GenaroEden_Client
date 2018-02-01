@@ -1,10 +1,10 @@
-import bridgeApi from '../../utils/StorjApiClient'
+import bridgeApi from '../../utils/storjApiClient'
 const state = {
     bucketList: []
 }
 
 const getters = {
-    bucketList: state=> state.bucketList
+    bucketList: state => state.bucketList
 }
 
 const mutations = {
@@ -26,9 +26,9 @@ const actions = {
             })
         })
     },
-    createBucket({ commit, dispatch }, {bucketName}) {
+    createBucket({ commit, dispatch }, { bucketName }) {
         return new Promise((resolve, reject) => {
-            if (/[/\\:*?"'<>|]/.test(bucketName)){
+            if (/[/\\:*?"'<>|]/.test(bucketName)) {
                 reject('Invaild symbol')
                 return
             }
@@ -42,7 +42,7 @@ const actions = {
             })
         })
     },
-    deleteBucket({ commit, dispatch }, {bucketId}) {
+    deleteBucket({ commit, dispatch }, { bucketId }) {
         return new Promise((resolve, reject) => {
             bridgeApi.deleteBucket(bucketId, (err, data) => {
                 if (err) {

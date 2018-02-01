@@ -1,54 +1,54 @@
 <style scoped>
-  .text {
-    font-size: 14px;
-  }
+.text {
+  font-size: 14px;
+}
 
-  .item {
-    padding: 18px 0;
-  }
+.item {
+  padding: 18px 0;
+}
 
-  .box-card {
-    width: 480px;
-    position:relative;
-    top:-100px;
-    margin:0px auto;
-  }
+.box-card {
+  width: 480px;
+  position: relative;
+  top: -100px;
+  margin: 0px auto;
+}
 
-  .login-center {
-      width: 100%;
-      text-align: center;
-  }
+.login-center {
+  width: 100%;
+  text-align: center;
+}
 
-  #wrap{
-    position:fixed;
-    top:35%;
-    left:0;
-    width:100%;
-  }
+#wrap {
+  position: fixed;
+  top: 35%;
+  left: 0;
+  width: 100%;
+}
 
-  #login-form {
-      width: 100%;
-  }
+#login-form {
+  width: 100%;
+}
 
-  #a-forget {
-      margin-left:10px;
-  }
+#a-forget {
+  margin-left: 10px;
+}
 
-  .otherlink {
-      font-size: 12px
-  }
-  h1 {
-      padding: 10px
-  }
-  .sign-in {
-      width: 100%
-  }
-  .pull-left {
-      float: left;
-  }
-  .pull-right {
-      float: right;
-  }
+.otherlink {
+  font-size: 12px;
+}
+h1 {
+  padding: 10px;
+}
+.sign-in {
+  width: 100%;
+}
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
 </style>
 <template>
     <div id="wrap" @keyup.enter="submitLogin">
@@ -79,73 +79,73 @@
 </template>
 
 <script> 
-    import STROJ_CLIENT from '../utils/StorjApiClient'
-    import router from '../router'
-    import store from '../store'
-    import { resetPassword } from '../../bridge/users'
-    import dbUtil from '../utils/DbUtil'
+import STROJ_CLIENT from '../utils/storjApiClient'
+import router from '../router'
+import store from '../store'
+import { resetPassword } from '../../bridge/users'
+import dbUtil from '../utils/DbUtil'
 
-    export default {
-        name : 'login-view',
-        created: function () {
-            const this2 = this
-            dbUtil.getCredentials().then((credentials)=>{
-                if(credentials) {
-                    store.commit('updateUsername', credentials.account)
-                    if(credentials.password) {
-                        store.commit('updatePassword', credentials.password)
-                        this2.checkEncryptionKeyAndLogin(credentials.account, credentials.password)
-                    } else {
-                        this.login.username = credentials.account
-                    }
+export default {
+    name: 'login-view',
+    created: function () {
+        const this2 = this
+        dbUtil.getCredentials().then((credentials) => {
+            if (credentials) {
+                store.commit('updateUsername', credentials.account)
+                if (credentials.password) {
+                    store.commit('updatePassword', credentials.password)
+                    this2.checkEncryptionKeyAndLogin(credentials.account, credentials.password)
+                } else {
+                    this.login.username = credentials.account
+                }
+            }
+        })
+    },
+    data: function () {
+        return {
+            login: {
+                username: '',
+                password: ''
+            },
+            ruleInline: {
+                username: [
+                    { required: true, message: 'Please input username', trigger: 'blur' },
+                    { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+                ],
+                password: [
+                    { required: true, message: 'Please input password', trigger: 'blur' },
+                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                ]
+            },
+            signing: false
+        }
+    },
+    methods: {
+        checkEncryptionKeyAndLogin(bridgeUser, bridgePass) {
+            store.commit('updateUsername', bridgeUser)
+            store.commit('updatePassword', bridgePass)
+            router.push({ path: '/encryption-key' })
+        },
+        submitLogin() {
+            let this2 = this
+            this.$refs['login'].validate((valid) => {
+                if (valid) {
+                    this.signing = true
+                    var bridgeUser = this.login.username
+                    var bridgePass = this.login.password
+                    STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
+                    STROJ_CLIENT.getBucketList((err) => {
+                        this.signing = false
+                        if (err) {
+                            this.$message.error('Username Or Password Error')
+                        } else {
+                            dbUtil.saveCredentials(bridgeUser, bridgePass)
+                            this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
+                        }
+                    })
                 }
             })
-        },
-        data: function() {
-            return {
-                login: {
-                    username: '',
-                    password: ''
-                },
-                ruleInline: {
-                    username: [
-                        { required: true, message: 'Please input username', trigger: 'blur' },
-                        { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: 'Please input password', trigger: 'blur' },
-                        { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
-                    ]
-                },
-                signing: false
-            }
-        },
-        methods:{
-            checkEncryptionKeyAndLogin(bridgeUser, bridgePass) {
-                store.commit('updateUsername', bridgeUser)
-                store.commit('updatePassword', bridgePass)
-                router.push({ path: '/encryption-key'})
-            },
-            submitLogin() {
-                let this2 = this
-                this.$refs['login'].validate((valid) => {
-                    if(valid) {
-                        this.signing = true
-                        var bridgeUser = this.login.username
-                        var bridgePass = this.login.password
-                        STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
-                        STROJ_CLIENT.getBucketList((err) => {
-                            this.signing = false
-                            if (err) {
-                                this.$message.error('Username Or Password Error')
-                            } else {
-                                dbUtil.saveCredentials(bridgeUser, bridgePass)
-                                this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
-                            }
-                        })
-                    }
-                })
-            }
         }
     }
+}
 </script>

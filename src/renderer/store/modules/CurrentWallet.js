@@ -1,4 +1,4 @@
-import bridgeApi from '../../utils/StorjApiClient'
+import bridgeApi from '../../utils/storjApiClient'
 import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager'
 import walletManager from '../../../wallet/walletManager'
 

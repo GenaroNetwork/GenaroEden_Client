@@ -59,9 +59,9 @@ function taskListAppend(commitTask) {
         .write();
 }
 
-function taskListGet(taskId) {
+function taskListGet(commitTask) {
     db.get("tasks")
-        .find({ taskId })
+        .find(commitTask)
         .value();
 }
 
@@ -71,9 +71,9 @@ function taskListUpdate(commitTask) {
         .assign(commitTask).write();
 }
 
-function taskListRemove(taskId) {
+function taskListRemove(commitTask) {
     db.get("tasks")
-        .remove({ taskId })
+        .remove(commitTask)
         .write();
 }
 
