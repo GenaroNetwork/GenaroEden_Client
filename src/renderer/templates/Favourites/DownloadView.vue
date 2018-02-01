@@ -104,7 +104,7 @@
                                     <i class="material-icons">folder</i>
                                 </el-button>
                                 <el-button class="row-action" @click="deleteHistory(scope.row)" type="text" size="small">
-                                    <i class="material-icons">delete</i>
+                                    <i class="material-icons">close</i>
                                 </el-button>
                             </div>
                         </template>

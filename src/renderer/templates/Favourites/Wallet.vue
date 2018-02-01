@@ -3,7 +3,7 @@
 .common-link {
   cursor: pointer;
   text-decoration: none;
-  color: #3498db
+  color: #3498db;
 }
 
 /* popup style */
@@ -343,7 +343,7 @@
                         </el-dropdown>
                     </h2>
                     <div>
-                        <span :title="wallet.address">{{wallet.address}}</span>
+                        <span :title="wallet.address">0x{{wallet.address}}</span>
                         <span class="copy">
                             <i class="material-icons" @click="copy(wallet.address)" v-popover:afterCopyTip>content_copy</i>
                         </span>

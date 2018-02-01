@@ -16,9 +16,20 @@
   font-size: 1rem;
   flex-grow: 1;
 }
+.top-bar h2 * {
+  vertical-align: middle;
+}
 .top-bar h2 a {
   color: unset;
+  display: inline-block;
   text-decoration: unset;
+}
+.top-bar h2 span {
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .top-bar .folder-action {
   flex-shrink: 0;
@@ -80,8 +91,8 @@ td.right-td {
     <div class="fullheight v-flex">
         <div class="top-bar">
             <h2>
-                <router-link to="/folders">Folders</router-link> &gt;
-                <span>{{ currentBucketName }}</span>
+                <router-link to="/folders">Folders</router-link>
+                <span :title="currentBucketName"> &gt; {{ currentBucketName }}</span>
             </h2>
             <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download
                 <i class="material-icons">file_download</i>
@@ -99,7 +110,7 @@ td.right-td {
                 <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <font-awesome-icon :icon="file2Icon(scope.row.filename).icon" v-bind:style="{ color: file2Icon(scope.row.filename).color }" />
-                        <span style="margin-left: 10px">{{ scope.row.filename }}</span>
+                        <span style="margin-left: 10px" :title="scope.row.filename">{{ scope.row.filename }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="size" label="Size" width="80" :formatter="formatSize"></el-table-column>
@@ -161,15 +172,15 @@ td.right-td {
 </template>
 
 <script>
-import STROJ_CLIENT from '../../utils/storjApiClient'
 import QR_CODE from '../../utils/qrCodeUtil'
 import ELECTRON_DIALOG from '../../utils/electronDialog'
-import store from '../../store'
 import { stepReady } from "../../utils/guide"
 import { fileName2Icon } from "../../utils/file2icon"
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
-const moment = require('moment');
-const humanSize = require('human-size');
+import moment from 'moment';
+import humanSize from 'human-size';
+
+import { fileUpload } from "../../utils/fileOperation";
 
 export default {
     data() {
@@ -250,7 +261,7 @@ export default {
                 }).then(() => {
                     this2.closeReceipt()
                     this2.selectedRow.forEach(row => {
-                        store.dispatch('deleteFile', {
+                        this.$store.dispatch('deleteFile', {
                             bucketId: this2.currentBucketId,
                             fileId: row.id
                         }).then(() => {
@@ -271,8 +282,8 @@ export default {
                 cancelButtonText: 'Cancel',
                 type: 'warning'
             }).then(() => {
-                this2.closeReceipt()
-                store.dispatch('deleteFile', {
+                this2.closeReceipt();
+                this.$store.dispatch('deleteFile', {
                     bucketId: this2.currentBucketId,
                     fileId: id
                 }).then(() => {
@@ -313,10 +324,10 @@ export default {
                 title: 'Save File',
                 defaultPath: './' + filename
             }
-            ELECTRON_DIALOG.showSaveDialog(options, function (filePath) {
-                this2.$message('File Downloading...')
+            ELECTRON_DIALOG.showSaveDialog(options, filePath => {
+                this.$message('File Downloading...')
 
-                store.dispatch('fireDownload', {
+                this.$store.dispatch('fireDownload', {
                     folderId: this2.currentBucketId,
                     folderName: this2.currentBucketName,
                     fileId: id,
@@ -356,27 +367,25 @@ export default {
             this.dragging = false
         },
         upload() {
-            let this2 = this
             const { dialog } = require('electron').remote
             const files = dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
 
             if (files && files.length > 0) {
-                this2.$message('File Uploading. Your can see this task in Recent panel on the left.')
+                this.$message('File Uploading. Your can see this task in Recent panel on the left.')
                 const filePath = files[0]
-                const bucketId = this2.currentBucketId
+                const bucketId = this.currentBucketId
                 this.rawUpload(bucketId, filePath)
             }
         },
         rawUpload(bucketId, filePath) {
-            const this2 = this
-            store.dispatch('fireUpload', {
+            this.$store.dispatch('fireUpload', {
                 filePath,
                 bucketId,
-                folderName: this2.currentBucketName
+                folderName: this.currentBucketName
             }).then(() => {
-                this2.$message.success('File Uploaded: ' + filePath)
+                this.$message.success('File Uploaded: ' + filePath)
             }).catch((err) => {
-                this2.$message.error('File Upload Failed: ' + err)
+                this.$message.error('File Upload Failed: ' + err)
             })
         }
     },

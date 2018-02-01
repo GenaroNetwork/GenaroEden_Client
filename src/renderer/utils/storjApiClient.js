@@ -1,13 +1,23 @@
 import store from '../store'
 import config from '../../config'
 const uuidv4 = require('uuid/v4')
-const {Environment, mnemonicGenerate, mnemonicCheck} = require('storj')
+const { Environment, mnemonicGenerate, mnemonicCheck } = require('storj')
 
 const BRIDGE_API_URL = config.bridgeApiUrl;
 const TASKSTATE = config.TASKSTATE
 const TASKTYPE = config.TASKTYPE
 
-let _storj
+let _storj;
+if (process.env.NODE_ENV === 'development') {
+    _storj = new Environment({
+        bridgeUrl: BRIDGE_API_URL,
+        bridgeUser: localStorage.bridgeUser,
+        bridgePass: localStorage.bridgePass,
+         encryptionKey: localStorage.bridgeKey,
+        logLevel: 0
+    });
+}
+
 let bridgeUser
 
 function newTask(customProp) {
@@ -19,8 +29,8 @@ function newTask(customProp) {
         created: Date.now(),
         updated: Date.now()
     }
-    if(customProp && typeof customProp === 'object') {
-        Object.keys(customProp).forEach(function(key,index) {
+    if (customProp && typeof customProp === 'object') {
+        Object.keys(customProp).forEach(function (key, index) {
             baseTask[key] = customProp[key]
         })
     }
@@ -69,7 +79,7 @@ function uploadFile(filePath, filename, bucketId, errorCallback, successCallback
             console.log(task)
         },
         finishedCallback: function (err, fileId) {
-            if(err) {
+            if (err) {
                 task.taskState = TASKSTATE.ERROR
                 errorCallback(err)
                 console.error('upload-file error')
@@ -140,26 +150,32 @@ function deleteFile(bucketId, fileId, callBack) {
 
 /* 获取信息 */
 function getInfo(errorCallback, successCallback) {
-    _storj.getInfo(function(err, result) {
-        if(err) {
+    _storj.getInfo(function (err, result) {
+        if (err) {
             errorCallback(err)
             console.error(err);
         } else {
             successCallback(result)
             console.log(result);
         }
-    })
+})
 }
 
-function setEnvironment(bridgeUser1, bridgePass, key) {
-    bridgeUser = bridgeUser1
+function setEnvironment(bridgeUser, bridgePass, bridgeKey) {
+
+    if (process.env.NODE_ENV === 'development') {
+        localStorage.bridgeUser = bridgeUser;
+        localStorage.bridgePass = bridgePass;
+        localStorage.bridgeKey = bridgeKey;
+    }
+    
     _storj = new Environment({
         bridgeUrl: BRIDGE_API_URL,
         bridgeUser: bridgeUser,
         bridgePass: bridgePass,
-        encryptionKey: key,
+        encryptionKey: bridgeKey,
         logLevel: 0
-    })
+    });
 }
 
 function generateKey() {
