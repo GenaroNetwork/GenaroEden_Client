@@ -1,15 +1,15 @@
+
 # genaro-eden
 
 > An uploader, downloader, and dashboard for the Genaro network
 
-## Roadmap
-
-### v1.0 release goals
-- [x] User management 
-- [x] List buckets
-- [x] List files in bucket
-- [x] Drag and drop file upload
-- [x] File download
+## Stack
+- [Electron](https://electronjs.org/) as platform
+- [VueJS](https://vuejs.org/) 
+- [Vuex](https://vuex.vuejs.org/) For state management
+- [Element](http://element.eleme.io/) UI Library
+- [web3](https://github.com/ethereum/web3.js/) to interact with Ethereum network
+- [libstorj](https://github.com/Storj/libstorj) to interact with p2p file storage layer
 
 ## Build Setup
 
@@ -32,6 +32,7 @@ npm run build:darwin
 npm run build:clean
 
 ```
+if you find trouble building native modules please take a look at this [gist](https://gist.github.com/seekerlee/a7be57c96c01cc7822914b22fe4ba5d8)
 
 ## Reference
 ---
