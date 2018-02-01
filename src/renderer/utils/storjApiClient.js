@@ -1,6 +1,8 @@
 import store from '../store'
 import config from '../../config'
-const uuidv4 = require('uuid/v4')
+import log from "./log";
+
+const UUID = require('uuid/v1')
 const { Environment, mnemonicGenerate, mnemonicCheck } = require('storj')
 
 const BRIDGE_API_URL = config.bridgeApiUrl;
@@ -13,16 +15,48 @@ if (process.env.NODE_ENV === 'development') {
         bridgeUrl: BRIDGE_API_URL,
         bridgeUser: localStorage.bridgeUser,
         bridgePass: localStorage.bridgePass,
-         encryptionKey: localStorage.bridgeKey,
+        encryptionKey: localStorage.bridgeKey,
         logLevel: 0
     });
 }
 
-let bridgeUser
+let bridgeUser;
 
+class Task {
+    constructor() {
+        this.taskId = UUID();
+        this.taskType = TASKTYPE.NOTSET;
+        this.taskState = TASKSTATE.INIT;
+        this.progress = 0;
+        this.created = Date.now();
+        this.updated = Date.now();
+
+        Object.entries(props).forEach(([key, value]) => {
+            this[key] = value;
+        });
+    }
+}
+
+class UploadTask extends Task {
+    constructor({ params }) {
+        super();
+        this.taskType = TASKTYPE.UPLOAD;
+        this.state = null;
+        this.user = bridgeUser;
+        this.uploadedBytes = 0;
+        this.totalBytes = 0;
+    };
+    cancel() {
+        log.log('Cancel task: ' + taskId);
+        log.log(this.state);
+        _storj.storeFileCancel(this.state);
+    }
+}
+
+// old version to generate a task , use class instead
 function newTask(customProp) {
     let baseTask = {
-        taskId: uuidv4(),
+        taskId: UUID(),
         taskType: TASKTYPE.NOTSET,
         taskState: TASKSTATE.INIT,
         progress: 0,
@@ -52,7 +86,8 @@ function deleteBucket(bucketId, callBack) {
     _storj.deleteBucket(bucketId, callBack);
 }
 
-function uploadFile(filePath, filename, bucketId, errorCallback, successCallback, progressCallback1) {
+// oldVersiopn
+function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallback, progressCallback1) {
     let task = newTask({
         taskType: TASKTYPE.UPLOAD,
         state: null,
@@ -92,6 +127,15 @@ function uploadFile(filePath, filename, bucketId, errorCallback, successCallback
         }
     })
     return task
+}
+
+// new version
+function uploadFile({ filePath, fileName, bucketId }) {
+    let task = new Task({
+        taskType: TASKTYPE.UPLOAD,
+
+    });
+
 }
 
 /* 获取文件列表 */
@@ -158,7 +202,7 @@ function getInfo(errorCallback, successCallback) {
             successCallback(result)
             console.log(result);
         }
-})
+    })
 }
 
 function setEnvironment(bridgeUser, bridgePass, bridgeKey) {
@@ -168,7 +212,7 @@ function setEnvironment(bridgeUser, bridgePass, bridgeKey) {
         localStorage.bridgePass = bridgePass;
         localStorage.bridgeKey = bridgeKey;
     }
-    
+
     _storj = new Environment({
         bridgeUrl: BRIDGE_API_URL,
         bridgeUser: bridgeUser,
@@ -194,6 +238,7 @@ export default {
     getBucketList,
     deleteBucket,
     deleteBucket,
+    oldUploadFile,
     uploadFile,
     cancelUpload,
     getFileList,

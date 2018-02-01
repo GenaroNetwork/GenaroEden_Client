@@ -65,7 +65,7 @@ const actions = {
         const filesize = stats.size
 
         return new Promise((resolve, reject) => {
-            var task = STROJ_CLIENT.uploadFile(filePath, filename, bucketId, function (err) {
+            var task = STROJ_CLIENT.oldUploadFile(filePath, filename, bucketId, function (err) {
                 commit('updateRunningUploadTask', task)
                 reject(err)
             }, () => {
