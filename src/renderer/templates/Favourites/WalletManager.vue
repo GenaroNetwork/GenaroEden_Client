@@ -282,7 +282,7 @@
                                 <i class="material-icons" @click="editNameIndex = index" v-if="editNameIndex !== index">edit</i>
                             </div>
                             <div>
-                                <div :title="item.address">{{item.address}}</div>
+                                <div :title="item.address">0x{{item.address}}</div>
                                 <i class="material-icons" @click="copy(item.address)">content_copy</i>
                             </div>
                         </div>
@@ -312,11 +312,11 @@
                     <div class="detail">
                         <div class="balance eth">
                             <img src="../../../static/eth_colorful.svg">
-                            <div class="h1" :title="balanceEth(item.address) | wei2eth | numslice"> 0x{{ balanceEth(item.address) | wei2eth | numslice}} </div>
+                            <div class="h1" :title="balanceEth(item.address) | wei2eth | numslice"> {{ balanceEth(item.address) | wei2eth | numslice}} </div>
                         </div>
                         <div class="balance gnx">
                             <img src="../../../static/gnx_colorful.svg">
-                            <div class="h1" :title="balanceGnx(item.address) | wei2gnx "> 0x{{ balanceGnx(item.address) | wei2gnx }} </div>
+                            <div class="h1" :title="balanceGnx(item.address) | wei2gnx "> {{ balanceGnx(item.address) | wei2gnx }} </div>
                         </div>
                         <!-- large QRCODE -->
                         <img class="qr" :src="qrUrl(item.address)" @click="largeQRCode=qrUrl(item.address)">
