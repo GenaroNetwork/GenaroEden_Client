@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { getUploadSize } from '../utils/DbUtil'
+import { getUploadSize } from '../utils/dbUtil'
 import store from '../store'
 const humanSize = require('human-size');
 export default {

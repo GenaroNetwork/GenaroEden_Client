@@ -5,7 +5,7 @@
  *        Use `TaskList.js` instead
  */
 
-import { getHistory, addHistory, removeHistoryById } from '../../utils/DbUtil'
+import { getHistory, addHistory, removeHistoryById } from '../../utils/dbUtil'
 const uuidV1 = require('uuid/v1')
 
 const state = {

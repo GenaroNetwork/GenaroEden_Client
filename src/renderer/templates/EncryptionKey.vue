@@ -142,7 +142,7 @@ div.key-area {
 </template>
 
 <script>
-import { getEncryptionKey, saveEncryptionKey } from '../utils/DbUtil'
+import { getEncryptionKey, saveEncryptionKey } from '../utils/dbUtil'
 import router from '../router'
 import { setEnvironment, mnemonicCheck, mnemonicGenerate } from '../utils/storjApiClient'
 import walletManager from '../../wallet/walletManager'

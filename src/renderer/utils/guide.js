@@ -1,5 +1,5 @@
 import Shepherd from 'tether-shepherd'
-import { isFirstTime } from './DbUtil'
+import { isFirstTime } from './dbUtil'
 
 function shouldTour() {
     return true
