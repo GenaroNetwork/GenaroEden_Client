@@ -53,10 +53,12 @@
                             <div class="process-bar">
                                 <el-progress :status="getStatusStr(scope.row.taskState)" :text-inside="true" :stroke-width="15" :percentage="Number.parseInt(scope.row.progress * 100)"></el-progress>
                                 <div>
-                                    <i v-if="scope.row.taskType === 2" class="material-icons">file_download</i>
-                                    <i v-if="scope.row.taskType === 3" class="material-icons">file_upload</i>
-                                    <span v-if="scope.row.progress > 0">{{humanSize(scope.row.totalBytes * scope.row.progress)}}/{{humanSize(scope.row.totalBytes)}}</span>
-                                    <span v-if="scope.row.progress == 0">waiting...</span>
+                                    <i v-if="scope.row.taskType === TASK_TYPE.DOWNLOAD" class="material-icons">file_download</i>
+                                    <i v-if="scope.row.taskType === TASK_TYPE.UPLOAD" class="material-icons">file_upload</i>
+                                    <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress)}}/{{humanSize(scope.row.totalBytes)}}</span>
+                                    <span v-else-if="scope.row.taskState === TASK_STATE.INIT">waiting...</span>
+                                    <span v-else-if="scope.row.taskState === TASK_STATE.CANCEL">canceled</span>
+                                    <span v-else-if="scope.row.taskState === TASK_STATE.ERROR">error</span>
                                 </div>
                             </div>
                         </template>
@@ -66,10 +68,10 @@
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
-                                <el-button v-if="scope.row.taskState === 2" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
+                                <el-button v-if="scope.row.taskState === TASK_STATE.INPROGRESS" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
                                     <i class="material-icons">cancel</i>
                                 </el-button>
-                                <el-button v-if="scope.row.taskState === 3 || scope.row.taskState === 4" class="row-action" @click="removeTask(scope.row)" type="text" size="small">
+                                <el-button class="row-action" @click="removeTask(scope.row)" type="text" size="small">
                                     <i class="material-icons">delete_sweep</i>
                                 </el-button>
                             </div>
@@ -94,18 +96,18 @@
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
-                                <span class="task-type" v-if="scope.row.taskType === 2">
+                                <span class="task-type" v-if="scope.row.taskType === TASK_TYPE.DOWNLOAD">
                                     <i class="material-icons">file_download</i>
                                     <span>Download Sucess</span>
                                 </span>
-                                <span class="task-type" v-if="scope.row.taskType === 3">
+                                <span class="task-type" v-if="scope.row.taskType === TASK_TYPE.UPLOAD">
                                     <i class="material-icons">file_upload</i>
                                     <span>Upload Sucess</span>
                                 </span>
                                 <el-button class="row-action" @click="ShowUploadItemInFolder(scope.row)" type="text" size="small">
                                     <i class="material-icons">folder</i>
                                 </el-button>
-                                <el-button class="row-action" @click="deleteHistory(scope.row)" type="text" size="small">
+                                <el-button class="row-action" @click="removeTask(scope.row)" type="text" size="small">
                                     <i class="material-icons">close</i>
                                 </el-button>
                             </div>
@@ -129,6 +131,8 @@ const humanSize = require('human-size');
 export default {
     data() {
         return {
+            TASK_STATE,
+            TASK_TYPE,
             fileTableColums: [{
                 title: 'File Name',
                 key: 'filename',
@@ -213,11 +217,7 @@ export default {
             }
         },
         removeTask(item) {
-            if (item.taskType === TASK_TYPE.DOWNLOAD) {
-                this.$store.dispatch('removeDownloadTask', { taskId: item.taskId })
-            } else if (item.taskType === TASK_TYPE.UPLOAD) {
-                this.$store.dispatch('removeUploadTask', { taskId: item.taskId })
-            }
+            this.$store.commit('taskListRemove', { taskId: item.taskId })
         }
     },
     mounted: function () {

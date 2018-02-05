@@ -336,7 +336,7 @@
                                 <i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item v-for="wallet of wallets" :command="wallet.address">
+                                <el-dropdown-item v-for="wallet, index of wallets" :command="wallet.address" :key="`walletId-${index}`">
                                     {{ wallet.name }}
                                 </el-dropdown-item>
                             </el-dropdown-menu>
@@ -362,16 +362,16 @@
             <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row">
                 <el-table-column prop="state" label="" width="60">
                     <template slot-scope="scope">
-                        <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === taskstate.INIT || scope.row.state === taskstate.INPROGRESS">
+                        <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TASK_STATE.INIT || scope.row.state === TASK_STATE.INPROGRESS">
                             remove_circle_outline
                         </i>
-                        <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === taskstate.ERROR">
+                        <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TASK_STATE.ERROR">
                             error_outline
                         </i>
                         <i class="material-icons state-icon" :state="scope.row.state" v-else>
                             add_circle_outline
                         </i>
-                        <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === taskstate.ERROR">
+                        <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TASK_STATE.ERROR">
                             refresh
                         </i>
 
@@ -397,7 +397,7 @@
 import { getGasPrics, getGasLimit } from "../../../wallet/transactionManager";
 import { utils, EtherscanURL, web3 } from "../../../wallet/web3Util";
 import { clipboard, shell } from "electron";
-import config from "../../../config.js";
+import { TASK_STATE } from "../../../config.js";
 
 const GNX_LIMIT = 120000;
 const GNX_SUGGEST = 150000;
@@ -474,6 +474,7 @@ export default {
             }
         };
         return {
+            TASK_STATE,
             payFormPop: false,
             depositPop: false,
             payOption: {
@@ -484,7 +485,6 @@ export default {
                 gasLimit: 0,
                 password: ""
             },
-            taskstate: config.TASKSTATE,
             defaultGas: {
                 price: 0,
                 limit: 0
@@ -574,7 +574,7 @@ export default {
         refreshStatus(row) {
             this.$store.commit("updateSingleTransaction", {
                 transactionId: row.transactionId,
-                state: config.TASKSTATE.INPROGRESS,
+                state: TASK_STATE.INPROGRESS,
             });
             this.$store.dispatch("updateSingleTransactionOnline", {
                 transactionId: row.transactionId,

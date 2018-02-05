@@ -84,9 +84,9 @@ let actions = {
                 commit("taskListUpdate", task);
                 resolve(task);
             });
-            task.on("error", () => {
+            task.on("error", err => {
                 commit("taskListUpdate", task);
-                reject(task);
+                reject(err);
             });
         });
     },
@@ -102,9 +102,9 @@ let actions = {
                 commit("taskListUpdate", task);
                 resolve(task);
             });
-            task.on("error", () => {
+            task.on("error", err => {
                 commit("taskListUpdate", task);
-                reject(task);
+                reject(err);
             });
         });
     },

@@ -240,15 +240,14 @@ export default {
             this.selectedRow = ss
         },
         showReceipt({ filename, id }) {
-            const this2 = this
-            this.receiptModal.display = true
-            this.receiptModal.fileName = filename
-            this.receiptModal.fileId = id
-            createQrCodeStr(id, function (err, result) {
+            this.receiptModal.display = true;
+            this.receiptModal.fileName = filename;
+            this.receiptModal.fileId = id;
+            createQrCodeStr(id, (err, result) => {
                 if (err) {
                     console.error('generate QR err for id: ' + id)
                 } else {
-                    this2.receiptModal.fileQrCode = result
+                    this.receiptModal.fileQrCode = result
                 }
             })
         },
@@ -261,22 +260,21 @@ export default {
             }
         },
         deleteSelected() {
-            const this2 = this
             if (this.anyRowSelected) {
                 this.$confirm('Are you sure to delete selected files', 'Confirm', {
                     confirmButtonText: 'Delete',
                     cancelButtonText: 'Cancel',
                     type: 'warning'
                 }).then(() => {
-                    this2.closeReceipt()
-                    this2.selectedRow.forEach(row => {
+                    this.closeReceipt()
+                    this.selectedRow.forEach(row => {
                         this.$store.dispatch('deleteFile', {
-                            bucketId: this2.currentBucketId,
+                            bucketId: this.currentBucketId,
                             fileId: row.id
                         }).then(() => {
-                            this2.$message.success('File Deleted: ' + row.filename)
+                            this.$message.success('File Deleted: ' + row.filename)
                         }).catch((err) => {
-                            this2.$message.error('File Delete Error: ' + err)
+                            this.$message.error('File Delete Error: ' + err)
                         })
                     })
                 })
@@ -314,9 +312,9 @@ export default {
                                 filePath: folderPath + '/' + row.filename,
                                 folderName: this.currentBucketName,
                             }).then(() => {
-                                this.$message.success('File Download Success: ' + row.filename)
+                                this.$message.success(`File Download Success: ${row.filename}`);
                             }).catch((err) => {
-                                this.$message.error('File Download Error: ' + err)
+                                this.$message.error(`File Download Error: ${err.message}`);
                             });
                         })
                     }
@@ -340,9 +338,9 @@ export default {
                     filePath: filePath,
                     folderName: this.currentBucketName,
                 }).then(() => {
-                    this.$message.success('File Download Success: ' + filename)
+                    this.$message.success(`File Download Success: ${filename}`);
                 }).catch((err) => {
-                    this.$message.error('File Download Error: ' + err)
+                    this.$message.error(`File Download Error: ${err.message}`);
                 });
             })
         },
@@ -392,18 +390,11 @@ export default {
                 filePath,
                 bucketId,
                 folderName: this.currentBucketName,
-            });
-            /*
-            this.$store.dispatch('fireUpload', {
-                filePath,
-                bucketId,
-                folderName: this.currentBucketName
             }).then(() => {
-                this.$message.success('File Uploaded: ' + filePath)
+                this.$message.success(`File Uploaded: ${filePath}`);
             }).catch((err) => {
-                this.$message.error('File Upload Failed: ' + err)
-            })
-            */
+                this.$message.error(`File Upload Failed: ${err.message}`);
+            });
         }
     },
     components: {
