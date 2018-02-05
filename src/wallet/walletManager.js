@@ -1,7 +1,7 @@
 import { web3, chainId, utils, GNXAddr } from './web3Util'
 import * as gnx from './gnxSmart'
 import axios from 'axios'
-import config from '../config'
+import { BRIDGE_API_URL } from '../config'
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -302,7 +302,7 @@ async function submitAddress(user, address, password) {
     }
 
     // send to server http://47.100.33.60:8080/users/simon@tedxsuzhou.com/payment
-    const url = config.bridgeApiUrl + `/users/${user}/payment`
+    const url = BRIDGE_API_URL + `/users/${user}/payment`
     axios.defaults.adapter = require('axios/lib/adapters/http')
     const result = await axios.post(url, req)
     // server verify

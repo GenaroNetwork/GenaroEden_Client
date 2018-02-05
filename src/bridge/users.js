@@ -1,5 +1,5 @@
 import axios from 'axios'
-import config from '../config'
+import { BRIDGE_API_URL, PASSWORD_RESET_REDIRECT, REGISTER_REDIRECT } from '../config'
 const storj = require('storj-lib')
 
 /*
@@ -13,24 +13,23 @@ const storj = require('storj-lib')
   
 */
 function resetPassword(email, password) {
-  console.log(config)
-  const url = config.bridgeApiUrl + '/users/' + email
-  return axios.patch(url, {
-    password: storj.utils.sha256(password),
-    redirect: config.passwordResetRedirect
-  })
+    const url = BRIDGE_API_URL + '/users/' + email
+    return axios.patch(url, {
+        password: storj.utils.sha256(password),
+        redirect: PASSWORD_RESET_REDIRECT
+    })
 }
 
 function register(email, password) {
-  const url = config.bridgeApiUrl + '/users'
-  return axios.post(url, {
-    email: email,
-    password: storj.utils.sha256(password),
-    redirect: config.registerRedirect
-  })
+    const url = BRIDGE_API_URL + '/users'
+    return axios.post(url, {
+        email: email,
+        password: storj.utils.sha256(password),
+        redirect: REGISTER_REDIRECT
+    })
 }
 
 export {
-  resetPassword,
-  register
+    resetPassword,
+    register
 }

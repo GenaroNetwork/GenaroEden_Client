@@ -47,12 +47,15 @@
   top: 0;
   left: 0;
   display: flex;
+  z-index: 9;
 }
 .overlay div {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -90%);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
   text-align: center;
 }
 .overlay div h2 {
@@ -118,21 +121,28 @@ td.right-td {
                 <el-table-column prop="id" label="File ID" width="250" class-name="id-col"></el-table-column>
                 <el-table-column width="130" label="">
                     <template slot-scope="scope">
-                        <el-button class="row-action" @click="showReceipt(scope.row)" type="text" size="small">
-                            <i class="material-icons">receipt</i>
-                        </el-button>
-                        <el-button class="row-action" @click="downloadFile(scope.row)" type="text" size="small">
-                            <i class="material-icons">file_download</i>
-                        </el-button>
-                        <el-button class="row-action" @click="deleteFile(scope.row)" type="text" size="small">
-                            <i class="material-icons">delete</i>
-                        </el-button>
+                        <el-tooltip content="View detail" placement="bottom">
+                            <el-button class="row-action" @click="showReceipt(scope.row)" type="text" size="small">
+                                <i class="material-icons">receipt</i>
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip content="Download" placement="bottom">
+                            <el-button class="row-action" @click="downloadFile(scope.row)" type="text" size="small">
+                                <i class="material-icons">file_download</i>
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip content="Delete" placement="bottom">
+                            <el-button class="row-action" @click="deleteFile(scope.row)" type="text" size="small">
+                                <i class="material-icons">delete</i>
+                            </el-button>
+                        </el-tooltip>
                     </template>
                 </el-table-column>
                 <span v-show="!dragging" slot="empty">No file in this folder. <br>You can click
                     <el-button type="text" @click="upload" size="small">Upload
                         <i class="el-icon-upload el-icon--right"></i>
-                    </el-button> button or drag and drop file here to upload.</span>
+                    </el-button> button or drag and drop file here to upload.
+                </span>
             </el-table>
             <div class="overlay" v-if="dragging">
                 <div>
@@ -172,15 +182,14 @@ td.right-td {
 </template>
 
 <script>
-import QR_CODE from '../../utils/qrCodeUtil'
-import ELECTRON_DIALOG from '../../utils/electronDialog'
-import { stepReady } from "../../utils/guide"
-import { fileName2Icon } from "../../utils/file2icon"
-import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+import { createQrCodeStr } from '../../utils/qrCodeUtil';
+import electronDialog from '../../utils/electronDialog';
+import { stepReady } from "../../utils/guide";
+import { fileName2Icon } from "../../utils/file2icon";
+import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import moment from 'moment';
 import humanSize from 'human-size';
-
-import { fileUpload } from "../../utils/fileOperation";
+import fs from "fs";
 
 export default {
     data() {
@@ -235,7 +244,7 @@ export default {
             this.receiptModal.display = true
             this.receiptModal.fileName = filename
             this.receiptModal.fileId = id
-            QR_CODE.createQrCodeStr(id, function (err, result) {
+            createQrCodeStr(id, function (err, result) {
                 if (err) {
                     console.error('generate QR err for id: ' + id)
                 } else {
@@ -294,22 +303,21 @@ export default {
             })
         },
         downloadSelected() {
-            const this2 = this
             if (this.anyRowSelected) {
-                ELECTRON_DIALOG.selectDirectory(folders => {
+                electronDialog.selectDirectory(folders => {
                     if (folders && folders.length > 0) {
                         const folderPath = folders[0]
-                        this2.selectedRow.forEach(row => {
-                            store.dispatch('fireDownload', {
-                                folderId: this2.currentBucketId,
-                                folderName: this2.currentBucketName,
+                        this.selectedRow.forEach(row => {
+                            this.$store.dispatch("taskListDownload", {
+                                bucketId: this.currentBucketId,
                                 fileId: row.id,
-                                filePath: folderPath + '/' + row.filename
+                                filePath: folderPath + '/' + row.filename,
+                                folderName: this.currentBucketName,
                             }).then(() => {
-                                this2.$message.success('File Download Success: ' + row.filename)
+                                this.$message.success('File Download Success: ' + row.filename)
                             }).catch((err) => {
-                                this2.$message.error('File Download Error: ' + err)
-                            })
+                                this.$message.error('File Download Error: ' + err)
+                            });
                         })
                     }
                 })
@@ -324,19 +332,18 @@ export default {
                 title: 'Save File',
                 defaultPath: './' + filename
             }
-            ELECTRON_DIALOG.showSaveDialog(options, filePath => {
-                this.$message('File Downloading...')
-
-                this.$store.dispatch('fireDownload', {
-                    folderId: this2.currentBucketId,
-                    folderName: this2.currentBucketName,
+            electronDialog.showSaveDialog(options, filePath => {
+                this.$message('File Downloading...');
+                this.$store.dispatch("taskListDownload", {
+                    bucketId: this.currentBucketId,
                     fileId: id,
-                    filePath
+                    filePath: filePath,
+                    folderName: this.currentBucketName,
                 }).then(() => {
-                    this2.$message.success('File Download Success')
+                    this.$message.success('File Download Success: ' + filename)
                 }).catch((err) => {
-                    this2.$message.error('File Download Error: ' + err)
-                })
+                    this.$message.error('File Download Error: ' + err)
+                });
             })
         },
         // Bucket 删除操作
@@ -355,12 +362,15 @@ export default {
             this.dragging = true
         },
         fileDrop(e) {
-            this.dragging = false
-            let this2 = this
-            for (let f of e.dataTransfer.files) {
-                console.log('File(s) you dragged here: ', f.path)
-                this2.$message('File Uploading. Your can this task in Recent panel on the left.')
-                this.rawUpload(this2.currentBucketId, f.path)
+            this.dragging = false;
+            for (let file of e.dataTransfer.files) {
+                if (!fs.lstatSync(file.path).isFile()) {
+                    this.$message.error("Only file can be uploaded.");
+                    continue;
+                }
+                console.log('File(s) you dragged here: ', file.path)
+                this.$message('File Uploading. Your can this task in Recent panel on the left.')
+                this.rawUpload(this.currentBucketId, file.path)
             }
         },
         fileDragLeave(e) {
@@ -378,6 +388,12 @@ export default {
             }
         },
         rawUpload(bucketId, filePath) {
+            this.$store.dispatch("taskListUpload", {
+                filePath,
+                bucketId,
+                folderName: this.currentBucketName,
+            });
+            /*
             this.$store.dispatch('fireUpload', {
                 filePath,
                 bucketId,
@@ -387,6 +403,7 @@ export default {
             }).catch((err) => {
                 this.$message.error('File Upload Failed: ' + err)
             })
+            */
         }
     },
     components: {

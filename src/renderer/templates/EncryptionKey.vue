@@ -142,9 +142,9 @@ div.key-area {
 </template>
 
 <script>
-import dbUtil from '../utils/DbUtil'
+import { getEncryptionKey, saveEncryptionKey } from '../utils/DbUtil'
 import router from '../router'
-import bridgeApi from '../utils/storjApiClient'
+import { setEnvironment, mnemonicCheck, mnemonicGenerate } from '../utils/storjApiClient'
 import walletManager from '../../wallet/walletManager'
 
 export default {
@@ -163,9 +163,9 @@ export default {
         checkKeyOkAndContinue() {
             const name = this.$store.state.User.username
             const pwd = this.$store.state.User.password
-            dbUtil.getEncryptionKey(pwd).then((c) => {
+            getEncryptionKey(pwd).then((c) => {
                 if (c) {
-                    bridgeApi.setEnvironment(name, pwd, c)
+                    setEnvironment(name, pwd, c)
                     router.push({ path: '/index' })
                 } else {
                     console.log('no key found')
@@ -187,7 +187,7 @@ export default {
         },
         confirm() {
             const this2 = this
-            const valid = bridgeApi.mnemonicCheck(this.encryptionKey)
+            const valid = mnemonicCheck(this.encryptionKey)
             const pwd = this.$store.state.User.password
             if (valid) {
                 this.generateWalletThenLogin(this.encryptionKey, pwd)
@@ -224,14 +224,14 @@ export default {
         submitLogin() {
             const this2 = this
             const pwd = this.$store.state.User.password
-            dbUtil.saveEncryptionKey(this.encryptionKey, pwd).then(() => {
+            saveEncryptionKey(this.encryptionKey, pwd).then(() => {
                 this2.checkKeyOkAndContinue()
             }).catch((e) => {
                 console.error(e)
             })
         },
         randomKey() {
-            this.encryptionKey = bridgeApi.mnemonicGenerate(128)
+            this.encryptionKey = mnemonicGenerate(128)
         },
         saveKey() {
             const theKey = this.encryptionKey

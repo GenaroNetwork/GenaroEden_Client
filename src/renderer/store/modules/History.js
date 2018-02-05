@@ -5,9 +5,7 @@
  *        Use `TaskList.js` instead
  */
 
-
-import STROJ_CLIENT from '../../utils/storjApiClient'
-import dbUtil from '../../utils/DbUtil'
+import { getHistory, addHistory, removeHistoryById } from '../../utils/DbUtil'
 const uuidV1 = require('uuid/v1')
 
 const state = {
@@ -24,16 +22,16 @@ const actions = {
     logHistory({ dispatch }, history) {
         history.historyId = uuidV1()
         // 1. save history in databse
-        dbUtil.addHistory(history)
+        addHistory(history)
         // 2. reload 
         dispatch('loadHistory')
     },
     loadHistory({ commit }) {
-        const his = dbUtil.getHistory()
+        const his = getHistory()
         commit('setHisotry', his)
     },
     removeHistory({ dispatch }, historyId) {
-        dbUtil.removeHistoryById(historyId)
+        removeHistoryById(historyId)
         dispatch('loadHistory')
     }
 }

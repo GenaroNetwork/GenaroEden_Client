@@ -1,25 +1,25 @@
 <style scoped>
 .layout-user-info {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 .layout-user-avater {
-    padding-top: 8px;
-    padding-left: 20px;
+  padding-top: 8px;
+  padding-left: 20px;
 }
 .layout-user-processor {
   display: flex;
   flex-flow: column;
 }
 .layout-user-wallet {
-    margin-top: 25px;
-    margin-left: -10px;
+  margin-top: 25px;
+  margin-left: -10px;
 }
 .username {
-    float:right
+  float: right;
 }
 .progress {
-    width:220px;
-    margin-bottom: 0;
+  width: 220px;
+  margin-bottom: 0;
 }
 </style>
 
@@ -27,21 +27,24 @@
     <div class="layout-user-info">
         <div class="layout-user-processor">
             <el-progress :percentage="percent" :show-text="false"></el-progress>
-            <span><span>{{totalUploadSize}}</span>/<span>{{totalMaxSizeHuman}}</span></span>
+            <span>
+                <span>{{totalUploadSize}}</span>/
+                <span>{{totalMaxSizeHuman}}</span>
+            </span>
         </div>
     </div>
 </template>
 
 <script>
-import DB_UTIL from '../utils/DbUtil'
+import { getUploadSize } from '../utils/DbUtil'
 import store from '../store'
 const humanSize = require('human-size');
 export default {
     mounted: function () {
-        const newTotalSize = DB_UTIL.getUploadSize()
+        const newTotalSize = getUploadSize()
         store.commit('updateTotalUploadSize', newTotalSize)
     },
-    data: function() {
+    data: function () {
         return {
             totalMaxSize: 100 * 1024 * 1024
         }

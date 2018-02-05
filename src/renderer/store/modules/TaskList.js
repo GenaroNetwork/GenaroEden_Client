@@ -1,9 +1,8 @@
 /* This is the new version of tasklist (include history list and upload list) */
 import UUID from "uuid/v1";
-import stroj from "../../utils/storjApiClient";
+import { UploadTask, DownloadTask } from "../../utils/storjApiClient";
 import fs from "fs";
 import path from "path";
-import events from "events";
 import { setTimeout } from "timers";
 
 import {
@@ -12,7 +11,7 @@ import {
     taskListRemove,
     taskListUpdate,
     taskListAppend,
-} from "../../utils/dbutil";
+} from "../../utils/dbUtil";
 
 let taskMatch = (savedTask, commitTask) => {
     let result = true;
@@ -38,77 +37,77 @@ let getters = {
 }
 
 let mutations = {
-    taskListInit(state, tasks) {
+    taskListLoad(state) {
+        let tasks = taskListList() || [];
         state.tasks = tasks;
     },
 
     taskListAppend(state, commitTask) {
-        state.tasks.push(Object.assign({}, commitTask));
+        taskListAppend(commitTask);
+        let savedTask = Object.assign({}, commitTask);
+        delete savedTask.state;
+        state.tasks.push(savedTask);
     },
 
     taskListUpdate(state, commitTask) {
-        let savedTask = state.tasks.find(savedTask => taskMatch(savedTask, commitTask));
+        taskListUpdate(commitTask);
+        let savedTask = state.tasks.find(task => task.taskId = commitTask.taskId);
         Object.keys(commitTask).forEach(key => {
             if (key === "taskId") return;
-            savedTask[key] = commitTask;
+            if (key === "state") return;
+            savedTask[key] = commitTask[key];
         });
     },
 
     taskListRemove(state, commitTask) {
-        let taskIndex = state.tasks.findIndex(savedTask => taskMatch(savedTask, commitTask));
+        taskListRemove(commitTask);
+        let taskIndex = state.tasks.findIndex(task => taskMatch(task, commitTask));
         state.tasks.splice(taskIndex, 1);
     },
 
     taskListClear(state) {
+        taskListClear();
         state.tasks = [];
     }
 }
 
 let actions = {
-    taskListLoadFromDb({ commit }) {
-        let tasks = taskListList() || [];
-        commit("taskListInit", tasks);
-    },
-    taskListAppend({ commit }, commitTask) {
-        commitTask.UUID = UUID();
-        taskListAppend(commitTask);
-        commit("taskListAppend", commitTask);
-    },
-    taskListUpdate({ commit }, commitTask) {
-        taskListUpdate(commitTask);
-        commit("taskListUpdate", commitTask);
-    },
-    taskListRemove({ commit }, commitTask) {
-        taskListRemove(commitTask);
-        commit("taskListRemove", commitTask);
-    },
-    taskListClear({ commit }, commitTask) {
-        taskListClear();
-        commit("taskListClear");
-    },
-    fileUpload({ commit, dispatch }, { filePath, bucketId, folderName }) {
+    taskListUpload({ commit }, { filePath, bucketId, folderName }) {
         let fileName = path.basename(filePath);
-        let stats = fs.statSync(filePath);
-        let fileSize = stats.size;
-        let event = new events;
+        return new Promise((resolve, reject) => {
+            let task = new UploadTask({ filePath, bucketId, fileName });
+            commit("taskListAppend", task);
+            task.on("progress", err => {
+                commit("taskListUpdate", task);
+            });
+            task.on("load", () => {
+                commit("taskListUpdate", task);
+                resolve(task);
+            });
+            task.on("error", () => {
+                commit("taskListUpdate", task);
+                reject(task);
+            });
+        });
+    },
 
-        let task;
-        task = stroj.uploadFile(filePath, fileName, bucketId,
-            (...params) => {
-                event.emit("error", task, ...params);
-            },
-            (...params) => {
-                event.emit("success", task, ...params);
-            },
-            (...params) => {
-                event.emit("progress", task, ...params);
-            },
-        );
-
-        setTimeout(() => {
-            event.emit("init", task);
-        }, 0);
-    }
+    taskListDownload({ commit }, { bucketId, fileId, filePath, folderName }) {
+        return new Promise((resolve, reject) => {
+            let task = new DownloadTask({ bucketId, fileId, filePath, folderName });
+            commit("taskListAppend", task);
+            task.on("progress", err => {
+                commit("taskListUpdate", task);
+            });
+            task.on("load", () => {
+                commit("taskListUpdate", task);
+                resolve(task);
+            });
+            task.on("error", () => {
+                commit("taskListUpdate", task);
+                reject(task);
+            });
+        });
+    },
 }
 
 export default {

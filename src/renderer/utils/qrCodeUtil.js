@@ -1,17 +1,17 @@
-const QRCode = require('qrcode')
+const qrCode = require('qrcode');
 
 const opts = {
-  errorCorrectionLevel: 'H',
-  type: 'png',
-  rendererOpts: {
-    quality: 0.3
-  }
+    errorCorrectionLevel: 'H',
+    type: 'png',
+    rendererOpts: {
+        quality: 0.3
+    }
 }
 
 function createQrCodeStr(val, callBack) {
-    QRCode.toDataURL(val, opts, callBack)
+    qrCode.toDataURL(val, opts, callBack)
 }
 
-export default {
+export {
     createQrCodeStr
 }

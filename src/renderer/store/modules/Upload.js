@@ -6,8 +6,8 @@
  */
 
 
-import STROJ_CLIENT from '../../utils/storjApiClient'
-import dbUtil from '../../utils/DbUtil'
+import { cancelUpload, oldUploadFile } from '../../utils/storjApiClient'
+import { addUploadSize, getUploadSize } from '../../utils/DbUtil'
 const state = {
     uploadList: []
 }
@@ -65,15 +65,15 @@ const actions = {
         const filesize = stats.size
 
         return new Promise((resolve, reject) => {
-            var task = STROJ_CLIENT.oldUploadFile(filePath, filename, bucketId, function (err) {
+            var task = oldUploadFile(filePath, filename, bucketId, function (err) {
                 commit('updateRunningUploadTask', task)
                 reject(err)
             }, () => {
                 commit('updateRunningUploadTask', task)
                 dispatch('logHistory', task, { root: true })
                 dispatch('reloadBucketData')
-                dbUtil.addUploadSize(filesize)
-                const newTotalSize = dbUtil.getUploadSize()
+                addUploadSize(filesize)
+                const newTotalSize = getUploadSize()
                 commit('updateTotalUploadSize', newTotalSize)
                 resolve()
             }, () => {
@@ -86,7 +86,7 @@ const actions = {
     cancelUpload({ commit, state, dispatch }, { taskId }) {
         const task = state.uploadList.find(t => t.taskId === taskId)
         if (task) {
-            STROJ_CLIENT.cancelUpload(task.state)
+            cancelUpload(task.state)
             commit('removeState', task) // storj may crash when cancel multipile times. set state to null to prevent.
         }
     },

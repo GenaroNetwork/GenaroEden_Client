@@ -16,7 +16,7 @@ const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ username: null, uploadSize: 0, history: [], encryptionKey: null }).write()
+db.defaults({ username: null, uploadSize: 0, tasks: [], encryptionKey: null }).write()
 
 const KEYCHAIN_LOGIN = 'network.genaro.eden.login'
 const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey'
@@ -48,7 +48,7 @@ function removeHistoryById(id) {
 function taskListList({
     sort = item => -item.created,
 } = {}) {
-    db.get("tasks")
+    return db.get("tasks")
         .sortBy(sort)
         .value();
 }
@@ -60,7 +60,7 @@ function taskListAppend(commitTask) {
 }
 
 function taskListGet(commitTask) {
-    db.get("tasks")
+    return db.get("tasks")
         .find(commitTask)
         .value();
 }
@@ -131,7 +131,7 @@ function getEncryptionKey(password) {
     })
 }
 
-export default {
+export {
     addUploadSize,
     getUploadSize,
     isFirstTime,

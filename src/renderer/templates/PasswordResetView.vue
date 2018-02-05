@@ -60,10 +60,9 @@ h1 {
 </template>
 
 <script> 
-import STROJ_CLIENT from '../utils/storjApiClient'
-import router from '../router'
-import store from '../store'
-import { resetPassword } from '../../bridge/users'
+import router from '../router';
+import store from '../store';
+import { resetPassword } from '../../bridge/users';
 
 export default {
     name: 'password-reset',

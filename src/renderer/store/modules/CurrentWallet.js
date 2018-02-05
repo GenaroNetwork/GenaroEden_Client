@@ -1,6 +1,5 @@
-import bridgeApi from '../../utils/storjApiClient'
-import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager'
-import walletManager from '../../../wallet/walletManager'
+import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager';
+import walletManager from '../../../wallet/walletManager';
 
 const state = {
     wallet: {

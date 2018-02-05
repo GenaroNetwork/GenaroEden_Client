@@ -1,13 +1,12 @@
-import store from '../store'
-import config from '../../config'
+import store from '../store';
+import { TASK_TYPE, TASK_STATE, BRIDGE_API_URL } from '../../config';
 import log from "./log";
+import events from "events";
+
 
 const UUID = require('uuid/v1')
 const { Environment, mnemonicGenerate, mnemonicCheck } = require('storj')
 
-const BRIDGE_API_URL = config.bridgeApiUrl;
-const TASKSTATE = config.TASKSTATE
-const TASKTYPE = config.TASKTYPE
 
 let _storj;
 if (process.env.NODE_ENV === 'development') {
@@ -25,30 +24,123 @@ let bridgeUser;
 class Task {
     constructor() {
         this.taskId = UUID();
-        this.taskType = TASKTYPE.NOTSET;
-        this.taskState = TASKSTATE.INIT;
+        this.taskType = TASK_TYPE.NOTSET;
+        this.taskState = TASK_STATE.INIT;
         this.progress = 0;
         this.created = Date.now();
         this.updated = Date.now();
 
-        Object.entries(props).forEach(([key, value]) => {
-            this[key] = value;
-        });
-    }
+        let taskEvent = new events;
+        this.on = taskEvent.on;
+        this.once = taskEvent.once;
+        this.emit = taskEvent.emit;
+        this.off = (eventName, listener = null) => {
+            if (listener === null) taskEvent.removeAllListeners(eventName);
+            else taskEvent.removeListener(eventName, listener);
+        };
+
+        Object.defineProperty(this, "on", { enumerable: false });
+        Object.defineProperty(this, "once", { enumerable: false });
+        Object.defineProperty(this, "emit", { enumerable: false });
+        Object.defineProperty(this, "off", { enumerable: false });
+    };
+    onProgress() { };
+    onFinish() { };
+    cancel() { }
 }
 
 class UploadTask extends Task {
-    constructor({ params }) {
+    constructor({ filePath, bucketId, fileName }) {
         super();
-        this.taskType = TASKTYPE.UPLOAD;
+
+        // init varibles
+        this.taskType = TASK_TYPE.UPLOAD;
         this.state = null;
         this.user = bridgeUser;
         this.uploadedBytes = 0;
         this.totalBytes = 0;
+        this.filePath = filePath;
+        this.bucketId = bucketId;
+        this.fileName = fileName;
+
+        // start upload
+        this.state = _storj.storeFile(this.bucketId, this.filePath, {
+            filename: this.fileName,
+            progressCallback: (...params) => this.onProgress(...params),
+            finishedCallback: (...params) => this.onFinish(...params),
+        });
+    };
+    onProgress(progress, uploadedBytes, totalBytes) {
+        this.progress = progress;
+        this.updated = Date.now();
+        this.uploadedBytes = uploadedBytes;
+        this.totalBytes = totalBytes;
+        this.taskState = TASK_STATE.INPROGRESS;
+        this.emit("progress", progress, uploadedBytes, totalBytes);
+    };
+    onFinish(err, fileId) {
+        if (err) {
+            this.taskState = TASK_STATE.ERROR;
+            this.emit("error", err);
+            log.error("Upload file error.", this);
+        } else {
+            this.progress = 1;
+            this.taskState = TASK_STATE.SUCCESS;
+            this.emit("load");
+            log.log("Upload file completed.", this);
+        }
     };
     cancel() {
-        log.log('Cancel task: ' + taskId);
-        log.log(this.state);
+        this.emit("cancel");
+        log.log("Upload file canceled.");
+        _storj.storeFileCancel(this.state);
+    }
+}
+
+class DownloadTask extends Task {
+    constructor({ bucketId, fileId, filePath, folderName }) {
+        super();
+
+        // init varibles
+        this.taskType = TASK_TYPE.DOWNLOAD;
+        this.state = null;
+        this.user = bridgeUser;
+        this.downloadedBytes = 0;
+        this.totalBytes = 0;
+        this.bucketId = bucketId;
+        this.fileId = fileId;
+        this.filePath = filePath;
+        this.folderName = folderName;
+
+        // start download
+        this.state = _storj.resolveFile(bucketId, fileId, filePath, {
+            overwrite: true,
+            progressCallback: (progress, downloadedBytes, totalBytes) => {
+                this.progress = progress;
+                this.updated = Date.now();
+                this.downloadedBytes = downloadedBytes;
+                this.totalBytes = totalBytes;
+                this.taskState = TASK_STATE.INPROGRESS;
+                this.emit("progress", progress, downloadedBytes, totalBytes);
+            },
+            finishedCallback: err => {
+                if (err) {
+                    this.taskState = TASK_STATE.ERROR;
+                    this.emit("error", err);
+                    debugger;
+                    log.error("Download file error.", err);
+                } else {
+                    this.progress = 1;
+                    this.taskState = TASK_STATE.SUCCESS;
+                    this.emit("load");
+                    log.log("Download file completed.", err);
+                }
+            },
+        });
+    };
+    cancel() {
+        this.emit("cancel");
+        log.log("Upload file canceled.");
         _storj.storeFileCancel(this.state);
     }
 }
@@ -57,8 +149,8 @@ class UploadTask extends Task {
 function newTask(customProp) {
     let baseTask = {
         taskId: UUID(),
-        taskType: TASKTYPE.NOTSET,
-        taskState: TASKSTATE.INIT,
+        taskType: TASK_TYPE.NOTSET,
+        taskState: TASK_STATE.INIT,
         progress: 0,
         created: Date.now(),
         updated: Date.now()
@@ -89,7 +181,7 @@ function deleteBucket(bucketId, callBack) {
 // oldVersiopn
 function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallback, progressCallback1) {
     let task = newTask({
-        taskType: TASKTYPE.UPLOAD,
+        taskType: TASK_TYPE.UPLOAD,
         state: null,
         filePath,
         bucketId,
@@ -109,33 +201,24 @@ function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallb
             task.updated = Date.now()
             task.uploadedBytes = uploadedBytes
             task.totalBytes = totalBytes
-            task.taskState = TASKSTATE.INPROGRESS
+            task.taskState = TASK_STATE.INPROGRESS
             progressCallback1(task)
             console.log(task)
         },
         finishedCallback: function (err, fileId) {
             if (err) {
-                task.taskState = TASKSTATE.ERROR
+                task.taskState = TASK_STATE.ERROR
                 errorCallback(err)
                 console.error('upload-file error')
             } else {
                 task.progress = 1
-                task.taskState = TASKSTATE.SUCCESS
+                task.taskState = TASK_STATE.SUCCESS
                 console.log(filePath + 'File upload complete:', fileId)
                 successCallback()
             }
         }
     })
     return task
-}
-
-// new version
-function uploadFile({ filePath, fileName, bucketId }) {
-    let task = new Task({
-        taskType: TASKTYPE.UPLOAD,
-
-    });
-
 }
 
 /* 获取文件列表 */
@@ -146,7 +229,7 @@ function getFileList(bucketId, callBack) {
 /* 下载文件 */
 function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, successCallback, progressCallback1) {
     let task = newTask({
-        taskType: TASKTYPE.DOWNLOAD,
+        taskType: TASK_TYPE.DOWNLOAD,
         state: null,
         filePath: downloadFilePath,
         bucketId: bucketId,
@@ -167,24 +250,24 @@ function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, success
             task.updated = Date.now()
             task.downloadedBytes = downloadedBytes
             task.totalBytes = totalBytes
-            task.taskState = TASKSTATE.INPROGRESS
+            task.taskState = TASK_STATE.INPROGRESS
             progressCallback1(task)
             console.log(task)
         },
         finishedCallback: function (err) {
             if (err) {
-                task.taskState = TASKSTATE.ERROR
+                task.taskState = TASK_STATE.ERROR
                 errorCallback(err)
                 console.error(err);
             } else {
                 task.progress = 1
-                task.taskState = TASKSTATE.SUCCESS
+                task.taskState = TASK_STATE.SUCCESS
                 console.log('File download complete');
                 successCallback()
             }
         }
     })
-    return task
+    return task;
 }
 
 /* 删除文件 */
@@ -232,14 +315,14 @@ function cancelDownload(state) {
 function cancelUpload(state) {
     if (state) _storj.storeFileCancel(state)
 }
-export default {
+export {
     setEnvironment,
     createBucket,
     getBucketList,
     deleteBucket,
-    deleteBucket,
     oldUploadFile,
-    uploadFile,
+    UploadTask,
+    DownloadTask,
     cancelUpload,
     getFileList,
     downloadFile,

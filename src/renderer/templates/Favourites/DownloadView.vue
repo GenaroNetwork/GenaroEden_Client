@@ -41,7 +41,7 @@
         <el-tabs value="runningTask" class="task-tabs-parent">
             <el-tab-pane label="Running Task" name="runningTask">
 
-                <el-table :data="taskFileList" class="files-table" height="100%" row-class-name="file-row">
+                <el-table :data="taskListNotSuccess" class="files-table" height="100%" row-class-name="file-row">
                     <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
@@ -81,7 +81,7 @@
             <!-- -->
             <el-tab-pane label="History" name="history">
 
-                <el-table :data="historyList" class="files-table" height="100%" row-class-name="file-row">
+                <el-table :data="taskListSuccess" class="files-table" height="100%" row-class-name="file-row">
                     <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
@@ -99,7 +99,9 @@
                                     <span>Download Sucess</span>
                                 </span>
                                 <span class="task-type" v-if="scope.row.taskType === 3">
-                                    <i class="material-icons">file_upload</i>Upload Sucess</span>
+                                    <i class="material-icons">file_upload</i>
+                                    <span>Upload Sucess</span>
+                                </span>
                                 <el-button class="row-action" @click="ShowUploadItemInFolder(scope.row)" type="text" size="small">
                                     <i class="material-icons">folder</i>
                                 </el-button>
@@ -119,9 +121,9 @@
 
 <script>
 
-import { fileName2Icon } from "../../utils/file2icon"
+import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
-import config from '../../../config'
+import { TASK_STATE, TASK_TYPE } from "../../../config"
 const moment = require('moment');
 const humanSize = require('human-size');
 export default {
@@ -143,24 +145,14 @@ export default {
         }
     },
     computed: {
-        downloadFileList() {
-            return this.$store.state.File.downloadFileList
+        taskList() {
+            return this.$store.state.TaskList.tasks;
         },
-        uploadList() {
-            return this.$store.state.Upload.uploadList
+        taskListSuccess() {
+            return this.$store.state.TaskList.tasks.filter(task => task.taskState === TASK_STATE.SUCCESS);
         },
-        downloadList() {
-            return this.$store.state.Download.downloadList
-        },
-        taskFileList() {
-            let allTask = this.downloadList.concat(this.uploadList)
-            allTask.sort(function (a, b) {
-                return b.created - a.created
-            })
-            return allTask
-        },
-        historyList() {
-            return this.$store.state.History.historyList
+        taskListNotSuccess() {
+            return this.$store.state.TaskList.tasks.filter(task => task.taskState !== TASK_STATE.SUCCESS);
         }
     },
     methods: {
@@ -181,16 +173,16 @@ export default {
         },
         getStatusStr(status) {
             switch (status) {
-                case config.TASKSTATE.SUCCESS:
+                case TASK_STATE.SUCCESS:
                     return 'success'
-                case config.TASKSTATE.ERROR:
+                case TASK_STATE.ERROR:
                     return 'exception'
                 default:
                     return null
             }
         },
         ShowUploadItemInFolder(item) {
-            if (item.taskType === config.TASKTYPE.DOWNLOAD) {
+            if (item.taskType === TASK_TYPE.DOWNLOAD) {
                 const { shell } = require('electron')
                 const fs = require('fs');
                 if (fs.existsSync(item.filePath)) {
@@ -198,30 +190,38 @@ export default {
                 } else {
                     this.$message('File no more exist. Maybe deleted or moved.');
                 }
-            } else if (item.taskType === config.TASKTYPE.UPLOAD) {
-                this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } })
+            } else if (item.taskType === TASK_TYPE.UPLOAD) {
+                let bucketList = this.$store.state.Bucket.bucketList;
+                let bucketExist = false;
+                bucketList.every(bucket => {
+                    if (bucket.name !== item.folderName) return true;
+                    bucketExist = true;
+                    return false;
+                });
+                if (bucketExist) this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } });
+                else this.$message.error(`Folder ${item.folderName} does not exist.`);
             }
         },
         deleteHistory(item) {
             this.$store.dispatch('removeHistory', item.historyId)
         },
         cancelTask(item) {
-            if (item.taskType === config.TASKTYPE.DOWNLOAD) {
+            if (item.taskType === TASK_TYPE.DOWNLOAD) {
                 this.$store.dispatch('cancelDownload', { taskId: item.taskId })
-            } else if (item.taskType === config.TASKTYPE.UPLOAD) {
+            } else if (item.taskType === TASK_TYPE.UPLOAD) {
                 this.$store.dispatch('cancelUpload', { taskId: item.taskId })
             }
         },
         removeTask(item) {
-            if (item.taskType === config.TASKTYPE.DOWNLOAD) {
+            if (item.taskType === TASK_TYPE.DOWNLOAD) {
                 this.$store.dispatch('removeDownloadTask', { taskId: item.taskId })
-            } else if (item.taskType === config.TASKTYPE.UPLOAD) {
+            } else if (item.taskType === TASK_TYPE.UPLOAD) {
                 this.$store.dispatch('removeUploadTask', { taskId: item.taskId })
             }
         }
     },
     mounted: function () {
-        this.$store.dispatch('loadHistory')
+        this.$store.commit('taskListLoad');
     },
     components: {
         FontAwesomeIcon

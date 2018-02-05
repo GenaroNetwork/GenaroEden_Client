@@ -1,5 +1,5 @@
 import Shepherd from 'tether-shepherd'
-import DbUtil from './DbUtil'
+import { isFirstTime } from './DbUtil'
 
 function shouldTour() {
     return true
@@ -21,7 +21,7 @@ function runGuide() {
             text: 'Exit',
             classes: 'shepherd-button-secondary',
             action: tour.cancel
-        },{
+        }, {
             text: 'Next',
             classes: 'shepherd-button-example-primary',
             action: tour.next
@@ -34,7 +34,7 @@ function runGuide() {
             text: 'Exit',
             classes: 'shepherd-button-secondary',
             action: tour.cancel
-        },{
+        }, {
             text: 'Next',
             classes: 'shepherd-button-example-primary',
             action: tour.next
@@ -47,7 +47,7 @@ function runGuide() {
             text: 'Exit',
             classes: 'shepherd-button-secondary',
             action: tour.cancel
-        },{
+        }, {
             text: 'Next',
             classes: 'shepherd-button-example-primary',
             action: tour.next
@@ -60,7 +60,7 @@ function runGuide() {
             text: 'Exit',
             classes: 'shepherd-button-secondary',
             action: tour.cancel
-        },{
+        }, {
             text: 'Next',
             classes: 'shepherd-button-example-primary',
             action: tour.next
@@ -82,8 +82,8 @@ function runGuide() {
 
 var stepCount = 0
 function stepReady(step) {
-    stepCount ++
-    if(DbUtil.isFirstTime && stepCount === 5 ) [
+    stepCount++
+    if (isFirstTime && stepCount === 5)[
         runGuide()
     ]
 }

@@ -61,7 +61,6 @@ h1 {
 </template>
 
 <script> 
-import STROJ_CLIENT from '../utils/storjApiClient'
 import router from '../router'
 import store from '../store'
 import { register } from '../../bridge/users'

@@ -79,17 +79,17 @@ h1 {
 </template>
 
 <script> 
-import STROJ_CLIENT from '../utils/storjApiClient'
+import { setEnvironment, getBucketList } from '../utils/storjApiClient'
 import router from '../router'
 import store from '../store'
 import { resetPassword } from '../../bridge/users'
-import dbUtil from '../utils/DbUtil'
+import { getCredentials, saveCredentials } from '../utils/DbUtil'
 
 export default {
     name: 'login-view',
     created: function () {
         const this2 = this
-        dbUtil.getCredentials().then((credentials) => {
+        getCredentials().then((credentials) => {
             if (credentials) {
                 store.commit('updateUsername', credentials.account)
                 if (credentials.password) {
@@ -133,13 +133,13 @@ export default {
                     this.signing = true
                     var bridgeUser = this.login.username
                     var bridgePass = this.login.password
-                    STROJ_CLIENT.setEnvironment(bridgeUser, bridgePass)
-                    STROJ_CLIENT.getBucketList((err) => {
+                    setEnvironment(bridgeUser, bridgePass)
+                    getBucketList((err) => {
                         this.signing = false
                         if (err) {
                             this.$message.error('Username Or Password Error')
                         } else {
-                            dbUtil.saveCredentials(bridgeUser, bridgePass)
+                            saveCredentials(bridgeUser, bridgePass)
                             this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
                         }
                     })

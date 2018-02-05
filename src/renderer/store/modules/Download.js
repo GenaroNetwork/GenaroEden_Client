@@ -1,4 +1,4 @@
-import STROJ_CLIENT from '../../utils/storjApiClient'
+import { cancelDownload, downloadFile } from '../../utils/storjApiClient'
 const state = {
     downloadList: []
 }
@@ -48,7 +48,7 @@ const mutations = {
 const actions = {
     fireDownload({ commit, rootState, dispatch }, { folderId, fileId, filePath, folderName }) {
         return new Promise((resolve, reject) => {
-            let task = STROJ_CLIENT.downloadFile(folderId, fileId, filePath, (err) => {
+            let task = downloadFile(folderId, fileId, filePath, (err) => {
                 // error
                 commit('updateRunningDownloadTask', task)
                 const fs = require('fs')
@@ -68,7 +68,7 @@ const actions = {
     cancelDownload({ commit, state, dispatch }, { taskId }) {
         const task = state.downloadList.find(t => t.taskId === taskId)
         if (task) {
-            STROJ_CLIENT.cancelDownload(task.state)
+            cancelDownload(task.state)
             commit('removeState', task) // storj may crash when cancel task multipile times. set state to null to prevent.
         }
     },
