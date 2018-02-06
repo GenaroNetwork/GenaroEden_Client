@@ -254,7 +254,7 @@
                             </el-select>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="gas pirce (Gwei)" prop="gasPrice">
+                    <el-form-item label="gas price (Gwei)" prop="gasPrice">
                         <el-input type="number" v-model="payOption.gasPrice" placeholder="Gas" size="mini">
                         </el-input>
                     </el-form-item>
@@ -455,6 +455,9 @@ export default {
                 }
             },
             gasPrice: async (rule, value, callback) => {
+                if (value.toString().trim() === "") {
+                    callback(new Error("Please input gasPrice"));
+                }
                 let price = await getGasPrics();
                 price = utils.fromWei(price, "Gwei");
                 if (value < price) {
@@ -464,6 +467,9 @@ export default {
                 }
             },
             gasLimit: (rule, value, callback) => {
+                if (value.toString().trim() === "") {
+                    callback(new Error("Please input gasLimit"));
+                }
                 if (this.payOption.payType === "ETH" && value < ETH_LIMIT) {
                     callback("gas limit should greater than " + ETH_LIMIT);
                 } else if (this.payOption.payType === "GNX" && value < GNX_LIMIT) {
@@ -504,11 +510,9 @@ export default {
                     { validator: validator.amount, trigger: "blur" }
                 ],
                 gasPrice: [
-                    { required: true, message: "Please input gasPrice", trigger: "blur" },
                     { validator: validator.gasPrice, trigger: "blur" }
                 ],
                 gasLimit: [
-                    { required: true, message: "Please input gasLimit", trigger: "blur" },
                     { validator: validator.gasLimit, trigger: "blur" }
                 ],
                 password: [

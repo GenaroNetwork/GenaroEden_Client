@@ -1,6 +1,7 @@
 /* This is the new version of tasklist (include history list and upload list) */
 import UUID from "uuid/v1";
 import { UploadTask, DownloadTask } from "../../utils/storjApiClient";
+import { TASK_TYPE } from "../../../config";
 import fs from "fs";
 import path from "path";
 import { setTimeout } from "timers";
@@ -23,7 +24,6 @@ let taskMatch = (savedTask, commitTask) => {
     return result;
 }
 
-
 let state = {
     tasks: []
 }
@@ -39,23 +39,24 @@ let getters = {
 let mutations = {
     taskListLoad(state) {
         let tasks = taskListList() || [];
-        state.tasks = tasks;
+        state.tasks = [];
+        tasks.forEach(task => {
+            state.tasks.push(Object.assign({}, task));
+        });
     },
 
     taskListAppend(state, commitTask) {
         taskListAppend(commitTask);
-        let savedTask = Object.assign({}, commitTask);
-        delete savedTask.state;
-        state.tasks.push(savedTask);
+        state.tasks.push(Object.assign({}, commitTask));
     },
 
     taskListUpdate(state, commitTask) {
         taskListUpdate(commitTask);
-        let savedTask = state.tasks.find(task => task.taskId = commitTask.taskId);
-        Object.keys(commitTask).forEach(key => {
+        let savedTask = state.tasks.find(task => task.taskId === commitTask.taskId);
+        Object.entries(commitTask).forEach(([key, value]) => {
             if (key === "taskId") return;
-            if (key === "state") return;
-            savedTask[key] = commitTask[key];
+            if (typeof value === "object") return;
+            savedTask[key] = value;
         });
     },
 
@@ -108,6 +109,20 @@ let actions = {
             });
         });
     },
+
+    taskListCancel({ commit, getters }, { taskId }) {
+        let savedTask = getters.task({ taskId });
+        switch (savedTask.taskType) {
+            case TASK_TYPE.UPLOAD:
+                UploadTask.cancel(savedTask.state);
+                break;
+            case TASK_TYPE.DOWNLOAD:
+                DownloadTask.cancel(savedTask.state);
+                break;
+        }
+
+    }
+
 }
 
 export default {

@@ -34,6 +34,10 @@
 .task-tabs-parent .file-row:hover .row-action {
   visibility: visible;
 }
+
+.not-actived {
+  color: #ccc;
+}
 </style>
 
 <template>
@@ -53,8 +57,8 @@
                             <div class="process-bar">
                                 <el-progress :status="getStatusStr(scope.row.taskState)" :text-inside="true" :stroke-width="15" :percentage="Number.parseInt(scope.row.progress * 100)"></el-progress>
                                 <div>
-                                    <i v-if="scope.row.taskType === TASK_TYPE.DOWNLOAD" class="material-icons">file_download</i>
-                                    <i v-if="scope.row.taskType === TASK_TYPE.UPLOAD" class="material-icons">file_upload</i>
+                                    <i v-if="scope.row.taskType === TASK_TYPE.DOWNLOAD" :class="['material-icons', {[`not-actived`]: scope.row.taskState !== TASK_STATE.INPROGRESS}]">file_download</i>
+                                    <i v-if="scope.row.taskType === TASK_TYPE.UPLOAD" :class="['material-icons', {[`not-actived`]: scope.row.taskState !== TASK_STATE.INPROGRESS}]">file_upload</i>
                                     <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress)}}/{{humanSize(scope.row.totalBytes)}}</span>
                                     <span v-else-if="scope.row.taskState === TASK_STATE.INIT">waiting...</span>
                                     <span v-else-if="scope.row.taskState === TASK_STATE.CANCEL">canceled</span>
@@ -206,15 +210,8 @@ export default {
                 else this.$message.error(`Folder ${item.folderName} does not exist.`);
             }
         },
-        deleteHistory(item) {
-            this.$store.dispatch('removeHistory', item.historyId)
-        },
         cancelTask(item) {
-            if (item.taskType === TASK_TYPE.DOWNLOAD) {
-                this.$store.dispatch('cancelDownload', { taskId: item.taskId })
-            } else if (item.taskType === TASK_TYPE.UPLOAD) {
-                this.$store.dispatch('cancelUpload', { taskId: item.taskId })
-            }
+            this.$store.dispatch('taskListCancel', { taskId: item.taskId });
         },
         removeTask(item) {
             this.$store.commit('taskListRemove', { taskId: item.taskId })

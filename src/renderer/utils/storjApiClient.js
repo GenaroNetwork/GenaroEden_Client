@@ -46,7 +46,7 @@ class Task {
     };
     onProgress() { };
     onFinish() { };
-    cancel() { }
+    static cancel(state) { };
 }
 
 class UploadTask extends Task {
@@ -70,6 +70,7 @@ class UploadTask extends Task {
             finishedCallback: (...params) => this.onFinish(...params),
         });
     };
+
     onProgress(progress, uploadedBytes, totalBytes) {
         this.progress = progress;
         this.updated = Date.now();
@@ -78,7 +79,7 @@ class UploadTask extends Task {
         this.taskState = TASK_STATE.INPROGRESS;
         this.emit("progress", progress, uploadedBytes, totalBytes);
     };
-    onFinish(err, fileId) {
+    onFinish(err) {
         if (err) {
             this.taskState = TASK_STATE.ERROR;
             this.emit("error", err);
@@ -90,11 +91,9 @@ class UploadTask extends Task {
             log.log("Upload file completed.", this);
         }
     };
-    cancel() {
-        this.emit("cancel");
-        log.log("Upload file canceled.");
-        _storj.storeFileCancel(this.state);
-    }
+    static cancel(state) {
+        if (state) _storj.storeFileCancel(state);
+    };
 }
 
 class DownloadTask extends Task {
@@ -115,34 +114,35 @@ class DownloadTask extends Task {
         // start download
         this.state = _storj.resolveFile(bucketId, fileId, filePath, {
             overwrite: true,
-            progressCallback: (progress, downloadedBytes, totalBytes) => {
-                this.progress = progress;
-                this.updated = Date.now();
-                this.downloadedBytes = downloadedBytes;
-                this.totalBytes = totalBytes;
-                this.taskState = TASK_STATE.INPROGRESS;
-                this.emit("progress", progress, downloadedBytes, totalBytes);
-            },
-            finishedCallback: err => {
-                if (err) {
-                    this.taskState = TASK_STATE.ERROR;
-                    this.emit("error", err);
-                    debugger;
-                    log.error("Download file error.", err);
-                } else {
-                    this.progress = 1;
-                    this.taskState = TASK_STATE.SUCCESS;
-                    this.emit("load");
-                    log.log("Download file completed.", err);
-                }
-            },
+            progressCallback: (...params) => this.onProgress(...params),
+            finishedCallback: (...params) => this.onFinish(...params),
         });
     };
-    cancel() {
-        this.emit("cancel");
-        log.log("Upload file canceled.");
-        _storj.storeFileCancel(this.state);
-    }
+
+    onProgress(progress, downloadedBytes, totalBytes) {
+        this.progress = progress;
+        this.updated = Date.now();
+        this.downloadedBytes = downloadedBytes;
+        this.totalBytes = totalBytes;
+        this.taskState = TASK_STATE.INPROGRESS;
+        this.emit("progress", progress, downloadedBytes, totalBytes);
+    };
+    onFinish(err) {
+        if (err) {
+            this.taskState = TASK_STATE.ERROR;
+            this.emit("error", err);
+            debugger;
+            log.error("Download file error.", err);
+        } else {
+            this.progress = 1;
+            this.taskState = TASK_STATE.SUCCESS;
+            this.emit("load");
+            log.log("Download file completed.", err);
+        }
+    };
+    static cancel(state) {
+        if (state) _storj.resolveFileCancel(state);
+    };
 }
 
 // old version to generate a task , use class instead
@@ -189,8 +189,6 @@ function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallb
         uploadedBytes: 0,
         totalBytes: 0,
         cancel: () => {
-            console.log('cancel task: ' + taskId)
-            console.log(this.state)
             _storj.storeFileCancel(this.state)
         }
     })
@@ -203,17 +201,14 @@ function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallb
             task.totalBytes = totalBytes
             task.taskState = TASK_STATE.INPROGRESS
             progressCallback1(task)
-            console.log(task)
         },
         finishedCallback: function (err, fileId) {
             if (err) {
                 task.taskState = TASK_STATE.ERROR
                 errorCallback(err)
-                console.error('upload-file error')
             } else {
                 task.progress = 1
                 task.taskState = TASK_STATE.SUCCESS
-                console.log(filePath + 'File upload complete:', fileId)
                 successCallback()
             }
         }
@@ -237,8 +232,6 @@ function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, success
         downloadedBytes: 0,
         totalBytes: 0,
         cancel: () => {
-            console.log('cancel task: ' + taskId)
-            console.log(this.state)
             _storj.ResolveFileCancel(this.state)
         }
     })
@@ -252,17 +245,14 @@ function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, success
             task.totalBytes = totalBytes
             task.taskState = TASK_STATE.INPROGRESS
             progressCallback1(task)
-            console.log(task)
         },
         finishedCallback: function (err) {
             if (err) {
                 task.taskState = TASK_STATE.ERROR
                 errorCallback(err)
-                console.error(err);
             } else {
                 task.progress = 1
                 task.taskState = TASK_STATE.SUCCESS
-                console.log('File download complete');
                 successCallback()
             }
         }
@@ -280,10 +270,8 @@ function getInfo(errorCallback, successCallback) {
     _storj.getInfo(function (err, result) {
         if (err) {
             errorCallback(err)
-            console.error(err);
         } else {
             successCallback(result)
-            console.log(result);
         }
     })
 }
