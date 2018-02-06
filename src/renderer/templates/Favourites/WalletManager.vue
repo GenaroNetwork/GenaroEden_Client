@@ -311,11 +311,11 @@
                     </div>
                     <div class="detail">
                         <div class="balance eth">
-                            <img src="../../../static/eth_colorful.svg">
+                            <img src="~@/assets/img/eth_colorful.svg">
                             <div class="h1" :title="balanceEth(item.address) | wei2eth | numslice"> {{ balanceEth(item.address) | wei2eth | numslice}} </div>
                         </div>
                         <div class="balance gnx">
-                            <img src="../../../static/gnx_colorful.svg">
+                            <img src="~@/assets/img/gnx_colorful.svg">
                             <div class="h1" :title="balanceGnx(item.address) | wei2gnx "> {{ balanceGnx(item.address) | wei2gnx }} </div>
                         </div>
                         <!-- large QRCODE -->

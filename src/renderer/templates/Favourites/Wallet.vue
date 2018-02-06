@@ -120,12 +120,12 @@
 }
 
 .banner .gnx:before {
-  background-image: url(../../../static/gnx_white.svg);
+  background-image: url(~@/assets/img/gnx_white.svg);
   background-size: 50px auto;
 }
 
 .banner .gnx:after {
-  background-image: url(../../../static/gnx_blue.svg);
+  background-image: url(~@/assets/img/gnx_blue.svg);
   background-size: 180px auto;
 }
 
@@ -134,12 +134,12 @@
 }
 
 .banner .eth:before {
-  background-image: url(../../../static/eth_white.svg);
+  background-image: url(~@/assets/img/eth_white.svg);
   background-size: 28px auto;
 }
 
 .banner .eth:after {
-  background-image: url(../../../static/eth_gray.svg);
+  background-image: url(~@/assets/img/eth_gray.svg);
   right: 10px;
   bottom: -10px;
   background-size: 120px auto;

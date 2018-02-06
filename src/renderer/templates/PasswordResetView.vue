@@ -13,6 +13,10 @@
   height: 100%;
 }
 
+#logo {
+  width: 50px;
+}
+
 .otherlink {
   font-size: 12px;
 }
@@ -31,7 +35,7 @@ h1 {
     <div id="wrap">
         <el-card class="box-card">
             <div class='login-center'>
-                <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
+                <span><img id="logo" src="~@/assets/img/logo.png"></span>
                 <h1>Reset Password</h1>
             </div>
             <el-form ref="model" :model="model" :rules="ruleInline">

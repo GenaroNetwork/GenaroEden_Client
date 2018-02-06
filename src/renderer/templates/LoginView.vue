@@ -26,6 +26,10 @@
   width: 100%;
 }
 
+#logo {
+  width: 50px;
+}
+
 #login-form {
   width: 100%;
 }
@@ -54,7 +58,7 @@ h1 {
     <div id="wrap" @keyup.enter="submitLogin">
         <el-card class="box-card">
             <div class='login-center'>
-                <span><img id="logo" src="~@/assets/genaro_logo.png"></span>
+                <span><img id="logo" src="~@/assets/img/logo.png"></span>
                 <h1>Genaro</h1>
             </div>
             <el-form ref="login" :model="login" :rules="ruleInline">

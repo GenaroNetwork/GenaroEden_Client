@@ -32,7 +32,7 @@
 <template>
     <div class="layout-header">
         <div class="logo">
-            <img shape="circle" src="~@/assets/logo_big@2x.png">
+            <img shape="circle" src="~@/assets/img/logo_words.png">
         </div>
         <div class="demo-avatar-badge">
             <el-dropdown>

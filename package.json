@@ -7,7 +7,8 @@
     "license": "MIT",
     "main": "./dist/electron/main.js",
     "scripts": {
-        "install": "/bin/bash ./bin/post-install.sh",
+        "prenstall": "/bin/bash ./bin/pre-install.sh",
+        "postinstall": "/bin/bash ./bin/post-install.sh",
         "build": "node .electron-vue/build.js",
         "build:darwin": "cross-env BUILD_TARGET=darwin node .electron-vue/build.js",
         "build:linux": "cross-env BUILD_TARGET=linux node .electron-vue/build.js",

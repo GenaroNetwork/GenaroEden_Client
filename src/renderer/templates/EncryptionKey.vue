@@ -60,7 +60,7 @@ div.key-area {
                 <h1>Set Encryption Key</h1>
             </div>
             <div class='newOrReturn'>
-                <img class="explain-img" src="~@/assets/key@2x.png">
+                <img class="explain-img" src="~@/assets/img/key_generate.png">
                 <br>
                 <el-button type="primary" @click="gotoGenerate()" long>I'm a new user and I don't have an Encryption Key, generate now</el-button>
                 <br>
