@@ -17,8 +17,6 @@
 # install dependencies
 
 npm install
-# Every time you run "npm install", run this:
-./node_modules/.bin/electron-rebuild
 
 # serve with hot reload at localhost:9080
 npm run dev
