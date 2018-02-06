@@ -76,9 +76,9 @@ let actions = {
     taskListUpload({ commit }, { filePath, bucketId, folderName }) {
         let fileName = path.basename(filePath);
         return new Promise((resolve, reject) => {
-            let task = new UploadTask({ filePath, bucketId, fileName });
+            let task = new UploadTask({ filePath, bucketId, fileName, folderName });
             commit("taskListAppend", task);
-            task.on("progress", err => {
+            task.on("progress", () => {
                 commit("taskListUpdate", task);
             });
             task.on("load", () => {

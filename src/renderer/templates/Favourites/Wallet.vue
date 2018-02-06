@@ -294,7 +294,7 @@
         <!-- Deposit popup -->
         <el-popover ref="depositPop" placement="bottom" width="350" trigger="click" v-model="depositPop">
             <div class="deposit-pop">
-                <el-input type="text" :disabled="true" v-model="wallet.address">
+                <el-input type="text" :disabled="true" :value="`0x${wallet.address}`">
                 </el-input>
                 <img :src="'qr://' + wallet.address">
                 <div class="actions">
@@ -303,9 +303,6 @@
                 </div>
             </div>
         </el-popover>
-
-        <!-- afterCopyTip -->
-        <el-popover ref="afterCopyTip" trigger="click" content="Address Copyed to ClipBoard."></el-popover>
 
         <!-- banner info -->
         <div class="banner">
@@ -345,7 +342,9 @@
                     <div>
                         <span :title="wallet.address">0x{{wallet.address}}</span>
                         <span class="copy">
-                            <i class="material-icons" @click="copy(wallet.address)" v-popover:afterCopyTip>content_copy</i>
+                            <el-tooltip :value="copiedPopup" content="Address Copied to ClipBoard." placement="bottom" :manual="true">
+                                <i class="material-icons" @click="copy(wallet.address)" @mouseleave="copiedPopup=false">content_copy</i>
+                            </el-tooltip>
                         </span>
                     </div>
                 </div>
@@ -483,6 +482,7 @@ export default {
             TASK_STATE,
             payFormPop: false,
             depositPop: false,
+            copiedPopup: false,
             payOption: {
                 payType: "ETH",
                 recipient: null,
@@ -611,6 +611,7 @@ export default {
         },
         copy(value) {
             clipboard.writeText(value);
+            this.copiedPopup = true;
         }
     }
 };

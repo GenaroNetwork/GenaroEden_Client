@@ -33,6 +33,7 @@ const actions = {
                 return
             }
             createBucket(bucketName, (err, data) => {
+                debugger;
                 if (err) {
                     reject(err)
                 } else {

@@ -283,7 +283,9 @@
                             </div>
                             <div>
                                 <div :title="item.address">0x{{item.address}}</div>
-                                <i class="material-icons" @click="copy(item.address)">content_copy</i>
+                                <el-tooltip :value="copiedIndex === index" content="Address Copied to ClipBoard." placement="bottom" :manual="true">
+                                    <i class="material-icons" @click="copy(item.address, index)" @mouseleave="copiedIndex = -1">content_copy</i>
+                                </el-tooltip>
                             </div>
                         </div>
                     </div>
@@ -352,6 +354,7 @@ export default {
     },
     data: function () {
         return {
+            copiedIndex: -1,
             editNameIndex: -1,
             largeQRCode: null,
             changePass: {
@@ -494,8 +497,9 @@ export default {
                     this2.$message.error(e.message);
                 });
         },
-        copy(value) {
+        copy(value, index) {
             clipboard.writeText(value);
+            this.copiedIndex = index;
         },
         exportWalletV3: async function (item) {
             const this2 = this;

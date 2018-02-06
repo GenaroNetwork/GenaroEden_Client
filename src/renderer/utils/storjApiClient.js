@@ -5,7 +5,7 @@ import events from "events";
 
 
 const UUID = require('uuid/v1')
-const { Environment, mnemonicGenerate, mnemonicCheck } = require('storj')
+const { Environment, mnemonicGenerate, mnemonicCheck, listFiles } = require('storj');
 
 
 let _storj;
@@ -50,7 +50,7 @@ class Task {
 }
 
 class UploadTask extends Task {
-    constructor({ filePath, bucketId, fileName }) {
+    constructor({ filePath, bucketId, fileName, folderName }) {
         super();
 
         // init varibles
@@ -62,6 +62,7 @@ class UploadTask extends Task {
         this.filePath = filePath;
         this.bucketId = bucketId;
         this.fileName = fileName;
+        this.folderName = folderName;
 
         // start upload
         this.state = _storj.storeFile(this.bucketId, this.filePath, {
@@ -142,6 +143,36 @@ class DownloadTask extends Task {
     };
     static cancel(state) {
         if (state) _storj.resolveFileCancel(state);
+    };
+}
+
+class Bucket {
+    constructor(bucketId) {
+        this.bucketId = bucketId;
+    }
+    static list() {
+        return new Promise((resolve, reject) => {
+            _storj.getBuckets((err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+    static create(bucketName) {
+        return new Promise((resolve, reject) => {
+            _storj.createBuckets(bucketName, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+    list() {
+        return new Promise((resolve, reject) => {
+            _storj.listFiles(this.bucketId, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
     };
 }
 
