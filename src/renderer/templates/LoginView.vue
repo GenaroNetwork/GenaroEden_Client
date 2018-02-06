@@ -83,7 +83,7 @@ import { setEnvironment, getBucketList } from '../utils/storjApiClient'
 import router from '../router'
 import store from '../store'
 import { resetPassword } from '../../bridge/users'
-import { getCredentials, saveCredentials } from '../utils/DbUtil'
+import { getCredentials, saveCredentials } from '../utils/dbUtil'
 
 export default {
     name: 'login-view',

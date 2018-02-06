@@ -7,7 +7,7 @@
 
 
 import { cancelUpload, oldUploadFile } from '../../utils/storjApiClient'
-import { addUploadSize, getUploadSize } from '../../utils/DbUtil'
+import { addUploadSize, getUploadSize } from '../../utils/dbUtil'
 const state = {
     uploadList: []
 }

@@ -58,7 +58,7 @@ import router from '../router'
 import StorageUsage from '@/assembly/StorageUsage'
 import store from '../store'
 import { stepReady } from "../utils/guide"
-import { deleteCredentials } from '../utils/DbUtil'
+import { deleteCredentials } from '../utils/dbUtil'
 
 export default {
     methods: {
