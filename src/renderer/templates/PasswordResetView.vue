@@ -103,26 +103,21 @@ export default {
     },
     methods: {
         resetPwd() {
-            var this2 = this
             this.$refs['model'].validate((valid) => {
                 if (valid) {
-                    const this2 = this
-                    this2.processing = true
+                    this.processing = true;
                     resetPassword(this.model.username, this.model.password).then(() => {
-                        this2.processing = false
-                        this.$alert('A mail has been sent to <' + this2.model.username + '>, please follow the instructions in the email to confirm.', 'Reset Success', {
+                        this.processing = false
+                        this.$alert('A mail has been sent to <' + this.model.username + '>, please follow the instructions in the email to confirm.', 'Reset Success', {
                             type: 'success',
                             confirmButtonText: 'OK',
                             callback: action => {
-                                this2.$router.push('/')
+                                this.$router.push('/')
                             }
                         })
                     }).catch((e) => {
-                        this2.processing = false
-                        this.$alert(e, 'Reset Error', {
-                            type: 'error',
-                            confirmButtonText: 'OK'
-                        })
+                        this.processing = false;
+                        this.$message.error(e.response.data.error);
                     })
                 }
             })

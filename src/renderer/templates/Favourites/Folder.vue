@@ -95,7 +95,7 @@ td.right-td {
         <div class="top-bar">
             <h2>
                 <router-link to="/folders">Folders</router-link>
-                <span :title="currentBucketName"> &gt; {{ currentBucketName }}</span>
+                <span :title="bucketName"> &gt; {{ bucketName }}</span>
             </h2>
             <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download
                 <i class="material-icons">file_download</i>
@@ -108,16 +108,20 @@ td.right-td {
             </el-button>
         </div>
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-            <el-table :data="fileList" class="files-table" height="100%" row-class-name="file-row" @selection-change="rowSelectChanged">
+            <el-table :data="fileList" class="files-table" row-class-name="file-row" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
-                        <font-awesome-icon :icon="file2Icon(scope.row.filename).icon" v-bind:style="{ color: file2Icon(scope.row.filename).color }" />
+                        <font-awesome-icon :icon="scope.row.filename | file2icon('icon')" :style="{color: file2Icon(scope.row.filename).color}" />
                         <span style="margin-left: 10px" :title="scope.row.filename">{{ scope.row.filename }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="size" label="Size" width="80" :formatter="formatSize"></el-table-column>
-                <el-table-column prop="created" label="Created" width="180" :formatter="formatTime" class-name="created-col"></el-table-column>
+                <el-table-column prop="size" label="Size" width="80">
+                    <template slot-scope="scope">{{ scope.row.size | formatSize }}</template>
+                </el-table-column>
+                <el-table-column prop="created" label="Created" width="180" class-name="created-col">
+                    <template slot-scope="scope">{{ scope.row.created | formatTime }}</template>
+                </el-table-column>
                 <el-table-column prop="id" label="File ID" width="250" class-name="id-col"></el-table-column>
                 <el-table-column width="130" label="">
                     <template slot-scope="scope">
@@ -147,7 +151,7 @@ td.right-td {
             <div class="overlay" v-if="dragging">
                 <div>
                     <i class="el-icon-upload el-icon--right"></i>
-                    <h2>drop to upload your files to {{currentBucketName}}</h2>
+                    <h2>drop to upload your files to {{bucketName}}</h2>
                 </div>
             </div>
         </div>
@@ -187,8 +191,6 @@ import electronDialog from '../../utils/electronDialog';
 import { stepReady } from "../../utils/guide";
 import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
-import moment from 'moment';
-import humanSize from 'human-size';
 import fs from "fs";
 
 export default {
@@ -206,33 +208,27 @@ export default {
         }
     },
     created: function () {
-        const folderId = this.$route.params.folderId
-        this.$store.dispatch('initBucketData', { bucketId: folderId })
+        const bucketId = this.$route.params.bucketId;
+        this.$store.dispatch('fileListLoadBucket', { bucketId });
     },
     mounted: function () {
-        stepReady('new-folder')
+        stepReady('new-folder');
     },
     computed: {
         fileList() {
-            return this.$store.state.CurrentBucket.fileList
+            return this.$store.state.FileList.files;
         },
-        currentBucketId() {
-            return this.$store.state.CurrentBucket.bucket.id
+        bucketId() {
+            return this.$store.state.FileList.bucket.id;
         },
-        currentBucketName() {
-            return this.$store.state.CurrentBucket.bucket.name
+        bucketName() {
+            return this.$store.state.FileList.bucket.name;
         },
         anyRowSelected() {
             return this.selectedRow.length > 0
         }
     },
     methods: {
-        formatTime(row, column) {
-            return moment(row.created).format("MM/DD/YYYY hh:mm a")
-        },
-        formatSize(row, column) {
-            return humanSize(row.size)
-        },
         file2Icon(name) {
             return fileName2Icon(name)
         },
@@ -259,73 +255,68 @@ export default {
                 this.receiptModal.fileQrCode = ''
             }
         },
-        deleteSelected() {
-            if (this.anyRowSelected) {
-                this.$confirm('Are you sure to delete selected files', 'Confirm', {
-                    confirmButtonText: 'Delete',
-                    cancelButtonText: 'Cancel',
-                    type: 'warning'
-                }).then(() => {
-                    this.closeReceipt()
-                    this.selectedRow.forEach(row => {
-                        this.$store.dispatch('deleteFile', {
-                            bucketId: this.currentBucketId,
-                            fileId: row.id
-                        }).then(() => {
-                            this.$message.success('File Deleted: ' + row.filename)
-                        }).catch((err) => {
-                            this.$message.error('File Delete Error: ' + err)
-                        })
-                    })
-                })
-            } else {
-                this.$message('Please select file first')
+        async deleteSelected() {
+            if (!this.anyRowSelected) {
+                this.$message('Please select file first');
+                return;
             }
-        },
-        deleteFile({ filename, id }) {
-            const this2 = this
-            this.$confirm('Are you sure to delete file: ' + filename, 'Confirm', {
+            await this.$confirm('Are you sure to delete selected files', 'Confirm', {
                 confirmButtonText: 'Delete',
                 cancelButtonText: 'Cancel',
                 type: 'warning'
-            }).then(() => {
-                this2.closeReceipt();
-                this.$store.dispatch('deleteFile', {
-                    bucketId: this2.currentBucketId,
-                    fileId: id
-                }).then(() => {
-                    this2.$message.success('File Deleted')
-                }).catch((err) => {
-                    this2.$message.error('File Delete Error: ' + err)
+            });
+
+            this.closeReceipt()
+            this.selectedRow.forEach(async file => {
+                this.deleteRow({ fileId: file.id })
+            })
+        },
+        async deleteFile({ filename, id }) {
+            await this.$confirm(
+                `Are you sure to delete file: ${filename}`,
+                'Confirm',
+                {
+                    confirmButtonText: 'Delete',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning'
+                });
+            this.closeReceipt();
+            await this.deleteRow({ fileId: id });
+        },
+        async deleteRow({ fileId }) {
+            try {
+                await this.$store.dispatch('fileListDelete', { fileId });
+                this.$message.success('File Deleted');
+            } catch (error) {
+                this.$message.error(`File Delete Error: ${error}`);
+            }
+
+        },
+        async downloadSelected() {
+            if (!this.anyRowSelected) {
+                this.$message('Please select file first');
+                return;
+            }
+            electronDialog.selectDirectory(folders => {
+                if (!folders || !folders.length) return;
+                const folderPath = folders[0];
+                this.selectedRow.forEach(async file => {
+                    try {
+                        await this.$store.dispatch("taskListDownload", {
+                            bucketId: this.bucketId,
+                            fileId: file.id,
+                            filePath: folderPath + '/' + file.filename,
+                            folderName: this.bucketName,
+                        });
+                        this.$message.success(`File Download Success: ${file.filename}`);
+                    } catch (err) {
+                        this.$message.error(`File Download Error: ${err.message}`);
+                    }
                 })
             })
         },
-        downloadSelected() {
-            if (this.anyRowSelected) {
-                electronDialog.selectDirectory(folders => {
-                    if (folders && folders.length > 0) {
-                        const folderPath = folders[0]
-                        this.selectedRow.forEach(row => {
-                            this.$store.dispatch("taskListDownload", {
-                                bucketId: this.currentBucketId,
-                                fileId: row.id,
-                                filePath: folderPath + '/' + row.filename,
-                                folderName: this.currentBucketName,
-                            }).then(() => {
-                                this.$message.success(`File Download Success: ${row.filename}`);
-                            }).catch((err) => {
-                                this.$message.error(`File Download Error: ${err.message}`);
-                            });
-                        })
-                    }
-                })
-            } else {
-                this.$message('Please select file first')
-            }
-        },
         downloadFile({ filename, id }) {
             // 弹出保存对话框配置
-            let this2 = this
             var options = {
                 title: 'Save File',
                 defaultPath: './' + filename
@@ -333,10 +324,10 @@ export default {
             electronDialog.showSaveDialog(options, filePath => {
                 this.$message('File Downloading...');
                 this.$store.dispatch("taskListDownload", {
-                    bucketId: this.currentBucketId,
+                    bucketId: this.bucketId,
                     fileId: id,
                     filePath: filePath,
-                    folderName: this.currentBucketName,
+                    folderName: this.bucketName,
                 }).then(() => {
                     this.$message.success(`File Download Success: ${filename}`);
                 }).catch((err) => {
@@ -345,15 +336,9 @@ export default {
             })
         },
         // Bucket 删除操作
-        deleteBucket() {
-            var bridgeUser = this.username
-            var bridgePass = this.password
-
-            this.$store.dispatch('deleteBucket', { selectBucketId: this.bucketId }).then(data => {
-                this.$message.success('Folder Delete Success')
-            }).catch(e => {
-
-            })
+        async deleteBucket() {
+            await this.$store.dispatch('bucketListDelete', { bucketId: this.bucketId })
+            this.$message.success('Folder Delete Success');
         },
         fileDragOver(e) {
             // TODO: check contain file
@@ -368,33 +353,37 @@ export default {
                 }
                 console.log('File(s) you dragged here: ', file.path)
                 this.$message('File Uploading. Your can this task in Recent panel on the left.')
-                this.rawUpload(this.currentBucketId, file.path)
+                this.rawUpload(this.bucketId, file.path)
             }
         },
         fileDragLeave(e) {
             this.dragging = false
         },
-        upload() {
+        async upload() {
             const { dialog } = require('electron').remote
             const files = dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
 
-            if (files && files.length > 0) {
-                this.$message('File Uploading. Your can see this task in Recent panel on the left.')
-                const filePath = files[0]
-                const bucketId = this.currentBucketId
-                this.rawUpload(bucketId, filePath)
-            }
-        },
-        rawUpload(bucketId, filePath) {
-            this.$store.dispatch("taskListUpload", {
-                filePath,
-                bucketId,
-                folderName: this.currentBucketName,
-            }).then(() => {
-                this.$message.success(`File Uploaded: ${filePath}`);
-            }).catch((err) => {
-                this.$message.error(`File Upload Failed: ${err.message}`);
+            if (!files || !files.length) return;
+
+            this.$message('File Uploading. Your can see this task in Recent panel on the left.');
+            files.forEach(async file => {
+                const filePath = file;
+                const bucketId = this.bucketId;
+                await this.rawUpload(bucketId, filePath);
             });
+        },
+        async rawUpload(bucketId, filePath) {
+            try {
+                await this.$store.dispatch("taskListUpload", {
+                    filePath,
+                    bucketId,
+                    folderName: this.bucketName,
+                });
+                this.$message.success(`File Uploaded: ${filePath}`);
+                console.log(this.fileList);
+            } catch (error) {
+                this.$message.error(`File Upload Failed: ${error.message}`);
+            };
         }
     },
     components: {

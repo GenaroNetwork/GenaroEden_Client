@@ -1,7 +1,7 @@
 /* This is the new version of tasklist (include history list and upload list) */
 import UUID from "uuid/v1";
 import { UploadTask, DownloadTask } from "../../utils/storjApiClient";
-import { TASK_TYPE } from "../../../config";
+import { TASK_TYPE, TASK_STATE } from "../../../config";
 import fs from "fs";
 import path from "path";
 import { setTimeout } from "timers";
@@ -73,7 +73,7 @@ let mutations = {
 }
 
 let actions = {
-    taskListUpload({ commit }, { filePath, bucketId, folderName }) {
+    taskListUpload({ commit, dispatch }, { filePath, bucketId, folderName }) {
         let fileName = path.basename(filePath);
         return new Promise((resolve, reject) => {
             let task = new UploadTask({ filePath, bucketId, fileName, folderName });
@@ -83,6 +83,7 @@ let actions = {
             });
             task.on("load", () => {
                 commit("taskListUpdate", task);
+                dispatch("fileListLoadFile");
                 resolve(task);
             });
             task.on("error", err => {
@@ -120,7 +121,11 @@ let actions = {
                 DownloadTask.cancel(savedTask.state);
                 break;
         }
-
+        commit("taskListUpdate", {
+            taskId,
+            task: null,
+            taskState: TASK_STATE.CANCEL,
+        });
     }
 
 }

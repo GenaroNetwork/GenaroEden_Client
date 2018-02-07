@@ -83,11 +83,13 @@ h1 {
 </template>
 
 <script> 
-import { setEnvironment, getBucketList } from '../utils/storjApiClient'
+import { Storj, getBucketList } from '../utils/storjApiClient'
 import router from '../router'
 import store from '../store'
 import { resetPassword } from '../../bridge/users'
 import { getCredentials, saveCredentials } from '../utils/dbUtil'
+
+
 
 export default {
     name: 'login-view',
@@ -137,7 +139,7 @@ export default {
                     this.signing = true
                     var bridgeUser = this.login.username
                     var bridgePass = this.login.password
-                    setEnvironment(bridgeUser, bridgePass)
+                    Storj.init(bridgeUser, bridgePass);
                     getBucketList((err) => {
                         this.signing = false
                         if (err) {

@@ -202,6 +202,9 @@
   padding: 0 20%;
   justify-content: space-around;
 }
+.banner .account .actions > button {
+  width: 40%;
+}
 
 /* list style */
 .state-icon {
@@ -373,7 +376,6 @@
                         <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TASK_STATE.ERROR">
                             refresh
                         </i>
-
                     </template>
                 </el-table-column>
                 <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true">
@@ -383,7 +385,9 @@
                 </el-table-column>
                 <el-table-column prop="receipt.blockNumber" label="Block" width="80"></el-table-column>
                 <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
-                <el-table-column prop="from" label="From" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="from" label="From" width="" class-name="id-col" :show-overflow-tooltip="true">
+                    <template slot-scope="scope">0x{{scope.row.from}}</template>
+                </el-table-column>
                 <el-table-column prop="recipient" label="To" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="amount" label="Amount" width="" class-name="id-col"></el-table-column>
                 <span slot="empty">No Transactions yet</span>
@@ -610,7 +614,7 @@ export default {
             return "qr://" + id;
         },
         copy(value) {
-            clipboard.writeText(value);
+            clipboard.writeText(`0x${value}`);
             this.copiedPopup = true;
         }
     }

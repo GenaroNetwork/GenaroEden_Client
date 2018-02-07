@@ -4,22 +4,102 @@ import log from "./log";
 import events from "events";
 
 
-const UUID = require('uuid/v1')
-const { Environment, mnemonicGenerate, mnemonicCheck, listFiles } = require('storj');
+const UUID = require('uuid/v1');
+import { Environment, mnemonicGenerate, mnemonicCheck, listFiles } from 'storj';
 
 
-let _storj;
-if (process.env.NODE_ENV === 'development') {
-    _storj = new Environment({
-        bridgeUrl: BRIDGE_API_URL,
-        bridgeUser: localStorage.bridgeUser,
-        bridgePass: localStorage.bridgePass,
-        encryptionKey: localStorage.bridgeKey,
-        logLevel: 0
-    });
+let storj;
+class Storj {
+    constructor({
+        bridgeUrl = BRIDGE_API_URL,
+        bridgeUser = localStorage.bridgeUser,
+        bridgePass = localStorage.bridgePass,
+        encryptionKey = localStorage.bridgeKey,
+        logLevel = 0,
+    } = {}) {
+        if (process.env.NODE_ENV === 'development') {
+            localStorage.bridgeUser = bridgeUser;
+            localStorage.bridgePass = bridgePass;
+            localStorage.encryptionKey = encryptionKey;
+        }
+        return new Environment({
+            bridgeUrl, bridgeUser, bridgePass, encryptionKey, logLevel,
+        });
+    };
+    static init(...params) {
+        storj = new Storj(...params);
+    };
+    static getInfo() {
+        return new Promise((resolve, reject) => {
+            storj.getInfo(function (err, result) {
+                if (err) reject(err);
+                else resolve(result);
+            })
+        });
+    }
 }
+if (process.env.NODE_ENV === 'development') storj = new Storj;
 
-let bridgeUser;
+class Bucket {
+    constructor(bucketId) {
+        this.bucketId = bucketId;
+    }
+
+    // create folder, not avaliable now.
+    create() {
+        return;
+    };
+
+    // get file list of this bucket
+    list() {
+        return new Promise((resolve, reject) => {
+            storj.listFiles(this.bucketId, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+
+    // delete file
+    delete({ fileId }) {
+        return new Promise((resolve, reject) => {
+            storj.deleteFile(this.bucketId, fileId, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+
+    // get bucket list
+    static list() {
+        return new Promise((resolve, reject) => {
+            storj.getBuckets((err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+
+    //create bucket
+    static create({ bucketName }) {
+        return new Promise((resolve, reject) => {
+            storj.createBucket(bucketName, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+
+    // delete bucket
+    static delete({ bucketId }) {
+        return new Promise((resolve, reject) => {
+            storj.deleteBucket(bucketId, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    };
+}
 
 class Task {
     constructor() {
@@ -29,6 +109,8 @@ class Task {
         this.progress = 0;
         this.created = Date.now();
         this.updated = Date.now();
+        this.state = null;
+        this.totalBytes = 0;
 
         let taskEvent = new events;
         this.on = taskEvent.on;
@@ -55,17 +137,14 @@ class UploadTask extends Task {
 
         // init varibles
         this.taskType = TASK_TYPE.UPLOAD;
-        this.state = null;
-        this.user = bridgeUser;
         this.uploadedBytes = 0;
-        this.totalBytes = 0;
         this.filePath = filePath;
         this.bucketId = bucketId;
         this.fileName = fileName;
         this.folderName = folderName;
 
         // start upload
-        this.state = _storj.storeFile(this.bucketId, this.filePath, {
+        this.state = storj.storeFile(this.bucketId, this.filePath, {
             filename: this.fileName,
             progressCallback: (...params) => this.onProgress(...params),
             finishedCallback: (...params) => this.onFinish(...params),
@@ -80,10 +159,11 @@ class UploadTask extends Task {
         this.taskState = TASK_STATE.INPROGRESS;
         this.emit("progress", progress, uploadedBytes, totalBytes);
     };
-    onFinish(err) {
-        if (err) {
+    onFinish(error) {
+        if (error) {
+            if (error.message === "File transfer canceled") return;
             this.taskState = TASK_STATE.ERROR;
-            this.emit("error", err);
+            this.emit("error", error);
             log.error("Upload file error.", this);
         } else {
             this.progress = 1;
@@ -93,7 +173,7 @@ class UploadTask extends Task {
         }
     };
     static cancel(state) {
-        if (state) _storj.storeFileCancel(state);
+        if (state) storj.storeFileCancel(state);
     };
 }
 
@@ -103,17 +183,14 @@ class DownloadTask extends Task {
 
         // init varibles
         this.taskType = TASK_TYPE.DOWNLOAD;
-        this.state = null;
-        this.user = bridgeUser;
         this.downloadedBytes = 0;
-        this.totalBytes = 0;
         this.bucketId = bucketId;
         this.fileId = fileId;
         this.filePath = filePath;
         this.folderName = folderName;
 
         // start download
-        this.state = _storj.resolveFile(bucketId, fileId, filePath, {
+        this.state = storj.resolveFile(bucketId, fileId, filePath, {
             overwrite: true,
             progressCallback: (...params) => this.onProgress(...params),
             finishedCallback: (...params) => this.onFinish(...params),
@@ -128,12 +205,12 @@ class DownloadTask extends Task {
         this.taskState = TASK_STATE.INPROGRESS;
         this.emit("progress", progress, downloadedBytes, totalBytes);
     };
-    onFinish(err) {
-        if (err) {
+    onFinish(error) {
+        if (error) {
+            if (error.message === "File transfer canceled") return;
             this.taskState = TASK_STATE.ERROR;
-            this.emit("error", err);
-            debugger;
-            log.error("Download file error.", err);
+            this.emit("error", error);
+            log.error("Upload file error.", this);
         } else {
             this.progress = 1;
             this.taskState = TASK_STATE.SUCCESS;
@@ -142,37 +219,7 @@ class DownloadTask extends Task {
         }
     };
     static cancel(state) {
-        if (state) _storj.resolveFileCancel(state);
-    };
-}
-
-class Bucket {
-    constructor(bucketId) {
-        this.bucketId = bucketId;
-    }
-    static list() {
-        return new Promise((resolve, reject) => {
-            _storj.getBuckets((err, data) => {
-                if (err) reject(err);
-                else resolve(data);
-            });
-        });
-    };
-    static create(bucketName) {
-        return new Promise((resolve, reject) => {
-            _storj.createBuckets(bucketName, (err, data) => {
-                if (err) reject(err);
-                else resolve(data);
-            });
-        });
-    };
-    list() {
-        return new Promise((resolve, reject) => {
-            _storj.listFiles(this.bucketId, (err, data) => {
-                if (err) reject(err);
-                else resolve(data);
-            });
-        });
+        if (state) storj.resolveFileCancel(state);
     };
 }
 
@@ -196,17 +243,17 @@ function newTask(customProp) {
 
 /* 创建Bucket */
 function createBucket(bucketName, callback) {
-    _storj.createBucket(bucketName, callback);
+    storj.createBucket(bucketName, callback);
 }
 
 /* 获取bucket列表 */
 function getBucketList(callback) {
-    _storj.getBuckets(callback)
+    storj.getBuckets(callback)
 }
 
 /* 删除Bucket */
 function deleteBucket(bucketId, callBack) {
-    _storj.deleteBucket(bucketId, callBack);
+    storj.deleteBucket(bucketId, callBack);
 }
 
 // oldVersiopn
@@ -220,10 +267,10 @@ function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallb
         uploadedBytes: 0,
         totalBytes: 0,
         cancel: () => {
-            _storj.storeFileCancel(this.state)
+            storj.storeFileCancel(this.state)
         }
     })
-    task.state = _storj.storeFile(bucketId, filePath, {
+    task.state = storj.storeFile(bucketId, filePath, {
         filename: filename,
         progressCallback: function (progress, uploadedBytes, totalBytes) {
             task.progress = progress
@@ -249,7 +296,7 @@ function oldUploadFile(filePath, filename, bucketId, errorCallback, successCallb
 
 /* 获取文件列表 */
 function getFileList(bucketId, callBack) {
-    _storj.listFiles(bucketId, callBack)
+    storj.listFiles(bucketId, callBack)
 }
 
 /* 下载文件 */
@@ -263,11 +310,11 @@ function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, success
         downloadedBytes: 0,
         totalBytes: 0,
         cancel: () => {
-            _storj.ResolveFileCancel(this.state)
+            storj.ResolveFileCancel(this.state)
         }
     })
 
-    task.state = _storj.resolveFile(bucketId, fileId, downloadFilePath, {
+    task.state = storj.resolveFile(bucketId, fileId, downloadFilePath, {
         overwrite: true,
         progressCallback: function (progress, downloadedBytes, totalBytes) {
             task.progress = progress
@@ -293,12 +340,12 @@ function downloadFile(bucketId, fileId, downloadFilePath, errorCallback, success
 
 /* 删除文件 */
 function deleteFile(bucketId, fileId, callBack) {
-    _storj.deleteFile(bucketId, fileId, callBack)
+    storj.deleteFile(bucketId, fileId, callBack)
 }
 
 /* 获取信息 */
 function getInfo(errorCallback, successCallback) {
-    _storj.getInfo(function (err, result) {
+    storj.getInfo(function (err, result) {
         if (err) {
             errorCallback(err)
         } else {
@@ -309,45 +356,32 @@ function getInfo(errorCallback, successCallback) {
 
 function setEnvironment(bridgeUser, bridgePass, bridgeKey) {
 
-    if (process.env.NODE_ENV === 'development') {
+    storj = new Storj()
+    /* if (process.env.NODE_ENV === 'development') {
         localStorage.bridgeUser = bridgeUser;
         localStorage.bridgePass = bridgePass;
         localStorage.bridgeKey = bridgeKey;
     }
 
-    _storj = new Environment({
+    storj = new Environment({
         bridgeUrl: BRIDGE_API_URL,
         bridgeUser: bridgeUser,
         bridgePass: bridgePass,
         encryptionKey: bridgeKey,
         logLevel: 0
-    });
+    }); */
 }
 
-function generateKey() {
-
-}
-
-function cancelDownload(state) {
-    if (state) _storj.resolveFileCancel(state)
-}
-function cancelUpload(state) {
-    if (state) _storj.storeFileCancel(state)
-}
 export {
-    setEnvironment,
+    Storj,
+    Bucket,
+    UploadTask,
+    DownloadTask,
     createBucket,
     getBucketList,
     deleteBucket,
-    oldUploadFile,
-    UploadTask,
-    DownloadTask,
-    cancelUpload,
     getFileList,
-    downloadFile,
-    cancelDownload,
     deleteFile,
-    getInfo,
     mnemonicGenerate,
     mnemonicCheck
 }
