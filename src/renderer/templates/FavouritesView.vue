@@ -66,16 +66,16 @@ i {
 <script>
 import { stepReady } from "../utils/guide";
 export default {
-  data() {
-    return {};
-  },
-  created: function() {
-    this.$router.push({ path: "/folders" });
-  },
-  mounted: function() {
-    stepReady("My Folder");
-    stepReady("Upload");
-    stepReady("download-history");
-  }
+    data() {
+        return {};
+    },
+    created: function () {
+        this.$router.push({ path: "/folders" });
+    },
+    mounted: function () {
+        stepReady("My Folder");
+        stepReady("Upload");
+        stepReady("download-history");
+    }
 };
 </script>

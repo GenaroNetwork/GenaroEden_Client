@@ -191,6 +191,7 @@ import electronDialog from '../../utils/electronDialog';
 import { stepReady } from "../../utils/guide";
 import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
+import { Bucket } from "../../utils/storjApiClient";
 import fs from "fs";
 
 export default {
@@ -346,15 +347,12 @@ export default {
         },
         fileDrop(e) {
             this.dragging = false;
-            for (let file of e.dataTransfer.files) {
-                if (!fs.lstatSync(file.path).isFile()) {
-                    this.$message.error("Only file can be uploaded.");
-                    continue;
-                }
-                console.log('File(s) you dragged here: ', file.path)
-                this.$message('File Uploading. Your can this task in Recent panel on the left.')
-                this.rawUpload(this.bucketId, file.path)
-            }
+            let files = [];
+            Object.keys(e.dataTransfer.files).forEach(i => {
+                files.push(e.dataTransfer.files[i].path);
+            });
+            this.rawUpload(this.bucketId, files);
+            return;
         },
         fileDragLeave(e) {
             this.dragging = false
@@ -362,29 +360,67 @@ export default {
         async upload() {
             const { dialog } = require('electron').remote
             const files = dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
-
             if (!files || !files.length) return;
+            const bucketId = this.bucketId;
+            await this.rawUpload(bucketId, files);
+        },
+        async rawUpload(bucketId, files) {
+            let bucket = new Bucket(bucketId);
+            let fileList = await bucket.list();
+            fileList = fileList.map(file => file.filename);
+            let errorMessage = [];
+            let preUpload = [];
+            files.forEach(file => {
+                let filename = file.split("/");
+                filename = filename[filename.length - 1];
+                if (!fs.lstatSync(file).isFile()) {
+                    errorMessage.push(this.$createElement("div", null, `Only file can be uploaded. ${file} is not a file.`));
+                    return;
+                }
+                if (fileList.includes(filename)) {
+                    errorMessage.push(this.$createElement("div", null, `File ${filename} is already exists.`));
+                    return;
+                };
+                preUpload.push(file);
+            });
 
-            this.$message('File Uploading. Your can see this task in Recent panel on the left.');
-            files.forEach(async file => {
-                const filePath = file;
-                const bucketId = this.bucketId;
-                await this.rawUpload(bucketId, filePath);
+            if (!errorMessage.length && preUpload.length) {
+                // all fine
+                this.$message('File Uploading. You can see this task in Recent panel on the left.');
+            } else if (errorMessage.length && preUpload.length) {
+                // some files got an error but other
+                errorMessage.unshift(this.$createElement("div", null, `------------------------`));
+                errorMessage.unshift(this.$createElement("div", null, `You can see this task in Recent panel on the left.`));
+                errorMessage.unshift(this.$createElement("div", null, `We've some errors on several files. Other file is being uploaded.`));
+                this.$message({
+                    type: "warning",
+                    message: this.$createElement("div", null, [errorMessage]),
+                });
+            } else if (errorMessage.length && !preUpload.length) {
+                // all error
+                this.$message({
+                    type: "error",
+                    message: this.$createElement("div", null, [errorMessage]),
+                });
+            } else {
+                // no error. no file.
+                this.$message.error("There is no file to uplaod.");
+            }
+
+            preUpload.forEach(async filePath => {
+                try {
+                    await this.$store.dispatch("taskListUpload", {
+                        filePath,
+                        bucketId,
+                        folderName: this.bucketName,
+                    });
+                    this.$message.success(`File Uploaded: ${filePath}`);
+                    console.log(this.fileList);
+                } catch (error) {
+                    this.$message.error(`File Upload Failed: ${error.message}`);
+                };
             });
         },
-        async rawUpload(bucketId, filePath) {
-            try {
-                await this.$store.dispatch("taskListUpload", {
-                    filePath,
-                    bucketId,
-                    folderName: this.bucketName,
-                });
-                this.$message.success(`File Uploaded: ${filePath}`);
-                console.log(this.fileList);
-            } catch (error) {
-                this.$message.error(`File Upload Failed: ${error.message}`);
-            };
-        }
     },
     components: {
         FontAwesomeIcon

@@ -68,7 +68,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" label="Folder" width="250"></el-table-column>
+                    <el-table-column prop="folderName" label="Folder" width="250">
+                        <template slot-scope="scope">
+                            <router-link :to="`/folder/${scope.row.bucketId}`">{{ scope.row.folderName }}</router-link>
+                        </template>
+                    </el-table-column>
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
