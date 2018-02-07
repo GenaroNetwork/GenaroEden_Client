@@ -237,7 +237,7 @@
         </el-dialog>
 
         <!-- import wallet dialog -->
-        <el-dialog title="Import Wallet" :visible.sync="importV3WalletDialog.shown" width="590px" center>
+        <el-dialog v-bind:title="locale.dashboard.walletmanage.name" :visible.sync="importV3WalletDialog.shown" width="590px" center>
             <template v-if="importV3WalletDialog.step === 0">
                 <div class="choose-file" @click="importV3Wallet().selectFile($event)">
                     <i class="material-icons">add</i>
@@ -245,8 +245,8 @@
                 </div>
                 <el-input type="password" v-model="importV3WalletDialog.password" placeholder="please input the password of wallet file." size="small"></el-input>
                 <div slot="footer">
-                    <el-button @click="importV3Wallet().cancel($event)">Cancel</el-button>
-                    <el-button @click="importV3Wallet().submit($event)" type="primary">Submit</el-button>
+                    <el-button @click="importV3Wallet().cancel($event)">{{locale.common.dialog.cancel}}</el-button>
+                    <el-button @click="importV3Wallet().submit($event)" type="primary">{{locale.common.dialog.submit}}</el-button>
                 </div>
             </template>
             <template v-else>
@@ -260,7 +260,7 @@
         </el-dialog>
 
         <div class="top-bar">
-            <h2>Wallet Manage</h2>
+            <h2>{{locale.dashboard.walletmanage.name}}</h2>
             <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">Import Json
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
@@ -337,6 +337,7 @@
 import { getGasPrics, getGasLimit, getBalanceEth, getBalanceGnx } from "../../../wallet/transactionManager";
 import walletManager from "../../../wallet/walletManager";
 import { utils } from "../../../wallet/web3Util";
+import locale from '../../i18n'
 import { clipboard } from "electron";
 const { dialog } = require("electron").remote;
 const fs = require("fs");
@@ -352,6 +353,7 @@ export default {
     },
     data: function () {
         return {
+            locale: locale.message,
             editNameIndex: -1,
             largeQRCode: null,
             changePass: {

@@ -31,27 +31,27 @@ i {
             <el-menu default-active="0" :router="true">
                 <el-menu-item index="0" route="/folders">
                     <i class="el-icon-document"></i>
-                    <span slot="title">My Files</span>
+                    <span slot="title">{{locale.dashboard.myfiles.name}}</span>
                 </el-menu-item>
                 <el-menu-item index="1" route="/file-download">
                     <i class="el-icon-time"></i>
-                    <span slot="title">Recent</span>
+                    <span slot="title">{{locale.dashboard.recent.name}}</span>
                 </el-menu-item>
                 <el-submenu index="2" default-active="2-0">
                     <template slot="title">
                         <i class="material-icons">account_balance_wallet</i>
-                        <span slot="title">My Wallet</span>
+                        <span slot="title">{{locale.dashboard.mywallet.name}}</span>
                     </template>
                     <el-menu-item index="2-0" route="/wallet">
-                        <span slot="title">My Wallet</span>
+                        <span slot="title">{{locale.dashboard.mywallet.name}}</span>
                     </el-menu-item>
                     <el-menu-item index="2-1" route="/wallet-manager">
-                        <span slot="title">Wallet Manage</span>
+                        <span slot="title">{{locale.dashboard.walletmanage.name}}</span>
                     </el-menu-item>
                 </el-submenu>
                 <el-menu-item index="3" route="/share-my-storage">
                     <i class="el-icon-share"></i>
-                    <span slot="title">Share My Storage</span>
+                    <span slot="title">{{locale.dashboard.sharestorage.name}}</span>
                 </el-menu-item>
             </el-menu>
         </div>
@@ -65,9 +65,11 @@ i {
 
 <script>
 import { stepReady } from "../utils/guide";
+import locale from '../i18n'
+
 export default {
   data() {
-    return {};
+    return {locale: locale.message};
   },
   created: function() {
     this.$router.push({ path: "/folders" });

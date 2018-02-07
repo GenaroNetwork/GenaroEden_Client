@@ -68,10 +68,10 @@ h1 {
                 </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">Sign In</el-button>
+                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">{{locale.common.login.signin}}</el-button>
                     </el-form-item>
-                    <router-link class="otherlink pull-left" to="register">Sign Up</router-link>
-                    <router-link class="otherlink pull-right" to="password-reset">Reset Password</router-link>
+                    <router-link class="otherlink pull-left" to="register">{{locale.common.login.signup}}</router-link>
+                    <router-link class="otherlink pull-right" to="password-reset">{{locale.common.login.reset}}</router-link>
                 </div>
             </el-form>
         </el-card>
@@ -84,6 +84,7 @@ import router from '../router'
 import store from '../store'
 import { resetPassword } from '../../bridge/users'
 import { getCredentials, saveCredentials } from '../utils/dbUtil'
+import locale from '../i18n'
 
 export default {
     name: 'login-view',
@@ -103,6 +104,7 @@ export default {
     },
     data: function () {
         return {
+            locale: locale.message,
             login: {
                 username: '',
                 password: ''

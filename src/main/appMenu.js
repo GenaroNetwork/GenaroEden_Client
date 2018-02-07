@@ -112,6 +112,19 @@ module.exports = function(app, shell) {
           },
         ]
       },
+      {
+        label: 'Language',
+        submenu: [
+          {
+            label: '中文',
+            click: function(menuItem, browserWindow, event) { app.language = 'cn' }
+          },
+          {
+            label: 'English',
+            click: function() { app.language = 'en' }
+          }
+        ]
+      }
     ];
   
     if (process.platform === 'darwin') {

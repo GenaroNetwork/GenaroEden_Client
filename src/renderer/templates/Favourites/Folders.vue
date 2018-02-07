@@ -74,8 +74,8 @@
 <template>
     <div class="fullheight right-container">
         <div class="top-bar">
-            <h2>Folders</h2>
-            <el-button class="btn" @click="createFolder" type="primary" icon="el-icon-circle-plus-outline" size="small">Create Folder</el-button>
+            <h2>{{locale.dashboard.myfiles.folder}}</h2>
+            <el-button class="btn" @click="createFolder" type="primary" icon="el-icon-circle-plus-outline" size="small">{{locale.dashboard.myfiles.create}}</el-button>
         </div>
         <div class="bucket-list">
             <div v-for="item in showBucketList" class="folder" @click="bucketBtnClick({label: item.name, value: item.id})">
@@ -97,10 +97,12 @@
 <script>
 import store from '../../store'
 import { stepReady } from "../../utils/guide"
+import locale from '../../i18n'
 
 export default {
     data() {
         return {
+            locale: locale.message
         }
     },
     created: function () {
@@ -133,9 +135,9 @@ export default {
             }).catch()
         },
         createFolder() {
-            this.$prompt('Folder Name:', 'Create Folder', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel'
+            this.$prompt(this.locale.dashboard.myfiles.foldername + ':', this.locale.dashboard.myfiles.create, {
+                confirmButtonText: this.locale.elementSys.messagebox.confirm,
+                cancelButtonText: this.locale.elementSys.messagebox.cancel
             }).then(({ value }) => {
                 this.$store.dispatch('createBucket', { bucketName: value }).then(() => {
                     this.$message({

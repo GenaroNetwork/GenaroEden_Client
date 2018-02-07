@@ -39,16 +39,16 @@
 <template>
     <div class="fullheight right-container">
         <el-tabs value="runningTask" class="task-tabs-parent">
-            <el-tab-pane label="Running Task" name="runningTask">
+            <el-tab-pane :label="locale.dashboard.recent.runningtask" name="runningTask">
 
                 <el-table :data="taskListNotSuccess" class="files-table" height="100%" row-class-name="file-row">
-                    <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
+                    <el-table-column prop="filename" :label="locale.dashboard.recent.filename" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
                             <span style="margin-left: 10px">{{ getFileName(scope.row.filePath) }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="totalBytes" label="Size" width="250">
+                    <el-table-column prop="totalBytes" :label="locale.dashboard.recent.size" width="250">
                         <template slot-scope="scope">
                             <div class="process-bar">
                                 <el-progress :status="getStatusStr(scope.row.taskState)" :text-inside="true" :stroke-width="15" :percentage="Number.parseInt(scope.row.progress * 100)"></el-progress>
@@ -63,8 +63,8 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" label="Folder" width="250"></el-table-column>
+                    <el-table-column prop="created" :label="locale.dashboard.recent.created" width="180" :formatter="formatTime"></el-table-column>
+                    <el-table-column prop="folderName" :label="locale.dashboard.recent.folder" width="250"></el-table-column>
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
@@ -77,22 +77,22 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <span slot="empty">No upload/download history yet</span>
+                    <span slot="empty">{{locale.dashboard.recent.tip1}}</span>
                 </el-table>
             </el-tab-pane>
             <!-- -->
-            <el-tab-pane label="History" name="history">
+            <el-tab-pane :label="locale.dashboard.recent.history" name="history">
 
                 <el-table :data="taskListSuccess" class="files-table" height="100%" row-class-name="file-row">
-                    <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
+                    <el-table-column prop="filename" :label="locale.dashboard.recent.filename" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
                             <span style="margin-left: 10px">{{ getFileName(scope.row.filePath) }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="totalBytes" label="Size" width="80" :formatter="formatSize"></el-table-column>
-                    <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" label="Folder" width="250"></el-table-column>
+                    <el-table-column prop="totalBytes" :label="locale.dashboard.recent.size" width="80" :formatter="formatSize"></el-table-column>
+                    <el-table-column prop="created" :label="locale.dashboard.recent.created" width="180" :formatter="formatTime"></el-table-column>
+                    <el-table-column prop="folderName" :label="locale.dashboard.recent.folder" width="250"></el-table-column>
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
@@ -113,7 +113,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <span slot="empty">No upload/download history yet</span>
+                    <span slot="empty">{{locale.dashboard.recent.tip1}}</span>
                 </el-table>
 
             </el-tab-pane>
@@ -126,11 +126,13 @@
 import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
 import { TASK_STATE, TASK_TYPE } from "../../../config"
+import locale from '../../i18n'
 const moment = require('moment');
 const humanSize = require('human-size');
 export default {
     data() {
         return {
+            locale: locale.message,
             TASK_STATE,
             TASK_TYPE,
             fileTableColums: [{
