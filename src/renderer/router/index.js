@@ -40,7 +40,7 @@ export default new Router({
                             component: require('@/templates/Favourites/Folders').default
                         },
                         {
-                            path: '/folder/:folderId',
+                            path: '/folder/:bucketId',
                             name: 'folder-view',
                             component: require('@/templates/Favourites/Folder').default
                         },

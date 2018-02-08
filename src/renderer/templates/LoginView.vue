@@ -83,11 +83,13 @@ h1 {
 </template>
 
 <script> 
-import { setEnvironment, getBucketList } from '../utils/storjApiClient'
+import { Storj, Bucket } from '../utils/storjApiClient'
 import router from '../router'
 import store from '../store'
 import { resetPassword } from '../../bridge/users'
 import { getCredentials, saveCredentials } from '../utils/dbUtil'
+
+
 
 export default {
     name: 'login-view',
@@ -137,16 +139,17 @@ export default {
                     this.signing = true
                     var bridgeUser = this.login.username
                     var bridgePass = this.login.password
-                    setEnvironment(bridgeUser, bridgePass)
-                    getBucketList((err) => {
-                        this.signing = false
-                        if (err) {
-                            this.$message.error('Username Or Password Error')
-                        } else {
-                            saveCredentials(bridgeUser, bridgePass)
-                            this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass)
-                        }
-                    })
+                    Storj.init({ bridgeUser, bridgePass });
+                    Bucket.list()
+                        .then(() => {
+                            saveCredentials(bridgeUser, bridgePass);
+                            this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            this.$message.error('Username Or Password Error');
+                        });
+                    this.signing = false;
                 }
             })
         }

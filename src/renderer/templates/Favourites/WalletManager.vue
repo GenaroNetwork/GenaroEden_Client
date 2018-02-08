@@ -288,7 +288,7 @@
 
         <!-- wallet list -->
         <div class="wallet-list">
-            <div v-for="item, index in wallets" :class="{wallet: true, current: index === 0}">
+            <div v-for="item, index in wallets" :class="['wallet',{current: false}]">
                 <div class="card">
                     <div class="account">
                         <img class="avatar" :src="avatarUrl(item.address)">
@@ -520,7 +520,7 @@ export default {
                 });
         },
         copy(value, index) {
-            clipboard.writeText(value);
+            clipboard.writeText(`0x${value}`);
             this.copiedIndex = index;
         },
         exportWalletV3: async function (item) {

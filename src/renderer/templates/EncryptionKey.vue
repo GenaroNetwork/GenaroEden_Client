@@ -144,7 +144,7 @@ div.key-area {
 <script>
 import { getEncryptionKey, saveEncryptionKey } from '../utils/dbUtil'
 import router from '../router'
-import { setEnvironment, mnemonicCheck, mnemonicGenerate } from '../utils/storjApiClient'
+import { Storj, mnemonicCheck, mnemonicGenerate } from '../utils/storjApiClient'
 import walletManager from '../../wallet/walletManager'
 
 export default {
@@ -161,14 +161,14 @@ export default {
     },
     methods: {
         checkKeyOkAndContinue() {
-            const name = this.$store.state.User.username
-            const pwd = this.$store.state.User.password
-            getEncryptionKey(pwd).then((c) => {
-                if (c) {
-                    setEnvironment(name, pwd, c)
-                    router.push({ path: '/index' })
+            const bridgeUser = this.$store.state.User.username;
+            const bridgePass = this.$store.state.User.password;
+            getEncryptionKey(bridgePass).then((encryptionKey) => {
+                if (encryptionKey) {
+                    Storj.init({ bridgeUser, bridgePass, encryptionKey });
+                    router.push({ path: '/index' });
                 } else {
-                    console.log('no key found')
+                    console.log('no key found');
                 }
             })
         },

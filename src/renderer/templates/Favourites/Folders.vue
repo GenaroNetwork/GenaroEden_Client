@@ -75,11 +75,11 @@
     <div class="fullheight right-container">
         <div class="top-bar">
             <h2>Folders</h2>
-            <el-button class="btn" @click="createFolder" type="primary" icon="el-icon-circle-plus-outline" size="small">Create Folder</el-button>
+            <el-button class="btn" @click="createBucket" type="primary" icon="el-icon-circle-plus-outline" size="small">Create Folder</el-button>
         </div>
         <div class="bucket-list">
-            <div v-for="item in showBucketList" class="folder" @click="bucketBtnClick({label: item.name, value: item.id})">
-                <a class="delete-folder" @click.stop.prevent="deleteFolder(item)">
+            <div v-for="bucket in bucketList" class="folder" @click="enterBucket(bucket)">
+                <a class="delete-folder" @click.stop.prevent="deleteBucket(bucket)">
                     <i class="material-icons">close</i>
                 </a>
 
@@ -87,7 +87,7 @@
                     <i class="material-icons">folder</i>
                 </div>
                 <div class="folder-name">
-                    <span>{{ item.name }}</span>
+                    <span>{{ bucket.name }}</span>
                 </div>
             </div>
         </div>
@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import store from '../../store'
 import { stepReady } from "../../utils/guide"
 
 export default {
@@ -104,52 +103,56 @@ export default {
         }
     },
     created: function () {
-        this.$store.dispatch('fetchBucketList')
+        this.$store.dispatch('bucketListLoad');
     },
     mounted: function () {
         stepReady('new-folder')
     },
     computed: {
-        showBucketList() {
-            return this.$store.state.Bucket.bucketList
+        bucketList() {
+            return this.$store.state.BucketList.buckets;
         }
     },
     methods: {
-        deleteFolder(bucket) {
-            const this2 = this
-            this.$confirm('All your files in folder ' + bucket.name + ' will be deleted. This action cannot be undone.', 'Confirm Delete Folder: ' + bucket.name, {
-                confirmButtonText: 'Delete',
-                cancelButtonText: 'Cancel',
-                type: 'warning',
-                confirmButtonClass: 'el-button--danger'
-            }).then(() => {
-                store.dispatch('deleteBucket', {
-                    bucketId: bucket.id
-                }).then(() => {
-                    this2.$message.success('Folder Deleted')
-                }).catch((err) => {
-                    this2.$message.error('Folder Delete Error: ' + err)
-                })
-            }).catch()
+        enterBucket(bucket) {
+            this.$router.push({ path: '/folder/' + bucket.id, query: { bucketName: bucket.name } });
         },
-        createFolder() {
-            this.$prompt('Folder Name:', 'Create Folder', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel'
-            }).then(({ value }) => {
-                this.$store.dispatch('createBucket', { bucketName: value }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: 'Create Folder Success: ' + value
+
+        async createBucket() {
+            try {
+                let { value: bucketName } = await this.$prompt('Folder Name:', 'Create Folder', {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel'
+                });
+                try {
+                    this.$store.dispatch("bucketListCreate", { bucketName });
+                    this.$message.success(`Create Folder Success: ${bucketName}`);
+                } catch (error) {
+                    this.$message.error(`Create Folder Error: ${error}`);
+                }
+            } catch (error) { }
+        },
+
+        async deleteBucket(bucket) {
+            try {
+                await this.$confirm(
+                    `All your files in folder ${bucket.name} will be deleted. This action cannot be undone.`,
+                    `Confirm Delete Folder: ${bucket.name}`,
+                    {
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel',
+                        type: 'warning',
+                        confirmButtonClass: 'el-button--danger'
                     });
-                }).catch(e => {
-                    this.$message.error('Create Folder Error: ' + e);
-                })
-            })
+                try {
+                    await this.$store.dispatch("bucketListDelete", { bucketId: bucket.id });
+                    this.$message.success('Folder Deleted');
+                } catch (error) {
+                    this.$message.error(`Folder Delete Error: ${error}`);
+                }
+
+            } catch (error) { }
         },
-        bucketBtnClick(bucket) {
-            this.$router.push({ path: '/folder/' + bucket.value, query: { folderName: bucket.label } })
-        }
     }
 }
 </script>

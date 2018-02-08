@@ -23,7 +23,7 @@ const mutations = {
 
 const actions = {
     initBucketData({ commit, getters, rootState, dispatch }, { bucketId }) {
-        let blist = rootState.Bucket.bucketList
+        let blist = rootState.BucketList.buckets;
         const bucket = blist.find(b => b.id === bucketId)
         commit('setBucket', bucket)
         return dispatch('reloadBucketData')
@@ -32,6 +32,8 @@ const actions = {
         return new Promise((resolve, reject) => {
             if (state.bucket) {
                 getFileList(state.bucket.id, function (err, data) {
+                    console.log(data);
+                    debugger;
                     if (err) {
                         reject()
                     } else {

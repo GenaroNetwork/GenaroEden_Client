@@ -202,6 +202,9 @@
   padding: 0 20%;
   justify-content: space-around;
 }
+.banner .account .actions > button {
+  width: 40%;
+}
 
 /* list style */
 .state-icon {
@@ -233,6 +236,15 @@
   padding: 0 10%;
   display: flex;
   justify-content: space-around;
+}
+
+.history-icon {
+  white-space: nowrap;
+}
+
+.history-icon > i {
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>
 <template>
@@ -284,8 +296,8 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="pay()" class="" type="primary" :loading="false">Submit</el-button>
-                        <el-button @click="resetForm" class="" type="primary" :loading="false">Cancel</el-button>
+                        <el-button @click="pay()" class="" type="primary">Submit</el-button>
+                        <el-button @click="payFormPop = false" class="" type="primary">Cancel</el-button>
                     </el-form-item>
                 </template>
             </el-form>
@@ -350,7 +362,7 @@
                 </div>
                 <div class="actions">
                     <el-button class="btn" v-popover:depositPop type="primary" size="small">Deposit</el-button>
-                    <el-button class="btn" v-popover:payFormPop type="primary" size="small" @click="resetForm">Transfer</el-button>
+                    <el-button class="btn" v-popover:payFormPop type="primary" size="small">Transfer</el-button>
                 </div>
             </div>
             <div class="blank"></div>
@@ -358,34 +370,37 @@
 
         <!-- transaction history -->
         <div class="flex flex-grow">
-            <el-table :data="txList" class="files-table" height="100%" row-class-name="file-row">
+            <el-table :data="txList" class="files-table" row-class-name="file-row">
                 <el-table-column prop="state" label="" width="60">
                     <template slot-scope="scope">
-                        <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TASK_STATE.INIT || scope.row.state === TASK_STATE.INPROGRESS">
-                            remove_circle_outline
-                        </i>
-                        <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TASK_STATE.ERROR">
-                            error_outline
-                        </i>
-                        <i class="material-icons state-icon" :state="scope.row.state" v-else>
-                            add_circle_outline
-                        </i>
-                        <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TASK_STATE.ERROR">
-                            refresh
-                        </i>
-
+                        <div class="history-icon">
+                            <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TASK_STATE.INIT || scope.row.state === TASK_STATE.INPROGRESS">
+                                remove_circle_outline
+                            </i>
+                            <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TASK_STATE.ERROR">
+                                error_outline
+                            </i>
+                            <i class="material-icons state-icon" :state="scope.row.state" v-else>
+                                add_circle_outline
+                            </i>
+                            <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TASK_STATE.ERROR">
+                                refresh
+                            </i>
+                        </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="hash" label="Hash" min-width="" :show-overflow-tooltip="true">
+                <el-table-column prop="hash" label="Hash" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <a class="common-link" href="#" @click="hashCheck(scope.row.hash)">{{ scope.row.hash }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column prop="receipt.blockNumber" label="Block" width="80"></el-table-column>
-                <el-table-column prop="created" label="Created" width="180" class-name="created-col"></el-table-column>
-                <el-table-column prop="from" label="From" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="recipient" label="To" width="" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="amount" label="Amount" width="" class-name="id-col"></el-table-column>
+                <el-table-column prop="receipt.blockNumber" label="Block"></el-table-column>
+                <el-table-column prop="created" label="Created" class-name="created-col"></el-table-column>
+                <el-table-column prop="from" label="From" class-name="id-col" :show-overflow-tooltip="true">
+                    <template slot-scope="scope">0x{{scope.row.from}}</template>
+                </el-table-column>
+                <el-table-column prop="recipient" label="To" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="amount" label="Amount" class-name="id-col"></el-table-column>
                 <span slot="empty">No Transactions yet</span>
             </el-table>
         </div>
@@ -567,7 +582,6 @@ export default {
                 await this.$refs.payOption.validate();
                 await this.$store.dispatch("payByCurrentWallet", this.payOption);
                 this.$message("transaction submitted");
-                this.resetForm();
             } catch (e) {
                 this.$message.error("create transaction error: " + e);
             }
@@ -592,16 +606,15 @@ export default {
             this.defaultGas.limit = ETH_SUGGEST;
         },
         payPopped() {
+            this.payStep = 0;
+            this.payOption.recipient = null;
+            this.payOption.amount = null;
+            this.payOption.payType = "ETH";
             function wei2Gwei(wei) {
                 return utils.fromWei(wei, "Gwei");
             }
             this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price));
             this.payOption.gasLimit = this.defaultGas.limit;
-        },
-        resetForm() {
-            this.payFormPop = false;
-            this.payStep = 0;
-            this.$refs.payOption.resetFields();
         },
         avatarUrl(id) {
             return "avatar://" + id;
@@ -610,7 +623,7 @@ export default {
             return "qr://" + id;
         },
         copy(value) {
-            clipboard.writeText(value);
+            clipboard.writeText(`0x${value}`);
             this.copiedPopup = true;
         }
     }

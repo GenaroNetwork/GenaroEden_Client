@@ -68,15 +68,19 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="created" label="Created" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" label="Folder" width="250"></el-table-column>
+                    <el-table-column prop="folderName" label="Folder" width="250">
+                        <template slot-scope="scope">
+                            <router-link :to="`/folder/${scope.row.bucketId}`">{{ scope.row.folderName }}</router-link>
+                        </template>
+                    </el-table-column>
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
                                 <el-button v-if="scope.row.taskState === TASK_STATE.INPROGRESS" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
                                     <i class="material-icons">cancel</i>
                                 </el-button>
-                                <el-button class="row-action" @click="removeTask(scope.row)" type="text" size="small">
-                                    <i class="material-icons">delete_sweep</i>
+                                <el-button v-if="scope.row.taskState !== TASK_STATE.INPROGRESS" class="row-action" @click="removeTask(scope.row)" type="text" size="small">
+                                    <i class="material-icons">close</i>
                                 </el-button>
                             </div>
                         </template>
