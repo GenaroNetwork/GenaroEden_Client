@@ -161,14 +161,14 @@ export default {
     },
     methods: {
         checkKeyOkAndContinue() {
-            const name = this.$store.state.User.username
-            const pwd = this.$store.state.User.password
-            getEncryptionKey(pwd).then((key) => {
-                if (key) {
-                    Storj.init(name, pwd, key);
-                    router.push({ path: '/index' })
+            const bridgeUser = this.$store.state.User.username;
+            const bridgePass = this.$store.state.User.password;
+            getEncryptionKey(bridgePass).then((encryptionKey) => {
+                if (encryptionKey) {
+                    Storj.init({ bridgeUser, bridgePass, encryptionKey });
+                    router.push({ path: '/index' });
                 } else {
-                    console.log('no key found')
+                    console.log('no key found');
                 }
             })
         },
