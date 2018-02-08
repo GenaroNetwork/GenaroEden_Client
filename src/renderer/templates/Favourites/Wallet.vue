@@ -393,7 +393,7 @@
 </template>
 
 <script>
-import { getGasPrics, getGasLimit } from "../../../wallet/transactionManager";
+import { getGasPrice, getGasLimit } from "../../../wallet/transactionManager";
 import { utils, EtherscanURL, web3 } from "../../../wallet/web3Util";
 import { clipboard, shell } from "electron";
 import { TASK_STATE } from "../../../config.js";
@@ -457,7 +457,7 @@ export default {
                 if (value.toString().trim() === "") {
                     callback(new Error("Please input gasPrice"));
                 }
-                let price = await getGasPrics();
+                let price = await getGasPrice();
                 price = utils.fromWei(price, "Gwei");
                 if (value < price) {
                     callback(new Error("gas price should greater than " + price));
@@ -588,7 +588,7 @@ export default {
             shell.openExternal(EtherscanURL + hash);
         },
         calculateGas: async function () {
-            this.defaultGas.price = await getGasPrics();
+            this.defaultGas.price = await getGasPrice();
             this.defaultGas.limit = ETH_SUGGEST;
         },
         payPopped() {

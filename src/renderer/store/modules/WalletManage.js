@@ -1,5 +1,7 @@
 import walletManager from '../../../wallet/walletManager'
-import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager';
+import * as txManager from '../../../wallet/transactionManager'
+import { getBalanceEth, getBalanceGnx } from '../../../wallet/transactionManager'
+
 const fs = require('fs')
 const state = {
     wallets: [],
@@ -59,7 +61,16 @@ const actions = {
         await walletManager.changePassword(address, password, newPassword)
         await dispatch('loadAllWallets')
     },
-    async setAsPayingWallet({ commit, dispatch, rootState }, { address, password }) {
+    async setAsPayingWallet({ commit, dispatch, rootState }, { address, password, amount, gasPrice }) {
+        // first set to 0 or transaction will fail: https://github.com/ethereum/EIPs/issues/738
+        // 1: GNX approve
+        // 2: Submit to network
+        const rawTrans0 = await walletManager.generateSignedApproveTx(address, password, 0, gasPrice, 70000)
+        await txManager.sendTransactionNoLog(rawTrans0)
+        // 1: GNX approve
+        // 2: Submit to network
+        const rawTrans = await walletManager.generateSignedApproveTx(address, password, amount, gasPrice, 70000)
+        await txManager.sendTransactionNoLog(rawTrans)
         const user = rootState.User.username
         await walletManager.submitAddress(user, address, password)
     },

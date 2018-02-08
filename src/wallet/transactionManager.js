@@ -61,7 +61,7 @@ function _getPrice() {
 }
 _getPrice()
 setInterval(_getPrice, 5000)
-function getGasPrics() {
+function getGasPrice() {
     return GasPrice
 }
 
@@ -72,6 +72,95 @@ async function getGasLimit() {
     // const gasLimit = avgGas / 9 * 10
     // debugger
     // return gasLimit
+}
+
+const RECEIPTSTATE = Object.freeze({
+    NOTFOUND: 0,
+    PENDING: 1,
+    FAIL: 2,
+    SUCCESS: 3
+})
+
+
+function sendTransactionNoLog(rawTx) {
+
+    function checkTxByHash(hash) {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransactionReceipt(hash).then(receipt => {
+                if (receipt) {
+                    console.debug(receipt)
+                    console.debug(receipt.status)
+                    if(receipt.status === '0x0') { //fail
+                        resolve(RECEIPTSTATE.FAIL)
+                    } else {
+                        resolve(RECEIPTSTATE.SUCCESS)
+                    }
+                } else {
+                    resolve(RECEIPTSTATE.NOTFOUND)
+                }
+            }).catch(error => {
+                console.error('checkTxByHash error')
+            })
+        })
+    }
+    
+    function checkTxByHashNtimes(hash, checkCount, interval) {
+        return new Promise((resolve, reject) => {
+            const intv = setInterval(function(){
+                console.debug('checkTxByHash checkCount: ' + checkCount)
+                checkTxByHash(hash).then(state => {
+                    checkCount --
+                    console.debug('checkTxByHash checkCount: ' + checkCount + ' state: ' + state)
+                    if(state === RECEIPTSTATE.NOTFOUND) {
+                        if(checkCount === 0) {
+                            clearInterval(intv)
+                            resolve(RECEIPTSTATE.NOTFOUND)
+                        }
+                    } else if (state === RECEIPTSTATE.FAIL) {
+                        clearInterval(intv)
+                        resolve(RECEIPTSTATE.FAIL)
+                    } else if (state === RECEIPTSTATE.SUCCESS) {
+                        clearInterval(intv)
+                        resolve(RECEIPTSTATE.SUCCESS)
+                    }
+                })
+            }, interval)
+        })
+    }
+
+    return new Promise((resolve, reject) => {
+        let thisHash
+        web3.eth.sendSignedTransaction(rawTx).once('transactionHash', function (hash) {
+            // log hash here
+            console.debug('transactionHash' + hash)
+            thisHash = hash
+        }).once('error', async (error) => {
+            console.debug('sendSignedTransaction error: ' + error)
+            if (thisHash) {
+                // recheck hash several times: 5 times, each 20 seconds
+                const state = await checkTxByHashNtimes(thisHash, 15, 20000)
+                if(state === RECEIPTSTATE.NOTFOUND) {
+                    reject('receipt not found: ' + thisHash)
+                } else if (state === RECEIPTSTATE.FAIL) {
+                    reject('receipt found but failed')
+                } else if (state === RECEIPTSTATE.SUCCESS) {
+                    resolve('receipt found and success')
+                }
+            } else {
+                reject('no hash received for transaction')
+            }
+        }).then(async (receipt) => {
+            console.debug('sendSignedTransaction receipt: ' + receipt)
+            const result = await checkTxByHash(thisHash)
+            if(result === RECEIPTSTATE.SUCCESS) {
+                resolve('receipt found and success')
+            } else {
+                reject('receipt found but failed')
+            }
+        }).catch(function (error) {
+            console.error(error)
+        })
+    })
 }
 
 function sendTransaction(payOption, rawTx, txUpdateCb) {
@@ -108,8 +197,9 @@ export {
     getBalanceEth,
     getBalanceGnx,
     getGasLimit,
-    getGasPrics,
+    getGasPrice,
     sendTransaction,
+    sendTransactionNoLog,
     getTransactions,
     addTransaction,
     updateTransaction,
