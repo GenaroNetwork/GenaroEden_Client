@@ -208,11 +208,11 @@ export default {
             cachedIcon: {}
         }
     },
-    created: function () {
+    async created() {
         const bucketId = this.$route.params.bucketId;
         this.$store.dispatch('fileListLoadBucket', { bucketId });
     },
-    mounted: function () {
+    mounted() {
         stepReady('new-folder');
     },
     computed: {
