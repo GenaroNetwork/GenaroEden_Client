@@ -193,7 +193,6 @@ import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import { Bucket } from "../../utils/storjApiClient";
 import fs from "fs";
-
 export default {
     data() {
         return {
@@ -210,7 +209,13 @@ export default {
     },
     async created() {
         const bucketId = this.$route.params.bucketId;
-        this.$store.dispatch('fileListLoadBucket', { bucketId });
+        this.$store.dispatch('fileListLoadBucket', { bucketId }).catch(error => {
+            if (error.message === "No Payment Wallet") {
+                this.$alert("Please set default payment wallet first.", "Error", {
+                    type: "error"
+                });
+            }
+        });
     },
     mounted() {
         stepReady('new-folder');

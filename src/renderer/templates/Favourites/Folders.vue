@@ -105,25 +105,6 @@ export default {
     created: function () {
         this.$store.dispatch('bucketListLoad');
     },
-    async beforeRouteLeave(to, from, next) {
-        if (to.name !== "folder-view") {
-            next();
-            return;
-        }
-        const bucketId = to.params.bucketId;
-        this.$store.dispatch('fileListLoadBucket', { bucketId })
-            .then(() => {
-                next();
-            })
-            .catch(e => {
-                if (e.message === "No Payment Wallet") {
-                    next(false);
-                    this.$alert("Please set default payment wallet first.", "Error", {
-                        type: "error"
-                    });
-                }
-            });
-    },
     mounted: function () {
         stepReady('new-folder')
     },
