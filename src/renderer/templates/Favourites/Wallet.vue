@@ -26,6 +26,7 @@
 .banner {
   display: flex;
   flex-direction: row;
+  flex-shrink: 0;
 }
 
 .banner > div {
