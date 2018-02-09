@@ -28,7 +28,12 @@ async function getBalance(address) {
 function getTransferData(toAddress, tokenAmount) {
     return Contract.methods.transfer(toAddress, tokenAmount).encodeABI()
 }
+
+function getApproveData(spender, amount) {
+    return Contract.methods.approve(spender, amount).encodeABI()
+}
 export {
     getBalance,
-    getTransferData
+    getTransferData,
+    getApproveData
 }

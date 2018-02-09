@@ -236,6 +236,23 @@
             </div>
         </el-dialog>
 
+        <!-- submit payment -->
+        <el-dialog title="Set As Paying Wallet" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center>
+            <el-form ref="submitPayFormRef" :model="submitPay" :rules="ruleInline">
+                <el-form-item prop="password">
+                    <el-input type="password" v-model="submitPay.password" placeholder="Wallet Password" size="small">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="amount">
+                    <el-input type="number" v-model="submitPay.amount" placeholder="Max GNX approve" size="small">
+                    </el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer">
+                <el-button @click="setAsPayingWallet()" type="primary">Submit</el-button>
+            </div>
+        </el-dialog>
+
         <!-- import wallet dialog -->
         <el-dialog title="Import Wallet" :visible.sync="importV3WalletDialog.shown" width="590px" center>
             <template v-if="importV3WalletDialog.step === 0">
@@ -305,7 +322,7 @@
                                 <el-dropdown-item :command="{item,action:'exportWalletV3'}">
                                     Export wallet as json
                                 </el-dropdown-item>
-                                <el-dropdown-item :command="{item,action:'setAsPayingWallet'}">
+                                <el-dropdown-item :command="{item,action:'popSubmitPay'}">
                                     Set as default payment
                                 </el-dropdown-item>
                             </el-dropdown-menu>
@@ -336,7 +353,7 @@
 </template>
 
 <script>
-import { getGasPrics, getGasLimit, getBalanceEth, getBalanceGnx } from "../../../wallet/transactionManager";
+import { getGasPrice, getGasLimit, getBalanceEth, getBalanceGnx } from "../../../wallet/transactionManager";
 import walletManager from "../../../wallet/walletManager";
 import { utils } from "../../../wallet/web3Util";
 import { clipboard } from "electron";
@@ -363,6 +380,11 @@ export default {
                 password: "",
                 newPassword: "",
                 newPasswordRepeat: ""
+            },
+            submitPay: {
+                show: false,
+                password: "",
+                amount: 100
             },
             importV3WalletDialog: {
                 shown: false,
@@ -536,24 +558,42 @@ export default {
                 this2.$message.error(e);
             });
         },
-        setAsPayingWallet: async function (item) {
-            const this2 = this;
-            const { value } = await this.$prompt("Password:", "Set As Paying Wallet", {
-                confirmButtonText: "Export",
-                cancelButtonText: "Cancel",
-                inputType: "password"
-            })
-            const password = value
+        popSubmitPay: async function (item) {
+            this.submitPay.show = true;
+            this.submitPay.address = item.address;
+        },
+        resetSubmitPayForm() {
+            this.submitPay.show = false
+            this.submitPay.address = ""
+            this.submitPay.password = ""
+            this.submitPay.amount = 0
+        },
+        setAsPayingWallet: async function () {
+            const password = this.submitPay.password
+            const gasPrice= getGasPrice()
+            debugger
+            const amount = this.submitPay.amount
+
+            const loading = this.$loading({
+                lock: true,
+                text: 'Please wait while executing smart contract, this will take up to 3 minutes.',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             this.$store
-                .dispatch("setAsPayingWallet", { address: item.address, password })
+                .dispatch("setAsPayingWallet", { address: this.submitPay.address, password, amount, gasPrice })
                 .then(() => {
                     this.$message({
                         type: "success",
-                        message: `now your payment wallet is 0x${item.address}`
+                        message: `now your payment wallet is 0x${this.submitPay.address}`
                     });
+                    this.resetSubmitPayForm()
+                    loading.close()
                 })
                 .catch(e => {
-                    this.$message.error("Error: " + e);
+                    this.$message.error("Error: " + e)
+                    this.resetSubmitPayForm()
+                    loading.close()
                 });
         },
         avatarUrl(id) {

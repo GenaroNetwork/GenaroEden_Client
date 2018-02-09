@@ -1,4 +1,4 @@
-import { web3, chainId, utils, GNXAddr } from './web3Util'
+import { web3, chainId, utils, GNXAddr, EMUAddr } from './web3Util'
 import * as gnx from './gnxSmart'
 import axios from 'axios'
 import { BRIDGE_API_URL } from '../config'
@@ -270,6 +270,36 @@ async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, g
     }
 }
 
+async function generateSignedApproveTx(myAddr, password, amount, gas, gasLimit) {
+    const myWallet = db.get('wallet').find({ address: myAddr }).value()
+    if (myWallet) {
+        const rawWallet = await loadRawWallet(myAddr, password)
+        const prikBuf = rawWallet.getPrivateKey()
+        const nonceval = await web3.eth.getTransactionCount(myAddr)
+
+        // 1. make transaction data
+        let txOptions = {
+            gasPrice: web3.utils.toHex(parseInt(gas)),
+            gasLimit: web3.utils.toHex(gasLimit),
+            value: 0,
+            nonce: web3.utils.toHex(nonceval),
+            from: myAddr,
+            to: GNXAddr,
+            data: gnx.getApproveData(EMUAddr, amount * GXN_RATE),
+            chainId
+        }
+
+        var tx = new Tx(txOptions)
+        // 2. sign transaction
+        tx.sign(prikBuf)
+        var serializedTx = tx.serialize()
+        const rawTrans = '0x' + serializedTx.toString('hex')
+        return rawTrans
+    } else {
+        throw ('wallet not found')
+    }
+}
+
 async function submitAddress(user, address, password) {
     const secp256k1 = require('secp256k1')
     const createKeccakHash = require('keccak')
@@ -322,6 +352,7 @@ export default {
     initRawWallet,
     generateSignedTx,
     generateSignedGnxTx,
+    generateSignedApproveTx,
     forgetWallet,
     changePassword,
     validateWalletPassword,
