@@ -1,3 +1,10 @@
+const {ipcMain} = require('electron')
+const {localeMessages} = require('../renderer/i18n')
+const i18n = require('../renderer/i18n')
+function getLocaleMenu(lang) {
+  return localeMessages.messages[lang].menu
+}
+let menu = getLocaleMenu(localeMessages.locale)
 /**
  * Creates a default menu for electron apps
  *
@@ -10,15 +17,15 @@ module.exports = function(app, shell) {
 
     const template = [
       {
-        label: 'Edit',
+        label: menu.edit.edit,
         submenu: [
           {
-            label: 'Undo',
+            label: menu.edit.undo,
             accelerator: 'CmdOrCtrl+Z',
             role: 'undo'
           },
           {
-            label: 'Redo',
+            label: menu.edit.redo,
             accelerator: 'Shift+CmdOrCtrl+Z',
             role: 'redo'
           },
@@ -26,29 +33,29 @@ module.exports = function(app, shell) {
             type: 'separator'
           },
           {
-            label: 'Cut',
+            label: menu.edit.cut,
             accelerator: 'CmdOrCtrl+X',
             role: 'cut'
           },
           {
-            label: 'Copy',
+            label: menu.edit.copy,
             accelerator: 'CmdOrCtrl+C',
             role: 'copy'
           },
           {
-            label: 'Paste',
+            label: menu.edit.paste,
             accelerator: 'CmdOrCtrl+V',
             role: 'paste'
           },
           {
-            label: 'Select All',
+            label: menu.edit.selectall,
             accelerator: 'CmdOrCtrl+A',
             role: 'selectall'
           },
         ]
       },
       {
-        label: 'View',
+        label: menu.view.view,
         submenu: [
         //   {
         //     label: 'Reload',
@@ -59,7 +66,7 @@ module.exports = function(app, shell) {
         //     }
         //   },
           {
-            label: 'Toggle Full Screen',
+            label: menu.view.togglefullscreen,
             accelerator: (function() {
               if (process.platform === 'darwin')
                 return 'Ctrl+Command+F';
@@ -72,7 +79,7 @@ module.exports = function(app, shell) {
             }
           },
           {
-            label: 'Toggle Developer Tools',
+            label: menu.view.toggledevelopertools,
             accelerator: (function() {
               if (process.platform === 'darwin')
                 return 'Alt+Command+I';
@@ -87,28 +94,49 @@ module.exports = function(app, shell) {
         ]
       },
       {
-        label: 'Window',
+        label: menu.window.window,
         role: 'window',
         submenu: [
           {
-            label: 'Minimize',
+            label: menu.window.minimize,
             accelerator: 'CmdOrCtrl+M',
             role: 'minimize'
           },
           {
-            label: 'Close',
+            label: menu.window.close,
             accelerator: 'CmdOrCtrl+W',
             role: 'close'
           },
         ]
       },
       {
-        label: 'Help',
+        label: menu.help.help,
         role: 'help',
         submenu: [
           {
-            label: 'Learn More',
+            label: menu.help.learnmore,
             click: function() { shell.openExternal('http://genaro.network') }
+          },
+        ]
+      },
+      {
+        label: menu.language.language,
+        submenu: [
+          {
+            label: '中文',
+            click: function(menuItem, browserWindow, event) { 
+              browserWindow.webContents.send('locale-language', 'zh')
+              menu = getLocaleMenu('zh')
+              app.updateMenu()
+            }
+          },
+          {
+            label: 'English',
+            click: function(menuItem, browserWindow, event) { 
+              browserWindow.webContents.send('locale-language', 'en')
+              menu = getLocaleMenu('en')
+              app.updateMenu()
+            }
           },
         ]
       },

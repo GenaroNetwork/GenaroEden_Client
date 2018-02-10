@@ -25,6 +25,7 @@ function addMenu() {
 function createWindow() {
     registerProtocals()
     addMenu()
+    app.updateMenu = addMenu
     /**
      * Initial window options
      */
