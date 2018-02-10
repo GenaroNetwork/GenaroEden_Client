@@ -193,6 +193,9 @@ import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import { Bucket } from "../../utils/storjApiClient";
 import fs from "fs";
+import { BRIDGE_API_URL } from "../../../config";
+import storj from 'storj-lib';
+
 export default {
     data() {
         return {
@@ -209,13 +212,23 @@ export default {
     },
     async created() {
         const bucketId = this.$route.params.bucketId;
-        this.$store.dispatch('fileListLoadBucket', { bucketId }).catch(error => {
-            if (error.message === "No Payment Wallet") {
-                this.$alert("Please set default payment wallet first.", "Error", {
-                    type: "error"
-                });
+        this.$store.dispatch('fileListLoadBucket', { bucketId });
+        this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
+            auth: {
+                username: this.$store.state.User.username,
+                password: storj.utils.sha256(this.$store.state.User.password),
             }
-        });
+        })
+            .then(data => {
+                if (!data.data.wallet) {
+                    this.$alert("Please set default payment wallet first.", "Error", {
+                        type: "error"
+                    });
+                }
+            })
+            .catch(error => {
+
+            });
     },
     mounted() {
         stepReady('new-folder');

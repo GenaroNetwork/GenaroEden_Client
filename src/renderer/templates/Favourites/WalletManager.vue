@@ -281,14 +281,11 @@
             <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">Import Json
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
-            <!-- 
-            <el-button type="primary" @click="restore" size="small">Restore<i class="el-icon-upload el-icon--right"></i></el-button>
-            -->
         </div>
 
         <!-- wallet list -->
         <div class="wallet-list">
-            <div v-for="item, index in wallets" :class="['wallet',{current: false}]">
+            <div v-for="item, index in wallets" :class="['wallet',{current: false}]" :key="`walletId-${index}`">
                 <div class="card">
                     <div class="account">
                         <img class="avatar" :src="avatarUrl(item.address)">
@@ -570,8 +567,7 @@ export default {
         },
         setAsPayingWallet: async function () {
             const password = this.submitPay.password
-            const gasPrice= getGasPrice()
-            debugger
+            const gasPrice = getGasPrice()
             const amount = this.submitPay.amount
 
             const loading = this.$loading({

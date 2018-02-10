@@ -78,7 +78,7 @@
             <el-button class="btn" @click="createBucket" type="primary" icon="el-icon-circle-plus-outline" size="small">Create Folder</el-button>
         </div>
         <div class="bucket-list">
-            <div v-for="bucket in bucketList" class="folder" @click="enterBucket(bucket)">
+            <div v-for="bucket,index in bucketList" class="folder" @click="enterBucket(bucket)" :key="`buckId-${index}`">
                 <a class="delete-folder" @click.stop.prevent="deleteBucket(bucket)">
                     <i class="material-icons">close</i>
                 </a>

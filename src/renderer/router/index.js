@@ -63,6 +63,11 @@ export default new Router({
                             path: '/wallet-manager',
                             name: 'wallet-manager',
                             component: require('@/templates/Favourites/WalletManager').default
+                        },
+                        {
+                            path: '/debit',
+                            name: 'debit-view',
+                            component: require('@/templates/Favourites/Debit').default
                         }
                     ]
                 }

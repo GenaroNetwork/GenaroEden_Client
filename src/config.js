@@ -3,7 +3,8 @@
 // const bridgeApiUrl = 'http://101.132.159.197:8080';
 
 // test environment
-let BRIDGE_API_URL = 'http://47.100.33.60:8080';
+// let BRIDGE_API_URL = 'http://47.100.33.60:8080';
+let BRIDGE_API_URL = 'http://127.0.0.1:6382';
 
 const PASSWORD_RESET_REDIRECT = 'https://genaro.network/en/password-reset-success'
 const REGISTER_REDIRECT = 'https://genaro.network/en/register-success'

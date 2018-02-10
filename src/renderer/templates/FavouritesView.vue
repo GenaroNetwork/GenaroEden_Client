@@ -28,7 +28,7 @@ i {
 <template>
     <div class="colcontainer">
         <div class="layout-favourites-enum">
-            <el-menu default-active="0" :router="true">
+            <el-menu :default-active="defaultActive" @select="(index)=>{defaultActive = index}" :router="true">
                 <el-menu-item index="0" route="/folders">
                     <i class="el-icon-document"></i>
                     <span slot="title">My Files</span>
@@ -47,6 +47,9 @@ i {
                     </el-menu-item>
                     <el-menu-item index="2-1" route="/wallet-manager">
                         <span slot="title">Wallet Manage</span>
+                    </el-menu-item>
+                    <el-menu-item index="2-2" route="/debit">
+                        <span slot="title">Debits</span>
                     </el-menu-item>
                 </el-submenu>
                 <el-menu-item index="3" route="/share-my-storage">
@@ -67,7 +70,18 @@ i {
 import { stepReady } from "../utils/guide";
 export default {
     data() {
-        return {};
+        return {
+            defaultActive: "0",
+        };
+    },
+    watch: {
+        "$route"(to, form) {
+            switch (to.name) {
+                case "folder-view":
+                    this.defaultActive = "0";
+                    break;
+            }
+        }
     },
     created: function () {
         this.$router.push({ path: "/folders" });
@@ -76,6 +90,6 @@ export default {
         stepReady("My Folder");
         stepReady("Upload");
         stepReady("download-history");
-    }
+    },
 };
 </script>

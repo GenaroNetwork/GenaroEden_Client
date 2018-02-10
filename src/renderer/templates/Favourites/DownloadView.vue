@@ -45,7 +45,7 @@
         <el-tabs value="runningTask" class="task-tabs-parent">
             <el-tab-pane label="Running Task" name="runningTask">
 
-                <el-table :data="taskListNotSuccess" class="files-table" height="100%" row-class-name="file-row">
+                <el-table :data="taskListNotSuccess" class="files-table" row-class-name="file-row">
                     <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
@@ -91,7 +91,7 @@
             <!-- -->
             <el-tab-pane label="History" name="history">
 
-                <el-table :data="taskListSuccess" class="files-table" height="100%" row-class-name="file-row">
+                <el-table :data="taskListSuccess" class="files-table" row-class-name="file-row">
                     <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
@@ -220,9 +220,6 @@ export default {
         removeTask(item) {
             this.$store.commit('taskListRemove', { taskId: item.taskId })
         }
-    },
-    mounted: function () {
-        this.$store.commit('taskListLoad');
     },
     components: {
         FontAwesomeIcon

@@ -7,8 +7,17 @@
 <script>
 
 import css from 'tether-shepherd/dist/css/shepherd-theme-arrows.css';
+import { Storj } from "./utils/storjApiClient";
 export default {
-    name: 'Genaro-Eden'
+    name: 'Genaro-Eden',
+    created() {
+        if (process.env.NODE_ENV === 'development') {
+            this.$store.commit("updateUsername", localStorage.bridgeUser);
+            this.$store.commit("updatePassword", localStorage.bridgePass);
+            this.$store.commit("setEncryptionKey", localStorage.bridgeKey);
+        }
+        this.$store.commit('taskListLoad');
+    }
 }
 </script>
 

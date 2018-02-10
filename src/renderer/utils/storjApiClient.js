@@ -38,7 +38,7 @@ class Storj {
         });
     }
 }
-if (process.env.NODE_ENV === 'development') storj = new Storj;
+if (process.env.NODE_ENV === 'development') Storj.init();
 
 class Bucket {
     constructor(bucketId) {
