@@ -17,11 +17,9 @@ p {
 <template>
     <div>
         <img src="~@/assets/img/rocket.png" alt="">
-        <h1>Genaro Sharer is alive, join us and earn reward!</h1>
-        <p>
-            If you want to share your storage space please click
-            <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">this link</a>
-            for a detailed explanation how to install and run Genaro Sharer.
+        <h1>{{ $t('dashboard.sharestorage.tip1') }}</h1>
+        <p v-html="$t('dashboard.sharestorage.tip2')">
+          
         </p>
     </div>
 </template>

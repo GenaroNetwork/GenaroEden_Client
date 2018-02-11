@@ -1,10 +1,3 @@
-const {ipcMain} = require('electron')
-const {localeMessages} = require('../renderer/i18n')
-const i18n = require('../renderer/i18n')
-function getLocaleMenu(lang) {
-  return localeMessages.messages[lang].menu
-}
-let menu = getLocaleMenu(localeMessages.locale)
 /**
  * Creates a default menu for electron apps
  *
@@ -17,15 +10,15 @@ module.exports = function(app, shell) {
 
     const template = [
       {
-        label: menu.edit.edit,
+        label: app.menuSetting.menu.edit.edit,
         submenu: [
           {
-            label: menu.edit.undo,
+            label: app.menuSetting.menu.edit.undo,
             accelerator: 'CmdOrCtrl+Z',
             role: 'undo'
           },
           {
-            label: menu.edit.redo,
+            label: app.menuSetting.menu.edit.redo,
             accelerator: 'Shift+CmdOrCtrl+Z',
             role: 'redo'
           },
@@ -33,29 +26,29 @@ module.exports = function(app, shell) {
             type: 'separator'
           },
           {
-            label: menu.edit.cut,
+            label: app.menuSetting.menu.edit.cut,
             accelerator: 'CmdOrCtrl+X',
             role: 'cut'
           },
           {
-            label: menu.edit.copy,
+            label: app.menuSetting.menu.edit.copy,
             accelerator: 'CmdOrCtrl+C',
             role: 'copy'
           },
           {
-            label: menu.edit.paste,
+            label: app.menuSetting.menu.edit.paste,
             accelerator: 'CmdOrCtrl+V',
             role: 'paste'
           },
           {
-            label: menu.edit.selectall,
+            label: app.menuSetting.menu.edit.selectall,
             accelerator: 'CmdOrCtrl+A',
             role: 'selectall'
           },
         ]
       },
       {
-        label: menu.view.view,
+        label: app.menuSetting.menu.view.view,
         submenu: [
         //   {
         //     label: 'Reload',
@@ -66,7 +59,7 @@ module.exports = function(app, shell) {
         //     }
         //   },
           {
-            label: menu.view.togglefullscreen,
+            label: app.menuSetting.menu.view.togglefullscreen,
             accelerator: (function() {
               if (process.platform === 'darwin')
                 return 'Ctrl+Command+F';
@@ -79,7 +72,7 @@ module.exports = function(app, shell) {
             }
           },
           {
-            label: menu.view.toggledevelopertools,
+            label: app.menuSetting.menu.view.toggledevelopertools,
             accelerator: (function() {
               if (process.platform === 'darwin')
                 return 'Alt+Command+I';
@@ -94,48 +87,48 @@ module.exports = function(app, shell) {
         ]
       },
       {
-        label: menu.window.window,
+        label: app.menuSetting.menu.window.window,
         role: 'window',
         submenu: [
           {
-            label: menu.window.minimize,
+            label: app.menuSetting.menu.window.minimize,
             accelerator: 'CmdOrCtrl+M',
             role: 'minimize'
           },
           {
-            label: menu.window.close,
+            label: app.menuSetting.menu.window.close,
             accelerator: 'CmdOrCtrl+W',
             role: 'close'
           },
         ]
       },
       {
-        label: menu.help.help,
+        label: app.menuSetting.menu.help.help,
         role: 'help',
         submenu: [
           {
-            label: menu.help.learnmore,
+            label: app.menuSetting.menu.help.learnmore,
             click: function() { shell.openExternal('http://genaro.network') }
           },
         ]
       },
       {
-        label: menu.language.language,
+        label: app.menuSetting.menu.language.language,
         submenu: [
           {
             label: '中文',
             click: function(menuItem, browserWindow, event) { 
               browserWindow.webContents.send('locale-language', 'zh')
-              menu = getLocaleMenu('zh')
-              app.updateMenu()
+              app.menuSetting.setLocale('zh')
+              app.menuSetting.updateMenu()
             }
           },
           {
             label: 'English',
             click: function(menuItem, browserWindow, event) { 
               browserWindow.webContents.send('locale-language', 'en')
-              menu = getLocaleMenu('en')
-              app.updateMenu()
+              app.menuSetting.setLocale('en')
+              app.menuSetting.updateMenu()
             }
           },
         ]

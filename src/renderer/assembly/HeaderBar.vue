@@ -44,7 +44,7 @@
                     <div class="api">
                         <storage-usage></storage-usage>
                         <div class="logout">
-                            <a href="" @click="logout">logout</a>
+                            <a href="" @click="logout">{{ $t('common.login.logout') }}</a>
                         </div>
                     </div>
                 </el-dropdown-menu>
