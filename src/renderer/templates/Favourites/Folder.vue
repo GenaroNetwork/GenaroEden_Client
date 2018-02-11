@@ -94,7 +94,7 @@ td.right-td {
     <div class="fullheight v-flex">
         <div class="top-bar">
             <h2>
-                <router-link to="/folders">Folders</router-link>
+                <router-link to="/folders">{{ $t("dashboard.myfiles.folder") }}</router-link>
                 <span :title="bucketName"> &gt; {{ bucketName }}</span>
             </h2>
             <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download

@@ -6,11 +6,15 @@ exports.default = {
     login: {
       signin: 'Sign In',
       signup: 'Sign Up',
-      reset: 'Reset Password'
+      reset: 'Reset Password',
+      logout: 'logout'
     },
     dialog: {
       submit: 'Submit',
       cancel: 'Cancel'
     },
+    button: {
+
+    }
   }
 };
