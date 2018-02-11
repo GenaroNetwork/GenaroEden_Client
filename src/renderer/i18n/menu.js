@@ -27,7 +27,7 @@ exports.default = {
       learnmore: 'Learn More'
     },
     language: {
-      language: 'Multi-Language'
+      language: 'Language'
     }
   }
 };

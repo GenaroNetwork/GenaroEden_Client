@@ -1,6 +1,7 @@
 import { app, BrowserWindow, Menu, shell } from 'electron'
 import registerProtocals from './customProtocol'
 const defaultMenu = require('./appMenu');
+import i18n, { writeLangJsonConfigFile} from '../renderer/i18n'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -14,6 +15,17 @@ const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
     : `file://${__dirname}/index.html`
 
+function setMenu() {
+    app.menuSetting = {
+        updateMenu: addMenu,
+        setLocale: function (lang) {
+            this.menu = i18n.messages[lang].menu
+            writeLangJsonConfigFile(lang)
+        }
+    }
+    app.menuSetting.setLocale(i18n.locale)
+}
+
 function addMenu() {
     // Get template for default menu 
     const menu = defaultMenu(app, shell);
@@ -24,8 +36,9 @@ function addMenu() {
 
 function createWindow() {
     registerProtocals()
-    addMenu()
-    app.updateMenu = addMenu
+    setMenu()
+    app.menuSetting.updateMenu()
+    // app.updateMenu = addMenu
     /**
      * Initial window options
      */
