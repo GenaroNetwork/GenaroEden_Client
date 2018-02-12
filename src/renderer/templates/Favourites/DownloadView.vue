@@ -3,6 +3,7 @@
   flex-direction: column;
   display: flex;
   padding: 15px 15px 0 15px;
+  box-sizing: border-box;
 }
 .task-tabs-parent {
   display: flex;

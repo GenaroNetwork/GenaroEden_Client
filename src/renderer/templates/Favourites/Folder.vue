@@ -80,7 +80,6 @@ td.right-td {
   text-align: left;
 }
 .files-table {
-  width: 100%;
 }
 .row-action {
   visibility: hidden;
@@ -110,19 +109,19 @@ td.right-td {
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
             <el-table :data="fileList" class="files-table" row-class-name="file-row" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
+                <el-table-column prop="filename" label="File Name" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <font-awesome-icon :icon="scope.row.filename | file2icon('icon')" :style="{color: file2Icon(scope.row.filename).color}" />
                         <span style="margin-left: 10px" :title="scope.row.filename">{{ scope.row.filename }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="size" label="Size" width="80">
+                <el-table-column prop="size" label="Size">
                     <template slot-scope="scope">{{ scope.row.size | formatSize }}</template>
                 </el-table-column>
-                <el-table-column prop="created" label="Created" width="180" class-name="created-col">
+                <el-table-column prop="created" label="Created" class-name="created-col">
                     <template slot-scope="scope">{{ scope.row.created | formatTime }}</template>
                 </el-table-column>
-                <el-table-column prop="id" label="File ID" width="250" class-name="id-col"></el-table-column>
+                <el-table-column prop="id" label="File ID" class-name="id-col"></el-table-column>
                 <el-table-column width="130" label="">
                     <template slot-scope="scope">
                         <el-tooltip content="View detail" placement="bottom">
@@ -213,22 +212,29 @@ export default {
     async created() {
         const bucketId = this.$route.params.bucketId;
         this.$store.dispatch('fileListLoadBucket', { bucketId });
-        this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
+        let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
             auth: {
                 username: this.$store.state.User.username,
                 password: storj.utils.sha256(this.$store.state.User.password),
             }
         })
-            .then(data => {
-                if (!data.data.wallet) {
-                    this.$alert("Please set default payment wallet first.", "Error", {
-                        type: "error"
-                    });
-                }
-            })
-            .catch(error => {
-
+        if (!data.data.wallet) {
+            this.$alert("Please set default payment wallet first.", "Error", {
+                type: "error"
             });
+        }
+        let payTransaction = await this.$http.get(`${BRIDGE_API_URL}/paytransactions/${this.$store.state.User.username}?page=1&limit=2`,
+            {
+                auth: {
+                    username: this.$store.state.User.username,
+                    password: storj.utils.sha256(this.$store.state.User.password),
+                }
+            });
+        if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
+            this.$alert("Please set default payment wallet first.", "Error", {
+                type: "error"
+            });
+        }
     },
     mounted() {
         stepReady('new-folder');

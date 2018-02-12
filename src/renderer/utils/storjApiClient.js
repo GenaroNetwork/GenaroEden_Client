@@ -20,7 +20,7 @@ class Storj {
         if (process.env.NODE_ENV === 'development') {
             localStorage.bridgeUser = bridgeUser;
             localStorage.bridgePass = bridgePass;
-            localStorage.encryptionKey = encryptionKey;
+            localStorage.bridgeKey = encryptionKey;
         }
         return new Environment({
             bridgeUrl, bridgeUser, bridgePass, encryptionKey, logLevel,

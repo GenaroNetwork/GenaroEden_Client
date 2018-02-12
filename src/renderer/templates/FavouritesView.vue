@@ -2,15 +2,19 @@
 .layout-favourites-enum {
   width: 200px;
   background: #fff;
-  overflow: hidden;
+  overflow: auto;
   border-radius: 8px;
   flex-shrink: 0;
+}
+.layout-favourites-enum ul {
+  border: none;
 }
 .layout-favourites-content {
   flex-grow: 1;
   margin-left: 20px;
   background: #fff;
   border-radius: 8px;
+  overflow: auto;
 }
 .colcontainer {
   display: flex;

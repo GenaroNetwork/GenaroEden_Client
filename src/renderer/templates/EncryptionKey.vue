@@ -175,7 +175,7 @@ export default {
         generateWalletThenLogin(mnemonic, password) {
             // generate an HD wallet
             walletManager.importFromMnemonic(mnemonic, password).then(() => {
-                this.submitLogin()
+                this.submitLogin();
             }).catch((e) => {
                 console.error(e)
                 if (e.code === 1) {
@@ -186,7 +186,6 @@ export default {
             })
         },
         confirm() {
-            const this2 = this
             const valid = mnemonicCheck(this.encryptionKey)
             const pwd = this.$store.state.User.password
             if (valid) {
@@ -222,10 +221,9 @@ export default {
             }
         },
         submitLogin() {
-            const this2 = this
-            const pwd = this.$store.state.User.password
+            const pwd = this.$store.state.User.password;
             saveEncryptionKey(this.encryptionKey, pwd).then(() => {
-                this2.checkKeyOkAndContinue()
+                this.checkKeyOkAndContinue()
             }).catch((e) => {
                 console.error(e)
             })

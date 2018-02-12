@@ -21,11 +21,13 @@ Vue.filter("numslice", num => {
 
 import moment from 'moment';
 Vue.filter("formatTime", time => {
-    return moment(time).format("MM/DD/YYYY hh:mm a");
+    let formated = moment(time).format("MM/DD/YYYY hh:mm a");
+    return formated === "Invalid date" ? time : formated;
 });
 
 import humanSize from 'human-size';
 Vue.filter("formatSize", size => {
+    if (size === null) return "--";
     return humanSize(size);
 });
 

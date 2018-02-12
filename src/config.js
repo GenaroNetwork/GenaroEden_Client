@@ -1,13 +1,14 @@
 
-// production environment
-// const bridgeApiUrl = 'http://101.132.159.197:8080';
 
-// test environment
-// let BRIDGE_API_URL = 'http://47.100.33.60:8080';
-let BRIDGE_API_URL = 'http://127.0.0.1:6382';
+// const BRIDGE_API_URL = 'http://47.100.33.60:8080';
+// const BRIDGE_API_URL = 'http://101.132.159.197:8080';
+const BRIDGE_API_URL = 'http://127.0.0.1:6382';
 
-const PASSWORD_RESET_REDIRECT = 'https://genaro.network/en/password-reset-success'
-const REGISTER_REDIRECT = 'https://genaro.network/en/register-success'
+const PASSWORD_RESET_REDIRECT = 'https://genaro.network/en/password-reset-success';
+const REGISTER_REDIRECT = 'https://genaro.network/en/register-success';
+
+const GNX_PER_GB_BANDWIDTH = 5.0;
+const GNX_PER_GB_HOUR_STORAGE = 0.002054795;
 
 const TASK_STATE = Object.freeze({
     INIT: 1,
