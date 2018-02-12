@@ -428,8 +428,8 @@ export default {
                 try {
                     let fileName = filePath.split("/");
                     fileName = fileName[fileName.length - 1];
-                    setTimeout(() => this.$notify.success({
-                        title: "Success",
+                    setTimeout(() => this.$notify.info({
+                        title: "Info",
                         message: `File ${fileName} Uploading. You can see this task in Recent panel on the left.`,
                     }), 0);
                     await this.$store.dispatch("taskListUpload", {
