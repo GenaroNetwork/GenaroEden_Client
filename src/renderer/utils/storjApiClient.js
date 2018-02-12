@@ -84,6 +84,7 @@ class Bucket {
     static create({ bucketName }) {
         return new Promise((resolve, reject) => {
             storj.createBucket(bucketName, (err, data) => {
+                debugger;
                 if (err) reject(err);
                 else resolve(data);
             });

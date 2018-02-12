@@ -1,8 +1,13 @@
 
 
-// const BRIDGE_API_URL = 'http://47.100.33.60:8080';
+// prod
+const BRIDGE_API_URL = 'http://47.100.33.60:8080';
+
+// develop
 // const BRIDGE_API_URL = 'http://101.132.159.197:8080';
-const BRIDGE_API_URL = 'http://127.0.0.1:6382';
+
+// local
+// const BRIDGE_API_URL = 'http://127.0.0.1:6382';
 
 const PASSWORD_RESET_REDIRECT = 'https://genaro.network/en/password-reset-success';
 const REGISTER_REDIRECT = 'https://genaro.network/en/register-success';
@@ -30,5 +35,7 @@ export {
     PASSWORD_RESET_REDIRECT,
     REGISTER_REDIRECT,
     TASK_STATE,
-    TASK_TYPE
+    TASK_TYPE,
+    GNX_PER_GB_BANDWIDTH,
+    GNX_PER_GB_HOUR_STORAGE,
 }

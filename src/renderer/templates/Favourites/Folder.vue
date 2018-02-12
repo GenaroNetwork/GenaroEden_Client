@@ -102,7 +102,7 @@ td.right-td {
             <el-button type="primary" :disabled="!anyRowSelected" @click="deleteSelected" size="small">Delete
                 <i class="material-icons">delete</i>
             </el-button>
-            <el-button type="primary" @click="upload" size="small">Upload
+            <el-button type="primary" :disabled="anyRowSelected" @click="upload" size="small">Upload
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
         </div>
@@ -212,29 +212,6 @@ export default {
     async created() {
         const bucketId = this.$route.params.bucketId;
         this.$store.dispatch('fileListLoadBucket', { bucketId });
-        let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
-            auth: {
-                username: this.$store.state.User.username,
-                password: storj.utils.sha256(this.$store.state.User.password),
-            }
-        })
-        if (!data.data.wallet) {
-            this.$alert("Please set default payment wallet first.", "Error", {
-                type: "error"
-            });
-        }
-        let payTransaction = await this.$http.get(`${BRIDGE_API_URL}/paytransactions/${this.$store.state.User.username}?page=1&limit=2`,
-            {
-                auth: {
-                    username: this.$store.state.User.username,
-                    password: storj.utils.sha256(this.$store.state.User.password),
-                }
-            });
-        if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
-            this.$alert("Please set default payment wallet first.", "Error", {
-                type: "error"
-            });
-        }
     },
     mounted() {
         stepReady('new-folder');
@@ -280,6 +257,34 @@ export default {
                 this.receiptModal.fileQrCode = ''
             }
         },
+
+        async checkDebit() {
+            let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
+                auth: {
+                    username: this.$store.state.User.username,
+                    password: storj.utils.sha256(this.$store.state.User.password),
+                }
+            })
+            if (!data.data.wallet) {
+                this.$alert("Please set default payment wallet first.", "Error", {
+                    type: "error"
+                });
+                throw (error);
+            }
+            let payTransaction = await this.$http.get(`${BRIDGE_API_URL}/paytransactions/${this.$store.state.User.username}?page=1&limit=2`,
+                {
+                    auth: {
+                        username: this.$store.state.User.username,
+                        password: storj.utils.sha256(this.$store.state.User.password),
+                    }
+                });
+            if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
+                this.$alert("Please set default payment wallet first.", "Error", {
+                    type: "error"
+                });
+                throw (error);
+            }
+        },
         async deleteSelected() {
             if (!this.anyRowSelected) {
                 this.$message('Please select file first');
@@ -322,6 +327,7 @@ export default {
                 this.$message('Please select file first');
                 return;
             }
+            await this.checkDebit();
             electronDialog.selectDirectory(folders => {
                 if (!folders || !folders.length) return;
                 const folderPath = folders[0];
@@ -340,7 +346,8 @@ export default {
                 })
             })
         },
-        downloadFile({ filename, id }) {
+        async downloadFile({ filename, id }) {
+            await this.checkDebit();
             // 弹出保存对话框配置
             var options = {
                 title: 'Save File',
@@ -389,6 +396,8 @@ export default {
             await this.rawUpload(bucketId, files);
         },
         async rawUpload(bucketId, files) {
+
+            await this.checkDebit();
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
             fileList = fileList.map(file => file.filename);
@@ -398,41 +407,31 @@ export default {
                 let filename = file.split("/");
                 filename = filename[filename.length - 1];
                 if (!fs.lstatSync(file).isFile()) {
-                    errorMessage.push(this.$createElement("div", null, `Only file can be uploaded. ${file} is not a file.`));
+
+                    setTimeout(() => this.$notify.error({
+                        title: "Error",
+                        message: `Only file can be uploaded. ${file} is not a file.`,
+                    }), 0);
                     return;
                 }
                 if (fileList.includes(filename)) {
-                    errorMessage.push(this.$createElement("div", null, `File ${filename} is already exists.`));
+                    setTimeout(() => this.$notify.error({
+                        title: "Error",
+                        message: `File ${filename} is already exists.`,
+                    }), 0);
                     return;
                 };
                 preUpload.push(file);
             });
 
-            if (!errorMessage.length && preUpload.length) {
-                // all fine
-                this.$message('File Uploading. You can see this task in Recent panel on the left.');
-            } else if (errorMessage.length && preUpload.length) {
-                // some files got an error but other
-                errorMessage.unshift(this.$createElement("div", null, `------------------------`));
-                errorMessage.unshift(this.$createElement("div", null, `You can see this task in Recent panel on the left.`));
-                errorMessage.unshift(this.$createElement("div", null, `We've some errors on several files. Other file is being uploaded.`));
-                this.$message({
-                    type: "warning",
-                    message: this.$createElement("div", null, [errorMessage]),
-                });
-            } else if (errorMessage.length && !preUpload.length) {
-                // all error
-                this.$message({
-                    type: "error",
-                    message: this.$createElement("div", null, [errorMessage]),
-                });
-            } else {
-                // no error. no file.
-                this.$message.error("There is no file to uplaod.");
-            }
-
             preUpload.forEach(async filePath => {
                 try {
+                    let fileName = filePath.split("/");
+                    fileName = fileName[fileName.length - 1];
+                    setTimeout(() => this.$notify.success({
+                        title: "Success",
+                        message: `File ${fileName} Uploading. You can see this task in Recent panel on the left.`,
+                    }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
                         bucketId,

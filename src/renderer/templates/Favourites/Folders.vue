@@ -125,19 +125,25 @@ export default {
                     cancelButtonText: this.$t("el.messagebox.cancel")
                 });
                 try {
+                    this.bucketList.forEach(bucket => {
+                        if (bucket.name === bucketName) {
+                            throw new Error("the folder is existed");
+                        }
+                    });
                     this.$store.dispatch("bucketListCreate", { bucketName });
                     this.$message.success(`Create Folder Success: ${bucketName}`);
                 } catch (error) {
                     this.$message.error(`Create Folder Error: ${error}`);
                 }
-            } catch (error) { }
+            } catch (error) {
+            }
         },
 
         async deleteBucket(bucket) {
             try {
                 await this.$confirm(
-                    this.$t("dashboard.myfiles.deleteconfirm.message", {name: `${bucket.name}`}),
-                    this.$t("dashboard.myfiles.deleteconfirm.title", {name: `${bucket.name}`}),
+                    this.$t("dashboard.myfiles.deleteconfirm.message", { name: `${bucket.name}` }),
+                    this.$t("dashboard.myfiles.deleteconfirm.title", { name: `${bucket.name}` }),
                     {
                         confirmButtonText: this.$t("dashboard.myfiles.deleteconfirm.delete"),
                         cancelButtonText: this.$t("dashboard.myfiles.deleteconfirm.cancel"),
