@@ -17,8 +17,11 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import locale from 'element-ui/lib/locale/lang/en'
-Vue.use(ElementUI, { locale })
+import i18n from './i18n'
+Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
+require('electron').ipcRenderer.on('locale-language', (event, lang) => {
+    i18n.locale = lang
+})
 Vue.prototype.$http = axios
 
 
@@ -35,5 +38,6 @@ new Vue({
     components: { App },
     router,
     store,
+    i18n,
     template: '<App/>'
 }).$mount('#app')

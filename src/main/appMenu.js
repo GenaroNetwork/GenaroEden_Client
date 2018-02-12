@@ -10,15 +10,15 @@ module.exports = function(app, shell) {
 
     const template = [
       {
-        label: 'Edit',
+        label: app.menuSetting.menu.edit.edit,
         submenu: [
           {
-            label: 'Undo',
+            label: app.menuSetting.menu.edit.undo,
             accelerator: 'CmdOrCtrl+Z',
             role: 'undo'
           },
           {
-            label: 'Redo',
+            label: app.menuSetting.menu.edit.redo,
             accelerator: 'Shift+CmdOrCtrl+Z',
             role: 'redo'
           },
@@ -26,29 +26,29 @@ module.exports = function(app, shell) {
             type: 'separator'
           },
           {
-            label: 'Cut',
+            label: app.menuSetting.menu.edit.cut,
             accelerator: 'CmdOrCtrl+X',
             role: 'cut'
           },
           {
-            label: 'Copy',
+            label: app.menuSetting.menu.edit.copy,
             accelerator: 'CmdOrCtrl+C',
             role: 'copy'
           },
           {
-            label: 'Paste',
+            label: app.menuSetting.menu.edit.paste,
             accelerator: 'CmdOrCtrl+V',
             role: 'paste'
           },
           {
-            label: 'Select All',
+            label: app.menuSetting.menu.edit.selectall,
             accelerator: 'CmdOrCtrl+A',
             role: 'selectall'
           },
         ]
       },
       {
-        label: 'View',
+        label: app.menuSetting.menu.view.view,
         submenu: [
         //   {
         //     label: 'Reload',
@@ -59,7 +59,7 @@ module.exports = function(app, shell) {
         //     }
         //   },
           {
-            label: 'Toggle Full Screen',
+            label: app.menuSetting.menu.view.togglefullscreen,
             accelerator: (function() {
               if (process.platform === 'darwin')
                 return 'Ctrl+Command+F';
@@ -72,7 +72,7 @@ module.exports = function(app, shell) {
             }
           },
           {
-            label: 'Toggle Developer Tools',
+            label: app.menuSetting.menu.view.toggledevelopertools,
             accelerator: (function() {
               if (process.platform === 'darwin')
                 return 'Alt+Command+I';
@@ -87,28 +87,49 @@ module.exports = function(app, shell) {
         ]
       },
       {
-        label: 'Window',
+        label: app.menuSetting.menu.window.window,
         role: 'window',
         submenu: [
           {
-            label: 'Minimize',
+            label: app.menuSetting.menu.window.minimize,
             accelerator: 'CmdOrCtrl+M',
             role: 'minimize'
           },
           {
-            label: 'Close',
+            label: app.menuSetting.menu.window.close,
             accelerator: 'CmdOrCtrl+W',
             role: 'close'
           },
         ]
       },
       {
-        label: 'Help',
+        label: app.menuSetting.menu.help.help,
         role: 'help',
         submenu: [
           {
-            label: 'Learn More',
+            label: app.menuSetting.menu.help.learnmore,
             click: function() { shell.openExternal('http://genaro.network') }
+          },
+        ]
+      },
+      {
+        label: app.menuSetting.menu.language.language,
+        submenu: [
+          {
+            label: '中文',
+            click: function(menuItem, browserWindow, event) { 
+              browserWindow.webContents.send('locale-language', 'zh')
+              app.menuSetting.setLocale('zh')
+              app.menuSetting.updateMenu()
+            }
+          },
+          {
+            label: 'English',
+            click: function(menuItem, browserWindow, event) { 
+              browserWindow.webContents.send('locale-language', 'en')
+              app.menuSetting.setLocale('en')
+              app.menuSetting.updateMenu()
+            }
           },
         ]
       },

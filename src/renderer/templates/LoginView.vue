@@ -72,10 +72,10 @@ h1 {
                 </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">Sign In</el-button>
+                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">{{ $t("common.login.signin") }}</el-button>
                     </el-form-item>
-                    <router-link class="otherlink pull-left" to="register">Sign Up</router-link>
-                    <router-link class="otherlink pull-right" to="password-reset">Reset Password</router-link>
+                    <router-link class="otherlink pull-left" to="register">{{ $t("common.login.signup") }}</router-link>
+                    <router-link class="otherlink pull-right" to="password-reset">{{ $t("common.login.reset") }}</router-link>
                 </div>
             </el-form>
         </el-card>
