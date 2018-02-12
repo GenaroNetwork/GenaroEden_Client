@@ -74,8 +74,8 @@
 <template>
     <div class="fullheight right-container">
         <div class="top-bar">
-            <h2>Folders</h2>
-            <el-button class="btn" @click="createBucket" type="primary" icon="el-icon-circle-plus-outline" size="small">Create Folder</el-button>
+            <h2>{{ $t("dashboard.myfiles.folder") }}</h2>
+            <el-button class="btn" @click="createBucket" type="primary" icon="el-icon-circle-plus-outline" size="small">{{ $t("dashboard.myfiles.create") }}</el-button>
         </div>
         <div class="bucket-list">
             <div v-for="bucket,index in bucketList" class="folder" @click="enterBucket(bucket)" :key="`buckId-${index}`">
@@ -120,9 +120,9 @@ export default {
 
         async createBucket() {
             try {
-                let { value: bucketName } = await this.$prompt('Folder Name:', 'Create Folder', {
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Cancel'
+                let { value: bucketName } = await this.$prompt(this.$t("dashboard.myfiles.foldername") + ':', this.$t("dashboard.myfiles.create"), {
+                    confirmButtonText: this.$t("el.messagebox.confirm"),
+                    cancelButtonText: this.$t("el.messagebox.cancel")
                 });
                 try {
                     this.$store.dispatch("bucketListCreate", { bucketName });
@@ -136,11 +136,11 @@ export default {
         async deleteBucket(bucket) {
             try {
                 await this.$confirm(
-                    `All your files in folder ${bucket.name} will be deleted. This action cannot be undone.`,
-                    `Confirm Delete Folder: ${bucket.name}`,
+                    this.$t("dashboard.myfiles.deleteconfirm.message", {name: `${bucket.name}`}),
+                    this.$t("dashboard.myfiles.deleteconfirm.title", {name: `${bucket.name}`}),
                     {
-                        confirmButtonText: 'Delete',
-                        cancelButtonText: 'Cancel',
+                        confirmButtonText: this.$t("dashboard.myfiles.deleteconfirm.delete"),
+                        cancelButtonText: this.$t("dashboard.myfiles.deleteconfirm.cancel"),
                         type: 'warning',
                         confirmButtonClass: 'el-button--danger'
                     });

@@ -311,8 +311,8 @@
                 </el-input>
                 <img :src="'qr://' + wallet.address">
                 <div class="actions">
-                    <el-button class="btn" size="small" @click="depositPop=false">Cancel</el-button>
-                    <el-button class="btn" type="primary" size="small" @click="copy(wallet.address)">Copy The Address</el-button>
+                    <el-button class="btn" size="small" @click="depositPop=false">{{ $t('el.messagebox.cancel') }}</el-button>
+                    <el-button class="btn" type="primary" size="small" @click="copy(wallet.address)">{{ $t('dashboard.mywallet.tip1') }}</el-button>
                 </div>
             </div>
         </el-popover>
@@ -355,15 +355,15 @@
                     <div>
                         <span :title="wallet.address">0x{{wallet.address}}</span>
                         <span class="copy">
-                            <el-tooltip :value="copiedPopup" content="Address Copied to ClipBoard." placement="bottom" :manual="true">
+                            <el-tooltip :value="copiedPopup" :content="$t('dashboard.mywallet.tip3')" placement="bottom" :manual="true">
                                 <i class="material-icons" @click="copy(wallet.address)" @mouseleave="copiedPopup=false">content_copy</i>
                             </el-tooltip>
                         </span>
                     </div>
                 </div>
                 <div class="actions">
-                    <el-button class="btn" v-popover:depositPop type="primary" size="small">Deposit</el-button>
-                    <el-button class="btn" v-popover:payFormPop type="primary" size="small">Transfer</el-button>
+                    <el-button class="btn" v-popover:depositPop type="primary" size="small">{{ $t('dashboard.mywallet.deposit') }}</el-button>
+                    <el-button class="btn" v-popover:payFormPop type="primary" size="small">{{ $t('dashboard.mywallet.transfer') }}</el-button>
                 </div>
             </div>
             <div class="blank"></div>
@@ -390,19 +390,19 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="hash" label="Hash" :show-overflow-tooltip="true">
+                <el-table-column prop="hash" :label="$t('dashboard.mywallet.hash')" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <a class="common-link" href="#" @click="hashCheck(scope.row.hash)">{{ scope.row.hash }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column prop="receipt.blockNumber" label="Block"></el-table-column>
-                <el-table-column prop="created" label="Created" class-name="created-col"></el-table-column>
-                <el-table-column prop="from" label="From" class-name="id-col" :show-overflow-tooltip="true">
+                <el-table-column prop="receipt.blockNumber" :label="$t('dashboard.mywallet.block')"></el-table-column>
+                <el-table-column prop="created" :label="$t('dashboard.mywallet.created')" class-name="created-col"></el-table-column>
+                <el-table-column prop="from" :label="$t('dashboard.mywallet.from')" class-name="id-col" :show-overflow-tooltip="true">
                     <template slot-scope="scope">0x{{scope.row.from}}</template>
                 </el-table-column>
-                <el-table-column prop="recipient" label="To" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="amount" label="Amount" class-name="id-col"></el-table-column>
-                <span slot="empty">No Transactions yet</span>
+                <el-table-column prop="recipient" :label="$t('dashboard.mywallet.to')" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="amount" :label="$t('dashboard.mywallet.amount')" class-name="id-col"></el-table-column>
+                <span slot="empty">{{ $t('dashboard.mywallet.tip2') }}</span>
             </el-table>
         </div>
     </div>

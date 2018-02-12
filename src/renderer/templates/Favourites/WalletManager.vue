@@ -254,16 +254,16 @@
         </el-dialog>
 
         <!-- import wallet dialog -->
-        <el-dialog title="Import Wallet" :visible.sync="importV3WalletDialog.shown" width="590px" center>
+        <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center>
             <template v-if="importV3WalletDialog.step === 0">
                 <div class="choose-file" @click="importV3Wallet().selectFile($event)">
                     <i class="material-icons">add</i>
-                    <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0] : "Upload JSON File" }}</div>
+                    <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0] : $t('dashboard.walletmanage.uploadjson') }}</div>
                 </div>
-                <el-input type="password" v-model="importV3WalletDialog.password" placeholder="please input the password of wallet file." size="small"></el-input>
+                <el-input type="password" v-model="importV3WalletDialog.password" :placeholder="$t('dashboard.walletmanage.placeholder1')" size="small"></el-input>
                 <div slot="footer">
-                    <el-button @click="importV3Wallet().cancel($event)">Cancel</el-button>
-                    <el-button @click="importV3Wallet().submit($event)" type="primary">Submit</el-button>
+                    <el-button @click="importV3Wallet().cancel($event)">{{ $t('common.dialog.cancel') }}</el-button>
+                    <el-button @click="importV3Wallet().submit($event)" type="primary">{{ $t('common.dialog.submit') }}</el-button>
                 </div>
             </template>
             <template v-else>
@@ -277,8 +277,8 @@
         </el-dialog>
 
         <div class="top-bar">
-            <h2>Wallet Manage</h2>
-            <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">Import Json
+            <h2>{{ $t('dashboard.walletmanage.walletmanage') }}</h2>
+            <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">{{ $t('dashboard.walletmanage.import', {name: ' Json'}) }}
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
         </div>
@@ -311,16 +311,16 @@
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item :command="{item,action:'forgetWallet'}">
-                                    Delete wallet
+                                    {{ $t('dashboard.walletmanage.deletewallet') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item :command="{item,action:'popChangePass'}">
-                                    Change password (of wallet)
+                                    {{ $t('dashboard.walletmanage.changepassword') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item :command="{item,action:'exportWalletV3'}">
-                                    Export wallet as json
+                                    {{ $t('dashboard.walletmanage.exportwallet') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item :command="{item,action:'popSubmitPay'}">
-                                    Set as default payment
+                                    {{ $t('dashboard.walletmanage.setdefaultpayment') }}
                                 </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -341,7 +341,7 @@
             </div>
             <div class="wallet" @click.stop.prevent="importV3WalletDialog.shown=true">
                 <div class="import-wallet">
-                    <i class="material-icons">add</i>Import JSON
+                    <i class="material-icons">add</i>{{ $t('dashboard.walletmanage.import', {name: ' JSON'}) }}
                 </div>
             </div>
         </div>
