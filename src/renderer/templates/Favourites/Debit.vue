@@ -189,7 +189,6 @@ export default {
                 this.$set(debit, "bandwidthAmount", debit.bandwidth * GNX_PER_GB_BANDWIDTH);
                 this.$set(debit, "storageAmount", debit.storage * GNX_PER_GB_HOUR_STORAGE);
 
-                debit.bandwidth *= 1000 * 1000 * 1000;
                 debit.storage *= 1000 * 1000 * 1000;
 
                 transaction.bandwidth += debit.bandwidth;
