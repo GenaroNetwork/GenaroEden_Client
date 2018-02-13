@@ -2,7 +2,7 @@
 .layout-favourites-enum {
   width: 200px;
   background: #fff;
-  overflow: auto;
+  overflow-x: hidden;
   border-radius: 8px;
   flex-shrink: 0;
 }

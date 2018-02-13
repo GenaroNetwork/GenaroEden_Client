@@ -34,13 +34,7 @@
 .top-bar .folder-action {
   flex-shrink: 0;
 }
-.files {
-  position: relative;
-  display: flex;
-  flex-grow: 1;
-}
 .overlay {
-  position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
@@ -80,6 +74,7 @@ td.right-td {
   text-align: left;
 }
 .files-table {
+  overflow: visible;
 }
 .row-action {
   visibility: hidden;
@@ -107,7 +102,7 @@ td.right-td {
             </el-button>
         </div>
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-            <el-table :data="fileList" class="files-table" row-class-name="file-row" @selection-change="rowSelectChanged">
+            <el-table :data="fileList" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="filename" label="File Name" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
