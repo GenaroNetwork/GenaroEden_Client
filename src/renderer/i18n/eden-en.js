@@ -7,6 +7,8 @@ exports.default = {
       signin: 'Sign In',
       signup: 'Sign Up',
       reset: 'Reset Password',
+      usernameholder: 'User Name',
+      passwordholder: 'Password',
       inputname:'Please input username',
       emailerr:'Incorrect email format',
       inputpwd: 'Please input password',
@@ -16,7 +18,8 @@ exports.default = {
     },
     dialog: {
       submit: 'Submit',
-      cancel: 'Cancel'
+      cancel: 'Cancel',
+      next: 'Next'
     }
   },
   dashboard: {
@@ -53,6 +56,26 @@ exports.default = {
       from: 'From',
       to: 'To',
       amount: 'Amount',
+      recipientaddress:"Recippient Address", // the word 'Recippient' is written wrong?
+      ETH: 'ETH',
+      GNX: 'GNX',
+      gasprice: 'gas price (Gwei)',
+      gaspriceholder: 'Gas',
+      gaslimit: 'gas limit (Unit)',
+      gaslimitholder: 'Gas Limit',
+      sendaddress: 'Sent Address',
+      walletpassword: 'Wallet Password',
+      accounterrmsg: 'Incorrect account address.',
+      amounterrmsg: 'Amount must less than balance.',
+      paterrmsg: 'Incorrect pat type',
+      gaspricemsg: 'Please input gasPrice',
+      gaspriceerrmsg: 'gas price should greater than {price}',
+      gaslimitmsg: 'Please input gasLimit',
+      gaslimiterrmsg: 'gas limit should greater than {limit}',
+      recipientmsg: 'Please input recipient',
+      amountmsg: 'Please input amount',
+      transactionsubmitted: 'transaction submitted',
+      createtransactionerr: 'create transaction error',
       tip1: 'Copy The Address',
       tip2: 'No Transactions yet',
       tip3: 'Address Copied to ClipBoard.'
@@ -70,7 +93,12 @@ exports.default = {
     },
     debits: {
         debits: 'Debits',
-        usage: 'usage: {used}{formatSize} / free storage: {total} (Year)'
+        usage: 'usage: {used}{formatSize} / free storage: {total} (Year)',
+        bonusamount: 'Bonus amount： {bonusAmount} GNX',
+        updatetime: 'Update time',
+        pricemsg: 'GNX first time users will be given 25 GB for a year.Click to view the Charges instructions.',
+        time: 'Time',
+        stroagebandwidth: 'Stroage / Bandwidth'
     },
     sharestorage: {
       sharestorage: 'Share My Storage',

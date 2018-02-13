@@ -256,49 +256,49 @@
             <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline">
                 <template v-if="payStep === 0">
                     <el-form-item prop="recipient">
-                        <el-input type="text" v-model="payOption.recipient" placeholder="Recippient Address" size="mini">
+                        <el-input type="text" v-model="payOption.recipient" :placeholder="$t('dashboard.mywallet.recipientaddress')" size="mini">
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="amount">
-                        <el-input type="number" v-model="payOption.amount" placeholder="Amount" size="mini" min="0">
+                        <el-input type="number" v-model="payOption.amount" :placeholder="$t('dashboard.mywallet.amount')" size="mini" min="0">
                             <el-select v-model="payOption.payType" placeholder="Please choose" slot="append">
-                                <el-option key="ETH" label="ETH" value="ETH"></el-option>
-                                <el-option key="GNX" label="GNX" value="GNX"></el-option>
+                                <el-option key="ETH" :label="$t('dashboard.mywallet.ETH')" value="ETH"></el-option>
+                                <el-option key="GNX" :label="$t('dashboard.mywallet.GNX')" value="GNX"></el-option>
                             </el-select>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="gas price (Gwei)" prop="gasPrice">
-                        <el-input type="number" v-model="payOption.gasPrice" placeholder="Gas" size="mini">
+                    <el-form-item :label="$t('dashboard.mywallet.gasprice')" prop="gasPrice">
+                        <el-input type="number" v-model="payOption.gasPrice" :placeholder="$t('dashboard.mywallet.gaspriceholder')" size="mini">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="gas limit (Unit)" prop="gasLimit">
-                        <el-input type="number" v-model="payOption.gasLimit" placeholder="Gas Limit" size="mini">
+                    <el-form-item :label="$t('dashboard.mywallet.gaslimit')" prop="gasLimit">
+                        <el-input type="number" v-model="payOption.gasLimit" :placeholder="$t('dashboard.mywallet.gaslimitholder')" size="mini">
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="nextStep" type="primary">Next</el-button>
+                        <el-button @click="nextStep" type="primary">{{ $t('common.dialog.next') }}</el-button>
                     </el-form-item>
                 </template>
                 <template v-if="payStep === 1">
                     <el-row>
-                        <el-col :span="10" class="preview-label">Sent Address:</el-col>
+                        <el-col :span="10" class="preview-label">{{ $t('dashboard.mywallet.sendaddress') }}:</el-col>
                         <el-col :span="14" class="preview-value">{{ wallet.address }}</el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="10" class="preview-label">Recipient Address:</el-col>
+                        <el-col :span="10" class="preview-label">{{ $t('dashboard.mywallet.recipientaddress') }}:</el-col>
                         <el-col :span="14" class="preview-value">{{ payOption.recipient }}</el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="10" class="preview-label">Amount:</el-col>
+                        <el-col :span="10" class="preview-label">{{ $t('dashboard.mywallet.amount') }}:</el-col>
                         <el-col :span="14" class="preview-value">{{ payOption.amount }}</el-col>
                     </el-row>
-                    <el-form-item label="Wallet Password" prop="password" key="password">
-                        <el-input type="password" v-model="payOption.password" placeholder="Wallet Password">
+                    <el-form-item :label="$t('dashboard.mywallet.walletpassword')" prop="password" key="password">
+                        <el-input type="password" v-model="payOption.password" :placeholder="$t('dashboard.mywallet.walletpassword')">
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="pay()" class="" type="primary">Submit</el-button>
-                        <el-button @click="payFormPop = false" class="" type="primary">Cancel</el-button>
+                        <el-button @click="pay()" class="" type="primary">{{ $t('common.dialog.submit') }}</el-button>
+                        <el-button @click="payFormPop = false" class="" type="primary">{{ $t('common.dialog.cancel') }}</el-button>
                     </el-form-item>
                 </template>
             </el-form>
@@ -438,7 +438,7 @@ export default {
         var validator = {
             recipient: (rule, value, callback) => {
                 if (!/^0x[a-zA-Z0-9]{40}$/.test(value)) {
-                    callback(new Error("Incorrect account address."));
+                    callback(new Error(this.$t('dashboard.mywallet.accounterrmsg')));
                 } else {
                     callback();
                 }
@@ -449,7 +449,7 @@ export default {
                     case "ETH":
                         balance = this.balanceEth;
                         if (utils.toWei(value) > balance) {
-                            callback(new Error("Amount must less than balance."));
+                            callback(new Error(this.$t('dashboard.mywallet.amounterrmsg')));
                         } else {
                             callback();
                         }
@@ -458,37 +458,37 @@ export default {
                     case "GNX":
                         balance = this.balanceGnx;
                         if (value * Math.pow(10, 9) > balance) {
-                            callback(new Error("Amount must less than balance."));
+                            callback(new Error(this.$t('dashboard.mywallet.amounterrmsg')));
                         } else {
                             callback();
                         }
                         break;
 
                     default:
-                        callback(new Error("Incorrect pat type"));
+                        callback(new Error(this.$t('dashboard.mywallet.paterrmsg')));
                         break;
                 }
             },
             gasPrice: async (rule, value, callback) => {
                 if (value.toString().trim() === "") {
-                    callback(new Error("Please input gasPrice"));
+                    callback(new Error(this.$t('dashboard.mywallet.gaspricemsg')));
                 }
                 let price = await getGasPrice();
                 price = utils.fromWei(price, "Gwei");
                 if (value < price) {
-                    callback(new Error("gas price should greater than " + price));
+                    callback(new Error(this.$t('dashboard.mywallet.gaspriceerrmsg', price)));
                 } else {
                     callback();
                 }
             },
             gasLimit: (rule, value, callback) => {
                 if (value.toString().trim() === "") {
-                    callback(new Error("Please input gasLimit"));
+                    callback(new Error(this.$t('dashboard.mywallet.gaslimitmsg')));
                 }
                 if (this.payOption.payType === "ETH" && value < ETH_LIMIT) {
-                    callback("gas limit should greater than " + ETH_LIMIT);
+                    callback(this.$t('dashboard.mywallet.gaslimiterrmsg', ETH_LIMIT));
                 } else if (this.payOption.payType === "GNX" && value < GNX_LIMIT) {
-                    callback("gas limit should greater than " + GNX_LIMIT);
+                    callback(this.$t('dashboard.mywallet.gaslimiterrmsg', GNX_LIMIT));
                 } else {
                     callback();
                 }
@@ -516,13 +516,13 @@ export default {
                 recipient: [
                     {
                         required: true,
-                        message: "Please input recipient",
+                        message: this.$t('dashboard.mywallet.recipientmsg'),
                         trigger: "blur"
                     },
                     { validator: validator.recipient, trigger: "blur" }
                 ],
                 amount: [
-                    { required: true, message: "Please input amount", trigger: "blur" },
+                    { required: true, message: this.$t('dashboard.mywallet.amountmsg'), trigger: "blur" },
                     { validator: validator.amount, trigger: "blur" }
                 ],
                 gasPrice: [
@@ -532,10 +532,10 @@ export default {
                     { validator: validator.gasLimit, trigger: "blur" }
                 ],
                 password: [
-                    { required: true, message: "Please input password", trigger: "blur" },
+                    { required: true, message: this.$t("common.login.inputpwd"), trigger: "blur" },
                     {
                         min: 6,
-                        message: "Password length must not be less than 6 bits",
+                        message: this.$t("common.login.pwdlength"),
                         trigger: "blur"
                     }
                 ]
@@ -582,9 +582,9 @@ export default {
             try {
                 await this.$refs.payOption.validate();
                 await this.$store.dispatch("payByCurrentWallet", this.payOption);
-                this.$message("transaction submitted");
+                this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
-                this.$message.error("create transaction error: " + e);
+                this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", e));
             }
         },
         changeWallet(address) {

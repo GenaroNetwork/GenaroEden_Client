@@ -47,17 +47,17 @@
         <div class="header">
             <div class="info">
                 <span>{{ $t('dashboard.debits.usage', {used: usage, formatSize: 'B', total: '25 GB'}) }}</span>
-                <span class="bonus">Bonus amount： {{ bonusAmount }} GNX</span>
+                <span class="bonus">{{ $t('dashboard.debits.bonusamount', {bonusAmount: bonusAmount}) }}</span>
             </div>
             <div class="progress-bar">
                 <div class="usage" :style="{width: latestUsage.usage + '%'}"></div>
                 <div class="usage-over" :style="{width: latestUsage.usageOver + '%'}"></div>
             </div>
             <div class="tips">
-                Update time: {{ updateTime }}
+                {{ $t('dashboard.debits.updatetime') }}: {{ updateTime }}
             </div>
             <div class="tips">
-                <li>GNX first time users will be given 25 GB for a year.Click to view the Charges instructions.
+                <li>{{ $t('dashboard.debits.pricemsg') }}
                 </li>
             </div>
         </div>
@@ -69,13 +69,13 @@
                 <el-table-column>
                     <template slot-scope="data">{{ data.row.created | formatTime}}</template>
                 </el-table-column>
-                <el-table-column label="Time" width="200px">
+                <el-table-column :label="$t('dashboard.debits.time')" width="200px">
                     <template slot-scope="data">{{ data.row.created | formatTime}}</template>
                 </el-table-column>
-                <el-table-column label="Stroage / Bandwidth">
+                <el-table-column :label="$t('dashboard.debits.stroagebandwidth')">
                     <template slot-scope="data">{{ data.row.storage | formatSize}} / {{ data.row.bandwidth | formatSize}}</template>
                 </el-table-column>
-                <el-table-column label="Amount" prop="amount"></el-table-column>
+                <el-table-column :label="$t('dashboard.mywallet.amount')" prop="amount"></el-table-column>
             </el-table>
         </div>
     </div>

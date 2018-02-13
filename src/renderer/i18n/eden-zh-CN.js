@@ -7,6 +7,8 @@ exports.default = {
       signin: '登录',
       signup: '注册',
       reset: '重置密码',
+      usernameholder: '用户名',
+      passwordholder: '密码',
       inputname:'请输入用户名',
       emailerr:'邮箱格式错误',
       inputpwd: '请输入密码',
@@ -16,7 +18,8 @@ exports.default = {
     },
     dialog: {
       submit: '提交',
-      cancel: '取消'
+      cancel: '取消',
+      next: '下一步'
     }
   },
   dashboard: {
@@ -53,6 +56,26 @@ exports.default = {
       from: '来源',
       to: '目的',
       amount: '数量',
+      recipientaddress:"Recippient 地址", // the word 'Recippient' is written wrong?
+      ETH: 'ETH',
+      GNX: 'GNX',
+      gasprice: 'gas 价格 (Gwei)',
+      gaspriceholder: '输入Gas',
+      gaslimit: 'gas 极限 (Unit)',
+      gaslimitholder: 'Gas 极限',
+      sendaddress: '发出地址',
+      walletpassword: '钱包密码',
+      accounterrmsg: '账户地址错误.',
+      amounterrmsg: '数量必须小于已有.',
+      paterrmsg: 'pat 类型错误',
+      gaspricemsg: '请输入gasPrice',
+      gaspriceerrmsg: 'gas 价格应大于 {price}',
+      gaslimitmsg: '请输入 gasLimit',
+      gaslimiterrmsg: 'gas limit 应大于 {limit}',
+      recipientmsg: '请输入 recipient',
+      amountmsg: '请输入数量',
+      transactionsubmitted: '交易已提交',
+      createtransactionerr: '交易失败',
       tip1: '复制地址',
       tip2: '尚无交易',
       tip3: '地址已复制到剪切板.'
@@ -70,7 +93,12 @@ exports.default = {
     },
     debits: {
         debits: '账单',
-        usage: '已使用: {used}{formatSize} / 免费存储: {total} (年)'
+        usage: '已使用: {used}{formatSize} / 免费存储: {total} (年)',
+        bonusamount: '奖金： {bonusAmount} GNX',
+        updatetime: '更新时间',
+        pricemsg: 'GNX 用户首次分配25 GB使用一年时间.单击参看详细收费说明.',
+        time: '时间',
+        stroagebandwidth: '存储 / 带宽'
     },
     sharestorage: {
       sharestorage: '分享我的硬盘',

@@ -63,11 +63,11 @@ h1 {
             </div>
             <el-form ref="login" :model="login" :rules="ruleInline">
                 <el-form-item prop="username">
-                    <el-input type="text" v-model="login.username" placeholder="User Name">
+                    <el-input type="text" v-model="login.username" :placeholder="$t('common.login.usernameholder')">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="login.password" placeholder="Password">
+                    <el-input type="password" v-model="login.password" :placeholder="$t('common.login.passwordholder')">
                     </el-input>
                 </el-form-item>
                 <div class='login-center clearfix'>
