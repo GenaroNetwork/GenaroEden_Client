@@ -46,7 +46,7 @@
     <div>
         <div class="header">
             <div class="info">
-                <span>usage: {{ usage | formatSize }} / free storage: 25 GB (Year)</span>
+                <span>{{ $t('dashboard.debits.usage', {used: usage, formatSize: 'B', total: '25 GB'}) }}</span>
                 <span class="bonus">Bonus amount： {{ bonusAmount }} GNX</span>
             </div>
             <div class="progress-bar">

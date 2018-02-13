@@ -2,6 +2,23 @@
 
 exports.__esModule = true;
 exports.default = {
+  common: {
+    login: {
+      signin: 'Sign In',
+      signup: 'Sign Up',
+      reset: 'Reset Password',
+      inputname:'Please input username',
+      emailerr:'Incorrect email format',
+      inputpwd: 'Please input password',
+      pwdlength: 'Password length must not be less than 6 bits',
+      loginerr: 'Username Or Password Error',
+      logout: 'logout'
+    },
+    dialog: {
+      submit: 'Submit',
+      cancel: 'Cancel'
+    }
+  },
   dashboard: {
     myfiles: {
       myfiles: 'My Files',
@@ -51,12 +68,44 @@ exports.default = {
       setdefaultpayment: 'Set as default payment',
       placeholder1: 'please input the password of wallet file.'
     },
+    debits: {
+        debits: 'Debits',
+        usage: 'usage: {used}{formatSize} / free storage: {total} (Year)'
+    },
     sharestorage: {
       sharestorage: 'Share My Storage',
       tip1: 'Genaro Sharer is alive, join us and earn reward!',
       tip2: 'If you want to share your storage space please click\
         <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">this link</a>\
         for a detailed explanation how to install and run Genaro Sharer.'
+    }
+  },
+  menu: {
+    edit: {
+      edit: 'Edit',
+      undo: 'Undo',
+      redo: 'Redo',
+      cut: 'Cut',
+      copy: 'Copy',
+      paste: 'Paste',
+      selectall: 'Select All'
+    },
+    view: {
+      view: 'View',
+      togglefullscreen: 'Toggle Full Screen',
+      toggledevelopertools: 'Toggle Developer Tools'
+    },
+    window: {
+      window: 'Window',
+      minimize: 'Minimize',
+      close: 'Close'
+    },
+    help: {
+      help: 'Help',
+      learnmore: 'Learn More'
+    },
+    language: {
+      language: 'Language'
     }
   }
 };

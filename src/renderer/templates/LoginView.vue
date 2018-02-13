@@ -115,12 +115,12 @@ export default {
             },
             ruleInline: {
                 username: [
-                    { required: true, message: 'Please input username', trigger: 'blur' },
-                    { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+                    { required: true, message: this.$t("common.login.inputname"), trigger: 'blur' },
+                    { type: 'email', message: this.$t("common.login.emailerr"), trigger: 'blur' }
                 ],
                 password: [
-                    { required: true, message: 'Please input password', trigger: 'blur' },
-                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    { required: true, message: this.$t("common.login.inputpwd"), trigger: 'blur' },
+                    { type: 'string', min: 6, message: this.$t("common.login.pwdlength"), trigger: 'blur' }
                 ]
             },
             signing: false
@@ -147,7 +147,7 @@ export default {
                         })
                         .catch(err => {
                             console.log(err);
-                            this.$message.error('Username Or Password Error');
+                            this.$message.error(this.$t("common.login.loginerr"));
                         });
                     this.signing = false;
                 }

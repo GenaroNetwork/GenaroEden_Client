@@ -2,27 +2,23 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import localeEn from 'element-ui/lib/locale/lang/en'
 import localeZh from 'element-ui/lib/locale/lang/zh-CN'
-import commonEn from './common'
-import commonZh from './common-zh-CN'
-import dashboardEn from './dashboard'
-import dashboardZh from './dashboard-zh-CN'
-import menuEn from './menu'
-import menuZh from './menu-zh-CN'
+import edenEn from './eden-en.js'
+import edenZh from './eden-zh-CN.js'
 
 Vue.use(VueI18n)
 
 const messages = {
     en: {
         el: localeEn.el,
-        common: commonEn.common,
-        dashboard: dashboardEn.dashboard,
-        menu: menuEn.menu
+        common: edenEn.common,
+        dashboard: edenEn.dashboard,
+        menu: edenEn.menu
     },
     zh: {
         el: localeZh.el,
-        common: commonZh.common,
-        dashboard: dashboardZh.dashboard,
-        menu: menuZh.menu
+        common: edenZh.common,
+        dashboard: edenZh.dashboard,
+        menu: edenZh.menu
     }
 }
 
