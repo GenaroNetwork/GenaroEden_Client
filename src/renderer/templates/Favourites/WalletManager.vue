@@ -243,7 +243,7 @@
                     <el-input type="password" v-model="submitPay.password" placeholder="Wallet Password" size="small">
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="amount">
+                <el-form-item label="Pay limit in GNX" prop="amount">
                     <el-input type="number" v-model="submitPay.amount" placeholder="Max GNX approve" size="small">
                     </el-input>
                 </el-form-item>
@@ -485,7 +485,7 @@ export default {
                 this.$store
                     .dispatch("forgetWallet", { address: item.address, password: value })
                     .catch(e => {
-                        this2.$message.error(e);
+                        this.$message.error(e);
                     });
             });
         },
