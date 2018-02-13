@@ -33,7 +33,15 @@ exports.default = {
         cancel: '取消',
         title: '确定要删除文件夹: {name}', // 翻译时，{name}是调用参数，请保留原样，不要翻译
         message: '文件夹 {name} 中所有文件都会被删除. 删除后无法恢复.' // 翻译时，{name}是调用参数，请保留原样，不要翻译
-      }
+      },
+      fileid: '文件ID',
+      download: '下载',
+      delete: '删除',
+      upload: '上传',
+      emptyfilemsg: '文件夹无文件. <br>可点击' + 
+                    '<el-button type="text" @click="upload" size="small">上传' +
+                      '<i class="el-icon-upload el-icon--right"></i>' +
+                    '</el-button> 按钮或拖拽文件至此上传.'
     },
     recent: {
       recent: '足迹',
@@ -93,12 +101,17 @@ exports.default = {
     },
     debits: {
         debits: '账单',
-        usage: '已使用: {used}{formatSize} / 免费存储: {total} (年)',
+        usage: '已使用',
+        freestorage: '剩余存储: {free}/年',
         bonusamount: '奖金： {bonusAmount} GNX',
         updatetime: '更新时间',
         pricemsg: 'GNX 用户首次分配25 GB使用一年时间.单击参看详细收费说明.',
         time: '时间',
-        stroagebandwidth: '存储 / 带宽'
+        stroagetraffic: '存储 / 带宽占用',
+        wallet: '钱包',
+        storagefee: '存储费用',
+        trafficfee: '带宽费用',
+        totalfee: '费用总计'
     },
     sharestorage: {
       sharestorage: '分享我的硬盘',

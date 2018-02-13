@@ -169,7 +169,7 @@
 
 /* import wallet style */
 .choose-file {
-  height: 125px;
+  min-height: 125px;
   background: rgb(249, 249, 249);
   border: 1px dashed rgb(202, 202, 202);
   border-radius: 4px;
@@ -243,7 +243,7 @@
                     <el-input type="password" v-model="submitPay.password" placeholder="Wallet Password" size="small">
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="amount">
+                <el-form-item label="Pay limit in GNX" prop="amount">
                     <el-input type="number" v-model="submitPay.amount" placeholder="Max GNX approve" size="small">
                     </el-input>
                 </el-form-item>
@@ -257,7 +257,7 @@
         <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center>
             <template v-if="importV3WalletDialog.step === 0">
                 <div class="choose-file" @click="importV3Wallet().selectFile($event)">
-                    <i class="material-icons">add</i>
+                    <i class="material-icons">{{ importV3WalletDialog.files ? "remove" : "add" }}</i>
                     <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0] : $t('dashboard.walletmanage.uploadjson') }}</div>
                 </div>
                 <el-input type="password" v-model="importV3WalletDialog.password" :placeholder="$t('dashboard.walletmanage.placeholder1')" size="small"></el-input>
@@ -285,7 +285,7 @@
 
         <!-- wallet list -->
         <div class="wallet-list">
-            <div v-for="item, index in wallets" :class="['wallet',{current: false}]" :key="`walletId-${index}`">
+            <div v-for="item, index in wallets" :class="['wallet',{current: item.address === defaultWallet}]" :key="`walletId-${index}`">
                 <div class="card">
                     <div class="account">
                         <img class="avatar" :src="avatarUrl(item.address)">
@@ -356,11 +356,20 @@ import { utils } from "../../../wallet/web3Util";
 import { clipboard } from "electron";
 const { dialog } = require("electron").remote;
 const fs = require("fs");
+import { BRIDGE_API_URL } from "../../../config";
+import storj from 'storj-lib';
 
 export default {
     created: async function () {
         await this.$store.dispatch("loadAllWallets");
         await this.$store.dispatch("loadAllWalletsBalances");
+        let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
+            auth: {
+                username: this.$store.state.User.username,
+                password: storj.utils.sha256(this.$store.state.User.password),
+            }
+        });
+        this.defaultWallet = data.data.wallet;
     },
     mounted: function () {
         // init balance
@@ -371,6 +380,7 @@ export default {
             copiedIndex: -1,
             editNameIndex: -1,
             largeQRCode: null,
+            defaultWallet: null,
             changePass: {
                 show: false,
                 address: "",
@@ -467,9 +477,7 @@ export default {
             }
         },
         forgetWallet(item) {
-            const this2 = this;
-
-            this.$prompt("Password:", "Forget Wallet", {
+            this.$prompt("Password:", "Delete Wallet", {
                 confirmButtonText: "OK",
                 cancelButtonText: "Cancel",
                 inputType: "password"
@@ -477,7 +485,7 @@ export default {
                 this.$store
                     .dispatch("forgetWallet", { address: item.address, password: value })
                     .catch(e => {
-                        this2.$message.error(e);
+                        this.$message.error(e);
                     });
             });
         },

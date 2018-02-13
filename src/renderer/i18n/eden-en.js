@@ -33,7 +33,15 @@ exports.default = {
         cancel: 'Cancel',
         title: 'Confirm Delete Folder: {name}',
         message: 'All your files in folder {name} will be deleted. This action cannot be undone.'
-      }
+      },
+      fileid: 'File ID',
+      download: 'Download',
+      delete: 'Delete',
+      upload: 'Upload',
+      emptyfilemsg: 'No file in this folder. <br>You can click' + 
+                    '<el-button type="text" @click="upload" size="small">Upload' +
+                      '<i class="el-icon-upload el-icon--right"></i>' +
+                    '</el-button> button or drag and drop file here to upload.'
     },
     recent: {
       recent: 'Recent',
@@ -93,12 +101,17 @@ exports.default = {
     },
     debits: {
         debits: 'Debits',
-        usage: 'usage: {used}{formatSize} / free storage: {total} (Year)',
-        bonusamount: 'Bonus amount： {bonusAmount} GNX',
-        updatetime: 'Update time',
-        pricemsg: 'GNX first time users will be given 25 GB for a year.Click to view the Charges instructions.',
+        usage: 'Used',
+        freestorage: 'Free storage: {free}/Year',
+        bonusamount: 'New user bandwidth： {bonusAmount} GNX',
+        updatetime: 'Last update',
+        pricemsg: 'Free 25GB storage is available during the first year, please see billing instructions here',
         time: 'Time',
-        stroagebandwidth: 'Stroage / Bandwidth'
+        stroagetraffic: 'Storage/Traffic Used',
+        wallet: 'Wallet',
+        storagefee: 'Storage Fee',
+        trafficfee: 'Traffic Fee',
+        totalfee: 'Total Fee'
     },
     sharestorage: {
       sharestorage: 'Share My Storage',

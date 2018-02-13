@@ -1,5 +1,9 @@
 import Vue from "vue";
 
+import moment from 'moment';
+import humanSize from 'human-size';
+import { fileName2Icon } from "../utils/file2icon";
+
 Vue.filter("wei2eth", wei => {
     wei = parseFloat(wei);
     let eth = wei * Math.pow(10, -18);
@@ -19,18 +23,22 @@ Vue.filter("numslice", num => {
     return num.toFixed(6);
 });
 
-import moment from 'moment';
 Vue.filter("formatTime", time => {
-    return moment(time).format("MM/DD/YYYY hh:mm a");
+    let formated = moment(time).format("MM/DD/YYYY hh:mm a");
+    return formated === "Invalid date" ? time : formated;
 });
 
-import humanSize from 'human-size';
 Vue.filter("formatSize", size => {
+    if (size === null || size === void 0) return "--";
     return humanSize(size);
 });
 
+Vue.filter("formatHourSize", size => {
+    if (size === null || size === void 0) return "--";
+    return humanSize(size) + "·h";
+});
 
-import { fileName2Icon } from "../utils/file2icon";
+
 Vue.filter("file2icon", (fileName, type) => {
     return fileName2Icon(fileName)[type];
 });

@@ -133,7 +133,6 @@ export default {
             router.push({ path: '/encryption-key' })
         },
         submitLogin() {
-            let this2 = this
             this.$refs['login'].validate((valid) => {
                 if (valid) {
                     this.signing = true
@@ -143,7 +142,7 @@ export default {
                     Bucket.list()
                         .then(() => {
                             saveCredentials(bridgeUser, bridgePass);
-                            this2.checkEncryptionKeyAndLogin(bridgeUser, bridgePass);
+                            this.checkEncryptionKeyAndLogin(bridgeUser, bridgePass);
                         })
                         .catch(err => {
                             console.log(err);

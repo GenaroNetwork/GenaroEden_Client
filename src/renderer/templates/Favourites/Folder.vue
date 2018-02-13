@@ -34,13 +34,7 @@
 .top-bar .folder-action {
   flex-shrink: 0;
 }
-.files {
-  position: relative;
-  display: flex;
-  flex-grow: 1;
-}
 .overlay {
-  position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
@@ -80,7 +74,7 @@ td.right-td {
   text-align: left;
 }
 .files-table {
-  width: 100%;
+  overflow: visible;
 }
 .row-action {
   visibility: hidden;
@@ -97,32 +91,32 @@ td.right-td {
                 <router-link to="/folders">{{ $t("dashboard.myfiles.folder") }}</router-link>
                 <span :title="bucketName"> &gt; {{ bucketName }}</span>
             </h2>
-            <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download
+            <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">{{ $t("dashboard.myfiles.download") }}
                 <i class="material-icons">file_download</i>
             </el-button>
-            <el-button type="primary" :disabled="!anyRowSelected" @click="deleteSelected" size="small">Delete
+            <el-button type="primary" :disabled="!anyRowSelected" @click="deleteSelected" size="small">{{ $t("dashboard.myfiles.delete") }}
                 <i class="material-icons">delete</i>
             </el-button>
-            <el-button type="primary" @click="upload" size="small">Upload
+            <el-button type="primary" :disabled="anyRowSelected" @click="upload" size="small">{{ $t("dashboard.myfiles.upload") }}
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
         </div>
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-            <el-table :data="fileList" class="files-table" row-class-name="file-row" @selection-change="rowSelectChanged">
+            <el-table :data="fileList" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="filename" label="File Name" min-width="200" :show-overflow-tooltip="true">
+                <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <font-awesome-icon :icon="scope.row.filename | file2icon('icon')" :style="{color: file2Icon(scope.row.filename).color}" />
                         <span style="margin-left: 10px" :title="scope.row.filename">{{ scope.row.filename }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="size" label="Size" width="80">
+                <el-table-column prop="size" :label="$t('dashboard.recent.size')">
                     <template slot-scope="scope">{{ scope.row.size | formatSize }}</template>
                 </el-table-column>
-                <el-table-column prop="created" label="Created" width="180" class-name="created-col">
+                <el-table-column prop="created" :label="$t('dashboard.recent.created')" class-name="created-col">
                     <template slot-scope="scope">{{ scope.row.created | formatTime }}</template>
                 </el-table-column>
-                <el-table-column prop="id" label="File ID" width="250" class-name="id-col"></el-table-column>
+                <el-table-column prop="id" :label="$t('dashboard.myfiles.fileid')" class-name="id-col"></el-table-column>
                 <el-table-column width="130" label="">
                     <template slot-scope="scope">
                         <el-tooltip content="View detail" placement="bottom">
@@ -142,10 +136,7 @@ td.right-td {
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <span v-show="!dragging" slot="empty">No file in this folder. <br>You can click
-                    <el-button type="text" @click="upload" size="small">Upload
-                        <i class="el-icon-upload el-icon--right"></i>
-                    </el-button> button or drag and drop file here to upload.
+                <span v-show="!dragging" slot="empty" v-html="$t('dashboard.myfiles.emptyfilemsg')">
                 </span>
             </el-table>
             <div class="overlay" v-if="dragging">
@@ -213,22 +204,6 @@ export default {
     async created() {
         const bucketId = this.$route.params.bucketId;
         this.$store.dispatch('fileListLoadBucket', { bucketId });
-        this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
-            auth: {
-                username: this.$store.state.User.username,
-                password: storj.utils.sha256(this.$store.state.User.password),
-            }
-        })
-            .then(data => {
-                if (!data.data.wallet) {
-                    this.$alert("Please set default payment wallet first.", "Error", {
-                        type: "error"
-                    });
-                }
-            })
-            .catch(error => {
-
-            });
     },
     mounted() {
         stepReady('new-folder');
@@ -274,6 +249,34 @@ export default {
                 this.receiptModal.fileQrCode = ''
             }
         },
+
+        async checkDebit() {
+            let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
+                auth: {
+                    username: this.$store.state.User.username,
+                    password: storj.utils.sha256(this.$store.state.User.password),
+                }
+            })
+            if (!data.data.wallet) {
+                this.$alert("Please set default payment wallet first.", "Error", {
+                    type: "error"
+                });
+                throw (error);
+            }
+            let payTransaction = await this.$http.get(`${BRIDGE_API_URL}/paytransactions/${this.$store.state.User.username}?page=1&limit=2`,
+                {
+                    auth: {
+                        username: this.$store.state.User.username,
+                        password: storj.utils.sha256(this.$store.state.User.password),
+                    }
+                });
+            if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
+                this.$alert("Please set default payment wallet first.", "Error", {
+                    type: "error"
+                });
+                throw (error);
+            }
+        },
         async deleteSelected() {
             if (!this.anyRowSelected) {
                 this.$message('Please select file first');
@@ -316,6 +319,7 @@ export default {
                 this.$message('Please select file first');
                 return;
             }
+            await this.checkDebit();
             electronDialog.selectDirectory(folders => {
                 if (!folders || !folders.length) return;
                 const folderPath = folders[0];
@@ -334,7 +338,8 @@ export default {
                 })
             })
         },
-        downloadFile({ filename, id }) {
+        async downloadFile({ filename, id }) {
+            await this.checkDebit();
             // 弹出保存对话框配置
             var options = {
                 title: 'Save File',
@@ -383,6 +388,8 @@ export default {
             await this.rawUpload(bucketId, files);
         },
         async rawUpload(bucketId, files) {
+
+            await this.checkDebit();
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
             fileList = fileList.map(file => file.filename);
@@ -392,41 +399,31 @@ export default {
                 let filename = file.split("/");
                 filename = filename[filename.length - 1];
                 if (!fs.lstatSync(file).isFile()) {
-                    errorMessage.push(this.$createElement("div", null, `Only file can be uploaded. ${file} is not a file.`));
+
+                    setTimeout(() => this.$notify.error({
+                        title: "Error",
+                        message: `Only file can be uploaded. ${file} is not a file.`,
+                    }), 0);
                     return;
                 }
                 if (fileList.includes(filename)) {
-                    errorMessage.push(this.$createElement("div", null, `File ${filename} is already exists.`));
+                    setTimeout(() => this.$notify.error({
+                        title: "Error",
+                        message: `File ${filename} is already exists.`,
+                    }), 0);
                     return;
                 };
                 preUpload.push(file);
             });
 
-            if (!errorMessage.length && preUpload.length) {
-                // all fine
-                this.$message('File Uploading. You can see this task in Recent panel on the left.');
-            } else if (errorMessage.length && preUpload.length) {
-                // some files got an error but other
-                errorMessage.unshift(this.$createElement("div", null, `------------------------`));
-                errorMessage.unshift(this.$createElement("div", null, `You can see this task in Recent panel on the left.`));
-                errorMessage.unshift(this.$createElement("div", null, `We've some errors on several files. Other file is being uploaded.`));
-                this.$message({
-                    type: "warning",
-                    message: this.$createElement("div", null, [errorMessage]),
-                });
-            } else if (errorMessage.length && !preUpload.length) {
-                // all error
-                this.$message({
-                    type: "error",
-                    message: this.$createElement("div", null, [errorMessage]),
-                });
-            } else {
-                // no error. no file.
-                this.$message.error("There is no file to uplaod.");
-            }
-
             preUpload.forEach(async filePath => {
                 try {
+                    let fileName = filePath.split("/");
+                    fileName = fileName[fileName.length - 1];
+                    setTimeout(() => this.$notify.info({
+                        title: "Info",
+                        message: `File ${fileName} Uploading. You can see this task in Recent panel on the left.`,
+                    }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
                         bucketId,
