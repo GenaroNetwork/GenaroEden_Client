@@ -189,8 +189,8 @@ export default {
                 this.$set(debit, "bandwidthAmount", debit.bandwidth * GNX_PER_GB_BANDWIDTH / Math.pow(1000, 3));
                 this.$set(debit, "storageAmount", debit.storage * GNX_PER_GB_HOUR_STORAGE);
 
-                debit.bandwidthAmount = parseFloat(Math.toFixed(debit.bandwidthAmount, 9));
-                debit.storageAmount = parseFloat(Math.toFixed(debit.storageAmount, 9));
+                debit.bandwidthAmount = parseFloat(debit.bandwidthAmount.toFixed(9));
+                debit.storageAmount = parseFloat(debit.storageAmount.toFixed(9));
 
                 debit.storage *= 1000 * 1000 * 1000;
 
@@ -199,9 +199,14 @@ export default {
                 transaction.bandwidthAmount += debit.bandwidthAmount;
                 transaction.storageAmount += debit.storageAmount;
 
+                transaction.bandwidthAmount = parseFloat(transaction.bandwidthAmount.toFixed(9));
+                transaction.storageAmount = parseFloat(transaction.storageAmount.toFixed(9));
+
                 transaction.debits.push(debit);
             });
             if (!transaction.totalAmount) transaction.totalAmount = transaction.storageAmount + transaction.bandwidthAmount;
+            transaction.totalAmount = parseFloat(transaction.totalAmount.toFixed(9));
+
         },
         async getPage(page = 1, limit = this.debits.pageSize) {
             let payTransactions = await this.$http.get(`${BRIDGE_API_URL}/paytransactions/${this.$store.state.User.username}?page=${page}&limit=${limit}`,
