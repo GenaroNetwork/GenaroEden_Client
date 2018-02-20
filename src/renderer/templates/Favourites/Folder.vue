@@ -91,32 +91,32 @@ td.right-td {
                 <router-link to="/folders">{{ $t("dashboard.myfiles.folder") }}</router-link>
                 <span :title="bucketName"> &gt; {{ bucketName }}</span>
             </h2>
-            <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">Download
+            <el-button type="primary" :disabled="!anyRowSelected" @click="downloadSelected" size="small">{{ $t("dashboard.myfiles.download") }}
                 <i class="material-icons">file_download</i>
             </el-button>
-            <el-button type="primary" :disabled="!anyRowSelected" @click="deleteSelected" size="small">Delete
+            <el-button type="primary" :disabled="!anyRowSelected" @click="deleteSelected" size="small">{{ $t("dashboard.myfiles.delete") }}
                 <i class="material-icons">delete</i>
             </el-button>
-            <el-button type="primary" :disabled="anyRowSelected" @click="upload" size="small">Upload
+            <el-button type="primary" :disabled="anyRowSelected" @click="upload" size="small">{{ $t("dashboard.myfiles.upload") }}
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
         </div>
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
             <el-table :data="fileList" @selection-change="rowSelectChanged">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="filename" label="File Name" :show-overflow-tooltip="true">
+                <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                         <font-awesome-icon :icon="scope.row.filename | file2icon('icon')" :style="{color: file2Icon(scope.row.filename).color}" />
                         <span style="margin-left: 10px" :title="scope.row.filename">{{ scope.row.filename }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="size" label="Size">
+                <el-table-column prop="size" :label="$t('dashboard.recent.size')">
                     <template slot-scope="scope">{{ scope.row.size | formatSize }}</template>
                 </el-table-column>
-                <el-table-column prop="created" label="Created" class-name="created-col">
+                <el-table-column prop="created" :label="$t('dashboard.recent.created')" class-name="created-col">
                     <template slot-scope="scope">{{ scope.row.created | formatTime }}</template>
                 </el-table-column>
-                <el-table-column prop="id" label="File ID" class-name="id-col"></el-table-column>
+                <el-table-column prop="id" :label="$t('dashboard.myfiles.fileid')" class-name="id-col"></el-table-column>
                 <el-table-column width="130" label="">
                     <template slot-scope="scope">
                         <el-tooltip content="View detail" placement="bottom">
@@ -136,10 +136,7 @@ td.right-td {
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <span v-show="!dragging" slot="empty">No file in this folder. <br>You can click
-                    <el-button type="text" @click="upload" size="small">Upload
-                        <i class="el-icon-upload el-icon--right"></i>
-                    </el-button> button or drag and drop file here to upload.
+                <span v-show="!dragging" slot="empty" v-html="$t('dashboard.myfiles.emptyfilemsg')">
                 </span>
             </el-table>
             <div class="overlay" v-if="dragging">

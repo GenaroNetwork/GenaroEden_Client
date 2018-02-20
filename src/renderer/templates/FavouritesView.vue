@@ -53,7 +53,7 @@ i {
                         <span slot="title">{{ $t("dashboard.walletmanage.walletmanage") }}</span>
                     </el-menu-item>
                     <el-menu-item index="2-2" route="/debit">
-                        <span slot="title">Debits</span>
+                        <span slot="title">{{ $t("dashboard.debits.debits") }}</span>
                     </el-menu-item>
                 </el-submenu>
                 <el-menu-item index="3" route="/share-my-storage">
