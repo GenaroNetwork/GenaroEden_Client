@@ -147,6 +147,15 @@ exports.default = {
     },
     language: {
       language: 'Language'
+    },
+    darwin: {
+      about: 'About',
+      services: 'Services',
+      hide: 'Hide',
+      hideothers: 'Hide Others',
+      showall: 'Show All',
+      quit: 'Quit',
+      front: 'Bring All to Front'
     }
   }
 };

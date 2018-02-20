@@ -147,6 +147,15 @@ exports.default = {
     },
     language: {
       language: '多语言'
+    },
+    darwin: {
+      about: '关于',
+      services: '服务',
+      hide: '隐藏',
+      hideothers: '隐藏其他',
+      showall: '显示所有',
+      quit: '退出',
+      front: '前端显示'
     }
   }
 };
