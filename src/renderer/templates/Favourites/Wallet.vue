@@ -95,8 +95,8 @@
 
 .banner .balance:before,
 .banner .balance:after {
-  pointer-events: none;
   content: "";
+  pointer-events: none;
   position: absolute;
   left: 25px;
   top: 20px;
@@ -205,6 +205,7 @@
 }
 .banner .account .actions > button {
   width: 40%;
+  min-width: 100px;
 }
 
 /* list style */
@@ -246,6 +247,12 @@
 .history-icon > i {
   display: inline-block;
   vertical-align: middle;
+}
+.transactions /deep/ .word-wrap .cell {
+  word-break: break-word;
+}
+.transactions /deep/ .no-wrap .cell {
+  white-space: nowrap;
 }
 </style>
 <template>
@@ -342,7 +349,7 @@
                     <h2>
                         <el-dropdown trigger="click" @command="changeWallet">
                             <span class="el-dropdown-link">
-                                {{wallet.name}}
+                                {{ wallet.name }}
                                 <i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
@@ -371,8 +378,8 @@
 
         <!-- transaction history -->
         <div class="flex flex-grow">
-            <el-table :data="txList" class="files-table" row-class-name="file-row">
-                <el-table-column prop="state" label="" width="60">
+            <el-table :data="txList" class="transactions" row-class-name="file-row">
+                <el-table-column prop="state" label="" width="60" class-name="no-wrap">
                     <template slot-scope="scope">
                         <div class="history-icon">
                             <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TASK_STATE.INIT || scope.row.state === TASK_STATE.INPROGRESS">
@@ -390,18 +397,22 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="hash" :label="$t('dashboard.mywallet.hash')" :show-overflow-tooltip="true">
+                <el-table-column prop="hash" :label="$t('dashboard.mywallet.hash')" :show-overflow-tooltip="true" class-name="no-wrap">
                     <template slot-scope="scope">
                         <a class="common-link" href="#" @click="hashCheck(scope.row.hash)">{{ scope.row.hash }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column prop="receipt.blockNumber" :label="$t('dashboard.mywallet.block')"></el-table-column>
-                <el-table-column prop="created" :label="$t('dashboard.mywallet.created')" class-name="created-col"></el-table-column>
-                <el-table-column prop="from" :label="$t('dashboard.mywallet.from')" class-name="id-col" :show-overflow-tooltip="true">
+                <el-table-column prop="receipt.blockNumber" :label="$t('dashboard.mywallet.block')" class-name="no-wrap"></el-table-column>
+                <el-table-column prop="created" :label="$t('dashboard.mywallet.created')" class-name="word-wrap">
+                    <template slot-scope="scope">
+                        {{ scope.row.created | formatTime }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="from" :label="$t('dashboard.mywallet.from')" class-name="no-wrap" :show-overflow-tooltip="true">
                     <template slot-scope="scope">0x{{scope.row.from}}</template>
                 </el-table-column>
-                <el-table-column prop="recipient" :label="$t('dashboard.mywallet.to')" class-name="id-col" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="amount" :label="$t('dashboard.mywallet.amount')" class-name="id-col"></el-table-column>
+                <el-table-column prop="recipient" :label="$t('dashboard.mywallet.to')" class-name="no-wrap" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="amount" :label="$t('dashboard.mywallet.amount')" class-name="no-wrap"></el-table-column>
                 <span slot="empty">{{ $t('dashboard.mywallet.tip2') }}</span>
             </el-table>
         </div>
