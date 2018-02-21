@@ -62,18 +62,18 @@
     <div>
         <div class="header">
             <div class="info">
-                <span>Used: {{ latest.storage | formatSize }} / Free storage: 25 GB/year</span>
-                <span class="bonus">New user bandwidth: {{ bonusAmount }} GNX</span>
+                <span>{{ $t('dashboard.debits.usage') }}: {{ latest.storage | formatSize }} / {{ $t('dashboard.debits.freestorage', {free: '25 GB'}) }}</span>
+                <span class="bonus">{{ $t('dashboard.debits.bonusamount', {bonusAmount: bonusAmount}) }}</span>
             </div>
             <div class="progress-bar">
                 <div class="usage" :style="{width: latest.usage + '%'}"></div>
                 <div class="usage-over" :style="{width: latest.overUsage + '%'}"></div>
             </div>
             <div class="tips">
-                Last update: {{ latest.created | formatTime}}
+                {{ $t('dashboard.debits.updatetime') }}: {{ latest.created | formatTime}}
             </div>
             <div class="tips">
-                <li>Free 25GB storage is available during the first year, please see billing instructions here
+                <li>{{ $t('dashboard.debits.pricemsg') }}
                 </li>
             </div>
         </div>
@@ -89,16 +89,16 @@
                                 <template slot-scope="data">{{data.row.created | formatTime}}</template>
                             </el-table-column>
                             <el-table-column>
-                                <template slot-scope="data">Storage/Traffic Used: {{data.row.storage | formatHourSize}}/{{data.row.bandwidth | formatSize}}</template>
+                                <template slot-scope="data">{{ $t('dashboard.debits.stroagetraffic') }}: {{data.row.storage | formatHourSize}}/{{data.row.bandwidth | formatSize}}</template>
                             </el-table-column>
                             <el-table-column>
-                                <template slot-scope="data">Storage Fee: {{data.row.storageAmount}} GNX</template>
+                                <template slot-scope="data">{{ $t('dashboard.debits.storagefee') }}: {{data.row.storageAmount}} GNX</template>
                             </el-table-column>
                             <el-table-column>
-                                <template slot-scope="data">Traffic Fee: {{data.row.bandwidthAmount}} GNX</template>
+                                <template slot-scope="data">{{ $t('dashboard.debits.trafficfee') }}: {{data.row.bandwidthAmount}} GNX</template>
                             </el-table-column>
                             <el-table-column>
-                                <template slot-scope="data">Total Fee: {{data.row.amount}} GNX</template>
+                                <template slot-scope="data">{{ $t('dashboard.debits.totalfee') }}: {{data.row.amount}} GNX</template>
                             </el-table-column>
                         </el-table>
                     </template>
@@ -112,22 +112,22 @@
                         <span v-else-if="data.row.state==='fail'" class="error-color">Transaction failed</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="Time" width="200px">
+                <el-table-column :label="$t('dashboard.debits.time')" width="200px">
                     <template slot-scope="data">{{ data.row.created | formatTime}}</template>
                 </el-table-column>
-                <el-table-column label="Wallet">
+                <el-table-column :label="$t('dashboard.debits.wallet')">
                     <template slot-scope="data">{{ data.row.payMethod }}</template>
                 </el-table-column>
-                <el-table-column label="Storage/Traffic Used">
+                <el-table-column :label="$t('dashboard.debits.stroagetraffic')">
                     <template slot-scope="data">{{ data.row.storage | formatHourSize}} / {{ data.row.bandwidth | formatSize}}</template>
                 </el-table-column>
-                <el-table-column label="Storage Fee">
+                <el-table-column :label="$t('dashboard.debits.storagefee')">
                     <template slot-scope="data">{{data.row.storageAmount === null ? "--" : data.row.storageAmount + " GNX"}}</template>
                 </el-table-column>
-                <el-table-column label="Traffic Fee">
+                <el-table-column :label="$t('dashboard.debits.trafficfee')">
                     <template slot-scope="data">{{data.row.bandwidthAmount === null ? "--" :data.row.bandwidthAmount + " GNX"}}</template>
                 </el-table-column>
-                <el-table-column label="Total Fee">
+                <el-table-column :label="$t('dashboard.debits.totalfee')">
                     <template slot-scope="data">{{ data.row.totalAmount }} GNX</template>
                 </el-table-column>
             </el-table>

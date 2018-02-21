@@ -141,14 +141,14 @@ module.exports = function(app, shell) {
         label: name,
         submenu: [
           {
-            label: 'About ' + name,
+            label: app.menuSetting.menu.darwin.about + ' ' + name,
             role: 'about'
           },
           {
             type: 'separator'
           },
           {
-            label: 'Services',
+            label: app.menuSetting.menu.darwin.services,
             role: 'services',
             submenu: []
           },
@@ -156,24 +156,24 @@ module.exports = function(app, shell) {
             type: 'separator'
           },
           {
-            label: 'Hide ' + name,
+            label: app.menuSetting.menu.darwin.hide + ' ' + name,
             accelerator: 'Command+H',
             role: 'hide'
           },
           {
-            label: 'Hide Others',
+            label: app.menuSetting.menu.darwin.hideothers,
             accelerator: 'Command+Shift+H',
             role: 'hideothers'
           },
           {
-            label: 'Show All',
+            label: app.menuSetting.menu.darwin.showall,
             role: 'unhide'
           },
           {
             type: 'separator'
           },
           {
-            label: 'Quit',
+            label: app.menuSetting.menu.darwin.quit,
             accelerator: 'Command+Q',
             click: function() { app.quit(); }
           },
@@ -186,7 +186,7 @@ module.exports = function(app, shell) {
             type: 'separator'
           },
           {
-            label: 'Bring All to Front',
+            label: app.menuSetting.menu.darwin.front,
             role: 'front'
           }
         );
