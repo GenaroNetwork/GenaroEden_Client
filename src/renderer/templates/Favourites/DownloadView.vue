@@ -202,7 +202,7 @@ export default {
                     this.$message('File no more exist. Maybe deleted or moved.');
                 }
             } else if (item.taskType === TASK_TYPE.UPLOAD) {
-                let bucketList = this.$store.state.Bucket.bucketList;
+                let bucketList = this.$store.state.BucketList.buckets;
                 let bucketExist = false;
                 bucketList.every(bucket => {
                     if (bucket.name !== item.folderName) return true;
