@@ -128,7 +128,7 @@ export default {
                     if (/[/\\'"*?:]/.test(bucketName)) throw new Error("Invaild symbol");
                     this.bucketList.forEach(bucket => {
                         if (bucket.name === bucketName) {
-                            throw new Error("the folder is existed");
+                            throw new Error("the folder has already existed, please use another name");
                         }
                     });
                     this.$store.dispatch("bucketListCreate", { bucketName });
