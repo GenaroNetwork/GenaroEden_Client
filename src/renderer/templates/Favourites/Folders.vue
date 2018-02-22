@@ -125,6 +125,7 @@ export default {
                     cancelButtonText: this.$t("el.messagebox.cancel")
                 });
                 try {
+                    if (/[/\\'"*?:]/.test(bucketName)) throw new Error("Invaild symbol");
                     this.bucketList.forEach(bucket => {
                         if (bucket.name === bucketName) {
                             throw new Error("the folder is existed");

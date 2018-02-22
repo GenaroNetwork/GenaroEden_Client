@@ -304,8 +304,8 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="pay()" class="" type="primary">{{ $t('common.dialog.submit') }}</el-button>
-                        <el-button @click="payFormPop = false" class="" type="primary">{{ $t('common.dialog.cancel') }}</el-button>
+                        <el-button @click="payFormPop = false">{{ $t('common.dialog.cancel') }}</el-button>
+                        <el-button @click="pay()" type="primary">{{ $t('common.dialog.submit') }}</el-button>
                     </el-form-item>
                 </template>
             </el-form>
@@ -516,7 +516,7 @@ export default {
                 amount: null,
                 gasPrice: 0,
                 gasLimit: 0,
-                password: ""
+                password: null
             },
             defaultGas: {
                 price: 0,
@@ -573,6 +573,7 @@ export default {
             return "9,999,999.00";
         },
         txList() {
+            this.$store.getters.transactionsByWallet(this.wallet);
             return this.$store.state.Transaction.transactions;
         }
     },
@@ -622,11 +623,13 @@ export default {
             this.payOption.recipient = null;
             this.payOption.amount = null;
             this.payOption.payType = "ETH";
+            this.payOption.password = null;
             function wei2Gwei(wei) {
                 return utils.fromWei(wei, "Gwei");
             }
             this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price));
             this.payOption.gasLimit = this.defaultGas.limit;
+            this.$refs.payOption.clearValidate();
         },
         avatarUrl(id) {
             return "avatar://" + id;

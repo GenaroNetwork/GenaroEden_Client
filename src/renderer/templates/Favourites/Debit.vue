@@ -72,6 +72,20 @@
   /deep/ .no-wrap .cell {
     white-space: nowrap;
   }
+  .old-transaction {
+    color: #909399;
+    font-size: 12px;
+    text-align: center;
+  }
+  .innertable {
+    .innertable-label {
+      color: #909399;
+      font-size: 12px;
+    }
+    /deep/ .el-table::before {
+      content: none;
+    }
+  }
 }
 </style>
 
@@ -101,26 +115,32 @@
             <el-table :data="debits.data">
                 <el-table-column type="expand" width="60px">
                     <template slot-scope="data">
-                        <span v-if="data.row.state === 'fail' && !data.row.debits.length">
+                        <div v-if="data.row.state === 'fail' && !data.row.debits.length" class="old-transaction">
                             Billing is incomplete，please see the transaction details: {{ data.row.ethTransactionHash ? data.row.ethTransactionHash : data.row.comment }} , billing will be automatically adjusted and deducted from the next transaction
+                        </div>
+                        <span class="innertable" v-else>
+                            <el-table :data="data.row.debits" :show-header="false">
+                                <el-table-column>
+                                    <template slot-scope="data">{{data.row.created | formatTime}}</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.stroagetraffic') }}:</span> {{data.row.storage | formatHourSize}} / {{data.row.bandwidth | formatSize}}</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.storagefee') }}:</span> {{data.row.storageAmount}} GNX</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.trafficfee') }}:</span> {{data.row.bandwidthAmount}} GNX</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.totalfee') }}:</span> {{data.row.amount}} GNX</template>
+                                </el-table-column>
+                            </el-table>
                         </span>
-                        <el-table :data="data.row.debits" :show-header="false" v-else>
-                            <el-table-column>
-                                <template slot-scope="data">{{data.row.created | formatTime}}</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.stroagetraffic') }}: {{data.row.storage | formatHourSize}} / {{data.row.bandwidth | formatSize}}</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.storagefee') }}: {{data.row.storageAmount}} GNX</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.trafficfee') }}: {{data.row.bandwidthAmount}} GNX</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.totalfee') }}: {{data.row.amount}} GNX</template>
-                            </el-table-column>
-                        </el-table>
                     </template>
                 </el-table-column>
                 <el-table-column class-name="word-wrap">
@@ -154,7 +174,7 @@
                     <template slot-scope="data">{{ data.row.totalAmount }} GNX</template>
                 </el-table-column>
             </el-table>
-            <el-pagination class="pager" layout="prev, pager, next" :total="debits.total" :page-size="debits.pageSize" :current-page="debits.page" @current-change="getPage"></el-pagination>
+            <el-pagination v-show="debits.total > debits.pageSize" class="pager" layout="prev, pager, next" :total="debits.total" :page-size="debits.pageSize" :current-page="debits.page" @current-change="getPage"></el-pagination>
         </div>
     </div>
 </template>
@@ -185,7 +205,8 @@ export default {
     async created() {
         let payTransactions = await this.getPage(1, this.debits.pageSize);
         let payTransaction = payTransactions[0];
-        await this.getDebits(payTransaction);
+        if (payTransaction) await this.getDebits(payTransaction);
+        else payTransaction = {};
         this.latest.storage = payTransaction.storage;
         this.latest.created = payTransaction.created;
         if (payTransaction.storage / Math.pow(1000, 3) <= 25) {
