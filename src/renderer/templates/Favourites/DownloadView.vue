@@ -43,9 +43,8 @@
     <div class="fullheight right-container">
         <el-tabs value="runningTask" class="task-tabs-parent">
             <el-tab-pane :label="$t('dashboard.recent.runningtask')" name="runningTask">
-
                 <el-table :data="taskListNotSuccess" class="files-table" row-class-name="file-row">
-                    <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" min-width="200" :show-overflow-tooltip="true">
+                    <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" :show-overflow-tooltip="true" min-width="200">
                         <template slot-scope="scope">
                             <font-awesome-icon :icon="file2Icon(scope.row.filePath).icon" v-bind:style="{ color: file2Icon(scope.row.filePath).color }" />
                             <span style="margin-left: 10px">{{ getFileName(scope.row.filePath) }}</span>
@@ -61,18 +60,18 @@
                                     <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress)}}/{{humanSize(scope.row.totalBytes)}}</span>
                                     <span v-else-if="scope.row.taskState === TASK_STATE.INIT">waiting...</span>
                                     <span v-else-if="scope.row.taskState === TASK_STATE.CANCEL">canceled</span>
-                                    <span v-else-if="scope.row.taskState === TASK_STATE.ERROR">error</span>
+                                    <span v-else-if="scope.row.taskState === TASK_STATE.ERROR">error: {{ scope.row.errorMessage }}</span>
                                 </div>
                             </div>
                         </template>
                     </el-table-column>
                     <el-table-column prop="created" :label="$t('dashboard.recent.created')" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" :label="$t('dashboard.recent.folder')" width="250">
+                    <el-table-column prop="folderName" :label="$t('dashboard.recent.folder')" width="100">
                         <template slot-scope="scope">
                             <router-link :to="`/folder/${scope.row.bucketId}`">{{ scope.row.folderName }}</router-link>
                         </template>
                     </el-table-column>
-                    <el-table-column width="300" label="">
+                    <el-table-column width="100" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
                                 <el-button v-if="scope.row.taskState === TASK_STATE.INPROGRESS" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
@@ -99,7 +98,7 @@
                     </el-table-column>
                     <el-table-column prop="totalBytes" :label="$t('dashboard.recent.size')" width="80" :formatter="formatSize"></el-table-column>
                     <el-table-column prop="created" :label="$t('dashboard.recent.created')" width="180" :formatter="formatTime"></el-table-column>
-                    <el-table-column prop="folderName" :label="$t('dashboard.recent.folder')" width="250"></el-table-column>
+                    <el-table-column prop="folderName" :label="$t('dashboard.recent.folder')" width="10 ·0"></el-table-column>
                     <el-table-column width="300" label="">
                         <template slot-scope="scope">
                             <div class="action-cell">
@@ -202,7 +201,7 @@ export default {
                     this.$message('File no more exist. Maybe deleted or moved.');
                 }
             } else if (item.taskType === TASK_TYPE.UPLOAD) {
-                let bucketList = this.$store.state.Bucket.bucketList;
+                let bucketList = this.$store.state.BucketList.buckets;
                 let bucketExist = false;
                 bucketList.every(bucket => {
                     if (bucket.name !== item.folderName) return true;

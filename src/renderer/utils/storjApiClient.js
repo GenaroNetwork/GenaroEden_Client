@@ -84,7 +84,6 @@ class Bucket {
     static create({ bucketName }) {
         return new Promise((resolve, reject) => {
             storj.createBucket(bucketName, (err, data) => {
-                debugger;
                 if (err) reject(err);
                 else resolve(data);
             });
@@ -112,6 +111,7 @@ class Task {
         this.updated = Date.now();
         this.state = null;
         this.totalBytes = 0;
+        this.errorMessage = null;
 
         let taskEvent = new events;
         this.on = taskEvent.on;
@@ -164,6 +164,7 @@ class UploadTask extends Task {
         if (error) {
             if (error.message === "File transfer canceled") return;
             this.taskState = TASK_STATE.ERROR;
+            this.errorMessage = error.message;
             this.emit("error", error);
             log.error("Upload file error.", this);
         } else {
@@ -210,6 +211,7 @@ class DownloadTask extends Task {
         if (error) {
             if (error.message === "File transfer canceled") return;
             this.taskState = TASK_STATE.ERROR;
+            this.errorMessage = error.message;
             this.emit("error", error);
             log.error("Upload file error.", this);
         } else {

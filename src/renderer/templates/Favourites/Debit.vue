@@ -1,4 +1,5 @@
-<style lang="less">
+<style lang="less" scoped>
+@import "../../cssConfig/color.less";
 .header {
   padding: 20px 30px;
   & > div {
@@ -7,9 +8,15 @@
     margin: 0 0 5px;
   }
   .info {
-    font-size: 13px;
-    margin-bottom: 5px;
+    font-size: 14px;
+    margin-bottom: 10px;
     width: 500px;
+    font-weight: bold;
+    .free-storage,
+    .bonus {
+      font-weight: normal;
+      font-size: 12px;
+    }
     .bonus {
       float: right;
     }
@@ -26,7 +33,7 @@
       border-radius: inherit;
     }
     .usage-over {
-      background: #60a8f7;
+      background: @pending;
       height: 100%;
       border-radius: 0 15px 15px 0;
       position: absolute;
@@ -37,6 +44,7 @@
   .tips {
     color: #777;
     font-size: 12px;
+    margin-bottom: 10px;
   }
 }
 
@@ -45,15 +53,39 @@
     margin: 40px 0 25px;
     text-align: center;
   }
-}
-.loading-color {
-  color: #009eff;
-}
-.success-color {
-  color: #88c557;
-}
-.error-color {
-  color: #c55788;
+  .counting-color {
+    color: @pending;
+  }
+  .pending-color {
+    color: @warning;
+  }
+
+  .success-color {
+    color: @success;
+  }
+  .error-color {
+    color: @error;
+  }
+  /deep/ .word-wrap .cell {
+    word-break: break-word;
+  }
+  /deep/ .no-wrap .cell {
+    white-space: nowrap;
+  }
+  .old-transaction {
+    color: #909399;
+    font-size: 12px;
+    text-align: center;
+  }
+  .innertable {
+    .innertable-label {
+      color: #909399;
+      font-size: 12px;
+    }
+    /deep/ .el-table::before {
+      content: none;
+    }
+  }
 }
 </style>
 
@@ -62,7 +94,9 @@
     <div>
         <div class="header">
             <div class="info">
-                <span>{{ $t('dashboard.debits.usage') }}: {{ latest.storage | formatSize }} / {{ $t('dashboard.debits.freestorage', {free: '25 GB'}) }}</span>
+                <span>{{ $t('dashboard.debits.usage') }}: {{ latest.storage | formatSize }}
+                    <span class="free-storage"> / {{ $t('dashboard.debits.freestorage', {free: '25 GB'}) }}</span>
+                </span>
                 <span class="bonus">{{ $t('dashboard.debits.bonusamount', {bonusAmount: bonusAmount}) }}</span>
             </div>
             <div class="progress-bar">
@@ -81,57 +115,66 @@
             <el-table :data="debits.data">
                 <el-table-column type="expand" width="60px">
                     <template slot-scope="data">
-                        <span v-if="data.row.state === 'fail' && !data.row.debits.length">
+                        <div v-if="data.row.state === 'fail' && !data.row.debits.length" class="old-transaction">
                             Billing is incomplete，please see the transaction details: {{ data.row.ethTransactionHash ? data.row.ethTransactionHash : data.row.comment }} , billing will be automatically adjusted and deducted from the next transaction
+                        </div>
+                        <span class="innertable" v-else>
+                            <el-table :data="data.row.debits" :show-header="false">
+                                <el-table-column>
+                                    <template slot-scope="data">{{data.row.created | formatTime}}</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.stroagetraffic') }}:</span> {{data.row.storage | formatHourSize}} / {{data.row.bandwidth | formatSize}}</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.storagefee') }}:</span> {{data.row.storageAmount}} GNX</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.trafficfee') }}:</span> {{data.row.bandwidthAmount}} GNX</template>
+                                </el-table-column>
+                                <el-table-column>
+                                    <template slot-scope="data">
+                                        <span class="innertable-label">{{ $t('dashboard.debits.totalfee') }}:</span> {{data.row.amount}} GNX</template>
+                                </el-table-column>
+                            </el-table>
                         </span>
-                        <el-table :data="data.row.debits" :show-header="false" v-else>
-                            <el-table-column>
-                                <template slot-scope="data">{{data.row.created | formatTime}}</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.stroagetraffic') }}: {{data.row.storage | formatHourSize}}/{{data.row.bandwidth | formatSize}}</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.storagefee') }}: {{data.row.storageAmount}} GNX</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.trafficfee') }}: {{data.row.bandwidthAmount}} GNX</template>
-                            </el-table-column>
-                            <el-table-column>
-                                <template slot-scope="data">{{ $t('dashboard.debits.totalfee') }}: {{data.row.amount}} GNX</template>
-                            </el-table-column>
-                        </el-table>
                     </template>
                 </el-table-column>
-                <el-table-column>
+                <el-table-column class-name="word-wrap">
                     <template slot-scope="data">
-                        <span v-if="data.row.state==='counting'" class="loading-color">Preparing transaction</span>
-                        <span v-else-if="data.row.state==='init'" class="loading-color">Preparing transaction</span>
-                        <span v-else-if="data.row.state==='pending'" class="loading-color">Preparing transaction</span>
+                        <span v-if="data.row.state==='counting'" class="counting-color">Preparing transaction</span>
+                        <span v-else-if="data.row.state==='init'" class="pending-color">Pending</span>
+                        <span v-else-if="data.row.state==='pending'" class="pending-color">Pending</span>
                         <span v-else-if="data.row.state==='success'" class="success-color">Transaction completed</span>
                         <span v-else-if="data.row.state==='fail'" class="error-color">Transaction failed</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.time')" width="200px">
+                <el-table-column :label="$t('dashboard.debits.time')" class-name="word-wrap">
                     <template slot-scope="data">{{ data.row.created | formatTime}}</template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.wallet')">
-                    <template slot-scope="data">{{ data.row.payMethod }}</template>
+                <el-table-column :label="$t('dashboard.debits.time')" class-name="word-wrap">
+                    <template slot-scope="data">{{ data.row.created | formatTime}}</template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.stroagetraffic')">
+                <el-table-column :label="$t('dashboard.debits.wallet')" class-name="no-wrap">
+                    <template slot-scope="data">{{ data.row.payMethod === "none" ? "--" : data.row.payMethod }}</template>
+                </el-table-column>
+                <el-table-column :label="$t('dashboard.debits.stroagetraffic')" class-name="no-wrap">
                     <template slot-scope="data">{{ data.row.storage | formatHourSize}} / {{ data.row.bandwidth | formatSize}}</template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.storagefee')">
+                <el-table-column :label="$t('dashboard.debits.storagefee')" class-name="no-wrap">
                     <template slot-scope="data">{{data.row.storageAmount === null ? "--" : data.row.storageAmount + " GNX"}}</template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.trafficfee')">
+                <el-table-column :label="$t('dashboard.debits.trafficfee')" class-name="no-wrap">
                     <template slot-scope="data">{{data.row.bandwidthAmount === null ? "--" :data.row.bandwidthAmount + " GNX"}}</template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.totalfee')">
+                <el-table-column :label="$t('dashboard.debits.totalfee')" class-name="no-wrap">
                     <template slot-scope="data">{{ data.row.totalAmount }} GNX</template>
                 </el-table-column>
             </el-table>
-            <el-pagination class="pager" layout="prev, pager, next" :total="debits.total" :page-size="debits.pageSize" :current-page="debits.page" @current-change="getPage"></el-pagination>
+            <el-pagination v-show="debits.total > debits.pageSize" class="pager" layout="prev, pager, next" :total="debits.total" :page-size="debits.pageSize" :current-page="debits.page" @current-change="getPage"></el-pagination>
         </div>
     </div>
 </template>
@@ -162,7 +205,8 @@ export default {
     async created() {
         let payTransactions = await this.getPage(1, this.debits.pageSize);
         let payTransaction = payTransactions[0];
-        await this.getDebits(payTransaction);
+        if (payTransaction) await this.getDebits(payTransaction);
+        else payTransaction = {};
         this.latest.storage = payTransaction.storage;
         this.latest.created = payTransaction.created;
         if (payTransaction.storage / Math.pow(1000, 3) <= 25) {

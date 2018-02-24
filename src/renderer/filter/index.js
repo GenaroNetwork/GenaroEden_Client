@@ -24,6 +24,7 @@ Vue.filter("numslice", num => {
 });
 
 Vue.filter("formatTime", time => {
+    if (time === null || time === void 0) return "--";
     let formated = moment(time).format("MM/DD/YYYY hh:mm a");
     return formated === "Invalid date" ? time : formated;
 });

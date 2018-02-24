@@ -56,6 +56,10 @@ let mutations = {
         Object.entries(commitTask).forEach(([key, value]) => {
             if (key === "taskId") return;
             if (typeof value === "object") return;
+            if (key === "progress") {
+                savedTask[key] = savedTask[key] > value ? savedTask[key] : value;
+                return;
+            }
             savedTask[key] = value;
         });
     },

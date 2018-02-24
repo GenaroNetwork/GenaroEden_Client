@@ -34,14 +34,29 @@
 .top-bar .folder-action {
   flex-shrink: 0;
 }
+.files {
+  height: 100%;
+}
 .overlay {
+  position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
   top: 0;
   left: 0;
-  display: flex;
   z-index: 9;
+}
+.overlay div {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 250px;
+  width: 300px;
+  margin: auto;
 }
 .overlay div {
   position: absolute;
@@ -102,7 +117,7 @@ td.right-td {
             </el-button>
         </div>
         <div class="files" @dragover.stop.prevent="fileDragOver" @dragleave.stop.prevent="fileDragLeave" @drop.stop.prevent="fileDrop">
-            <el-table :data="fileList" @selection-change="rowSelectChanged">
+            <el-table :data="fileList" @selection-change="rowSelectChanged" row-class-name="file-row">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
@@ -139,7 +154,7 @@ td.right-td {
                 <span v-show="!dragging" slot="empty" v-html="$t('dashboard.myfiles.emptyfilemsg')">
                 </span>
             </el-table>
-            <div class="overlay" v-if="dragging">
+            <div class="overlay" v-show="dragging">
                 <div>
                     <i class="el-icon-upload el-icon--right"></i>
                     <h2>drop to upload your files to {{bucketName}}</h2>

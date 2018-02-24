@@ -66,7 +66,7 @@
   overflow: hidden;
   box-sizing: border-box;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
   border: 2px solid rgb(231, 231, 231);
 }
 
@@ -215,7 +215,7 @@
         </el-dialog>
 
         <!-- reset Password dialog -->
-        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center>
+        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('resetPassword')">
             <el-form ref="changePassFormRef" :model="changePass" :rules="ruleInline">
                 <el-form-item prop="password">
                     <el-input type="password" v-model="changePass.password" placeholder="Wallet Password" size="small">
@@ -237,7 +237,7 @@
         </el-dialog>
 
         <!-- submit payment -->
-        <el-dialog title="Set As Paying Wallet" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center>
+        <el-dialog title="Set As Paying Wallet" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('submitPayment')">
             <el-form ref="submitPayFormRef" :model="submitPay" :rules="ruleInline">
                 <el-form-item prop="password">
                     <el-input type="password" v-model="submitPay.password" placeholder="Wallet Password" size="small">
@@ -254,7 +254,7 @@
         </el-dialog>
 
         <!-- import wallet dialog -->
-        <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center>
+        <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center @close="clearDialog('importWallet')">
             <template v-if="importV3WalletDialog.step === 0">
                 <div class="choose-file" @click="importV3Wallet().selectFile($event)">
                     <i class="material-icons">{{ importV3WalletDialog.files ? "remove" : "add" }}</i>
@@ -383,10 +383,10 @@ export default {
             defaultWallet: null,
             changePass: {
                 show: false,
-                address: "",
-                password: "",
-                newPassword: "",
-                newPasswordRepeat: ""
+                address: null,
+                password: null,
+                newPassword: null,
+                newPasswordRepeat: null
             },
             submitPay: {
                 show: false,
@@ -447,6 +447,22 @@ export default {
         }
     },
     methods: {
+        clearDialog(name) {
+            switch (name) {
+                case "resetPassword":
+                    this.changePass.address = null;
+                    this.changePass.password = null;
+                    this.changePass.newPassword = null;
+                    this.changePass.newPasswordRepeat = null;
+                    this.$refs.changePassFormRef.clearValidate();
+                    break;
+                case "submitPayment":
+                    this.submitPay.password = null;
+                    break;
+                case "importWallet":
+                    break;
+            }
+        },
         moreActions({ action, item }) {
             this[action](item);
         },
@@ -477,7 +493,7 @@ export default {
             }
         },
         forgetWallet(item) {
-            this.$prompt("Password:", "Delete Wallet", {
+            this.$prompt("Password (of wallet):", "Delete Wallet", {
                 confirmButtonText: "OK",
                 cancelButtonText: "Cancel",
                 inputType: "password"

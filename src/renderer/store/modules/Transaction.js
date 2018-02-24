@@ -7,7 +7,10 @@ const state = {
 }
 
 const getters = {
-
+    transactionsByWallet(state) {
+        return wallet => {
+        }
+    }
 }
 
 const mutations = {
@@ -65,6 +68,7 @@ const actions = {
 
 export default {
     state,
+    getters,
     mutations,
     actions
 }
