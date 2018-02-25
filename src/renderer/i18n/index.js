@@ -8,18 +8,8 @@ import edenZh from './eden-zh-CN.js'
 Vue.use(VueI18n)
 
 const messages = {
-    en: {
-        el: localeEn.el,
-        common: edenEn.common,
-        dashboard: edenEn.dashboard,
-        menu: edenEn.menu
-    },
-    zh: {
-        el: localeZh.el,
-        common: edenZh.common,
-        dashboard: edenZh.dashboard,
-        menu: edenZh.menu
-    }
+    en: Object.assign(edenEn, localeEn),
+    zh: Object.assign(edenZh, localeZh)
 }
 
 let defaultLang = 'en'
