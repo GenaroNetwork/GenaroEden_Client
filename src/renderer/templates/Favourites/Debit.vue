@@ -66,6 +66,9 @@
   .error-color {
     color: @error;
   }
+  /deep/ .cell {
+    font-size: 12px;
+  }
   /deep/ .word-wrap .cell {
     word-break: break-word;
   }
@@ -120,22 +123,22 @@
                         </div>
                         <span class="innertable" v-else>
                             <el-table :data="data.row.debits" :show-header="false">
-                                <el-table-column>
+                                <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">{{data.row.created | formatTime}}</template>
                                 </el-table-column>
-                                <el-table-column>
+                                <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">
                                         <span class="innertable-label">{{ $t('dashboard.debits.stroagetraffic') }}:</span> {{data.row.storage | formatHourSize}} / {{data.row.bandwidth | formatSize}}</template>
                                 </el-table-column>
-                                <el-table-column>
+                                <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">
                                         <span class="innertable-label">{{ $t('dashboard.debits.storagefee') }}:</span> {{data.row.storageAmount}} GNX</template>
                                 </el-table-column>
-                                <el-table-column>
+                                <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">
                                         <span class="innertable-label">{{ $t('dashboard.debits.trafficfee') }}:</span> {{data.row.bandwidthAmount}} GNX</template>
                                 </el-table-column>
-                                <el-table-column>
+                                <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">
                                         <span class="innertable-label">{{ $t('dashboard.debits.totalfee') }}:</span> {{data.row.amount}} GNX</template>
                                 </el-table-column>

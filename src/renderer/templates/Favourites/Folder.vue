@@ -1,9 +1,11 @@
-<style scoped>
+<style lang="less" scoped>
+@import "../../cssConfig/color.less";
 .top-bar {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   padding: 10px;
+  padding-left: 1.5rem;
 }
 .top-bar button i {
   margin-left: 5px;
@@ -20,7 +22,7 @@
   vertical-align: middle;
 }
 .top-bar h2 a {
-  color: unset;
+  color: @pending;
   display: inline-block;
   text-decoration: unset;
 }

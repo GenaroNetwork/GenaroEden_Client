@@ -435,7 +435,7 @@ export default {
         const address = this.$route.params.walletAddress;
         this.$store.dispatch("loadTransactions");
         this.$store.dispatch("initWallet");
-        await this.$store.dispatch("loadAllWallets");
+        await this.$store.dispatch("walletListInit");
     },
     mounted() {
         // init balance

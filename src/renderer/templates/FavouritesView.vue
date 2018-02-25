@@ -32,15 +32,27 @@ i {
 <template>
     <div class="colcontainer">
         <div class="layout-favourites-enum">
-            <el-menu :default-active="defaultActive" @select="(index)=>{defaultActive = index}" :router="true">
+            <el-menu :default-active="defaultActive" :router="true">
                 <el-menu-item index="0" route="/folders">
                     <i class="el-icon-document"></i>
                     <span slot="title">{{ $t("dashboard.myfiles.myfiles") }}</span>
                 </el-menu-item>
-                <el-menu-item index="1" route="/file-download">
+                <!-- <el-menu-item index="1" route="/file-download">
                     <i class="el-icon-time"></i>
                     <span slot="title">{{ $t("dashboard.recent.recent") }}</span>
-                </el-menu-item>
+                </el-menu-item> -->
+                <el-submenu index="1" default-active="1-0">
+                    <template slot="title">
+                        <i class="el-icon-time"></i>
+                        <span slot="title">{{ $t("dashboard.recent.recent") }}</span>
+                    </template>
+                    <el-menu-item index="1-0" route="/task-running">
+                        <span slot="title">Running Task</span>
+                    </el-menu-item>
+                    <el-menu-item index="1-1" route="/task-history">
+                        <span slot="title">History</span>
+                    </el-menu-item>
+                </el-submenu>
                 <el-submenu index="2" default-active="2-0">
                     <template slot="title">
                         <i class="material-icons">account_balance_wallet</i>

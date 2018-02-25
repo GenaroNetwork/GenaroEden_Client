@@ -16,8 +16,8 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #dddddd;
   padding: 10px;
+  padding-left: 1.5rem;
 }
 .top-bar h2 {
   margin: 0;

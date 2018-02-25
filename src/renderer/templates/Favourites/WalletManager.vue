@@ -285,7 +285,7 @@
 
         <!-- wallet list -->
         <div class="wallet-list">
-            <div v-for="item, index in wallets" :class="['wallet',{current: item.address === defaultWallet}]" :key="`walletId-${index}`">
+            <div v-for="item, index of wallets" :class="['wallet',{current: item.address === defaultWallet}]" :key="`walletId-${index}`">
                 <div class="card">
                     <div class="account">
                         <img class="avatar" :src="avatarUrl(item.address)">
@@ -361,7 +361,7 @@ import storj from 'storj-lib';
 
 export default {
     created: async function () {
-        await this.$store.dispatch("loadAllWallets");
+        await this.$store.dispatch("walletListInit");
         await this.$store.dispatch("loadAllWalletsBalances");
         let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
             auth: {
@@ -431,16 +431,16 @@ export default {
     },
     computed: {
         wallets() {
-            return this.$store.state.WalletManage.wallets;
+            return this.$store.state.WalletList.wallets;
         },
         balanceEth() {
-            return address => this.$store.state.WalletManage.balances.eth[address];
+            return address => this.$store.state.WalletList.balances.eth[address];
         },
         dollarEth() {
             return "9,999,999.00";
         },
         balanceGnx() {
-            return address => this.$store.state.WalletManage.balances.gnx[address];
+            return address => this.$store.state.WalletList.balances.gnx[address];
         },
         dollarGnx() {
             return "9,999,999.00";
@@ -476,7 +476,7 @@ export default {
                     if (this.importV3WalletDialog.files && this.importV3WalletDialog.files.length > 0) {
                         const filePath = this.importV3WalletDialog.files[0]
                         this.$store
-                            .dispatch("importV3Wallet", { filePath, password: this.importV3WalletDialog.password })
+                            .dispatch("walletListImportV3", { filePath, password: this.importV3WalletDialog.password })
                             .then(() => {
                                 this.importV3WalletDialog.step = 1;
                             })
@@ -499,7 +499,7 @@ export default {
                 inputType: "password"
             }).then(({ value }) => {
                 this.$store
-                    .dispatch("forgetWallet", { address: item.address, password: value })
+                    .dispatch("walletListDelete", { address: item.address, password: value })
                     .catch(e => {
                         this.$message.error(e);
                     });
@@ -507,7 +507,7 @@ export default {
         },
         saveName(index, event) {
             this.editNameIndex = -1;
-            this.$store.dispatch("updateWalletName", {
+            this.$store.dispatch("walletListUpdateName", {
                 address: this.wallets[index].address,
                 name: event.target.value,
             });
@@ -526,7 +526,7 @@ export default {
         submitChangePassword() {
             const this2 = this;
             this.$store
-                .dispatch("changePassword", {
+                .dispatch("walletListChangePassword", {
                     address: this.changePass.address,
                     password: this.changePass.password,
                     newPassword: this.changePass.newPassword
@@ -601,7 +601,7 @@ export default {
                 background: 'rgba(0, 0, 0, 0.7)'
             });
             this.$store
-                .dispatch("setAsPayingWallet", { address: this.submitPay.address, password, amount, gasPrice })
+                .dispatch("walletListSetPayment", { address: this.submitPay.address, password, amount, gasPrice })
                 .then(() => {
                     this.$message({
                         type: "success",

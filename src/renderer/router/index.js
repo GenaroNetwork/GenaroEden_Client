@@ -50,6 +50,16 @@ export default new Router({
                             component: require('@/templates/Favourites/DownloadView').default
                         },
                         {
+                            path: '/task-running',
+                            name: 'task-running',
+                            component: require('@/templates/Favourites/TaskRunning').default
+                        },
+                        {
+                            path: '/task-history',
+                            name: 'task-history',
+                            component: require('@/templates/Favourites/TaskHistory').default
+                        },
+                        {
                             path: '/share-my-storage',
                             name: 'share-my-storage',
                             component: require('@/templates/Favourites/ShareMyStorage').default

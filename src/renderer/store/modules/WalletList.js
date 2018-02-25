@@ -9,59 +9,74 @@ const state = {
         eth: {},
         gnx: {},
     },
+    currentWallet: null,
+    paymentWallet: null,
 }
 
 const getters = {
-
+    currentWallet(state) {
+        let wallet = state.wallets.find(wallet => wallet.address === state.currentWallet);
+        if (wallet) return wallet;
+        if (states.wallets[0]) return states.wallets[0];
+        return {};
+    },
+    currentWalletEth(state) { },
+    currentWalletGnx(state) { },
+    paymentWallet(state) {
+        let wallet = state.wallets.find(wallet => wallet.address === state.paymentWallet);
+        if (wallet) return wallet;
+        if (states.wallets[0]) return states.wallets[0];
+        return {};
+    },
 }
 
 const mutations = {
-    updateWalletName(state, { address, name }) {
+    walletListUpdateName(state, { address, name }) {
         let newWallets = state.wallets.forEach(oldWallet => {
             if (oldWallet.address !== address) return true;
             oldWallet.name = name;
         });
     },
-    setWallets(state, wallets) {
+    walletListInit(state, wallets) {
         state.wallets = wallets
     },
-    updateBalances(state, { address, eth, gnx }) {
+    walletListUpdateBalance(state, { address, eth, gnx }) {
         state.balances.gnx = Object.assign({}, state.balances.gnx, { [address]: gnx });
         state.balances.eth = Object.assign({}, state.balances.eth, { [address]: eth });
     }
 }
 
 const actions = {
-    async loadAllWallets({ commit }) {
+    async walletListInit({ commit }) {
         const wallets = await walletManager.loadWallet()
-        commit('setWallets', wallets)
+        commit('walletListInit', wallets)
     },
-    async loadAllWalletsBalances({ commit }) {
+    async walletListInitBalances({ commit }) {
         for (let wallet of state.wallets) {
             let address = wallet.address;
             let eth = await getBalanceEth(address);
             let gnx = await getBalanceGnx(address);
-            commit("updateBalances", { address, eth, gnx });
+            commit("walletListUpdateBalance", { address, eth, gnx });
         }
 
     },
-    async importV3Wallet({ commit, dispatch }, { filePath, password }) {
+    async walletListImportV3({ commit, dispatch }, { filePath, password }) {
         const content = fs.readFileSync(filePath, 'utf8')
         await walletManager.importFromV3Json(content, password)
-        await dispatch('loadAllWallets')
+        await dispatch('walletListInit')
     },
-    async forgetWallet({ commit, dispatch }, { address, password }) {
-        const passwordOk = await walletManagerå.validateWalletPassword(address, password)
+    async walletListDelete({ commit, dispatch }, { address, password }) {
+        const passwordOk = await walletManager.validateWalletPassword(address, password)
         if (passwordOk) {
             const ok = await walletManager.forgetWallet(address)
-            await dispatch('loadAllWallets')
+            await dispatch('walletListInit')
         }
     },
-    async changePassword({ commit, dispatch }, { address, password, newPassword }) {
+    async walletListChangePassword({ commit, dispatch }, { address, password, newPassword }) {
         await walletManager.changePassword(address, password, newPassword)
-        await dispatch('loadAllWallets')
+        await dispatch('walletListInit')
     },
-    async setAsPayingWallet({ commit, dispatch, rootState }, { address, password, amount, gasPrice }) {
+    async walletListSetPayment({ commit, dispatch, rootState }, { address, password, amount, gasPrice }) {
         // first set to 0 or transaction will fail: https://github.com/ethereum/EIPs/issues/738
         // 1: GNX approve
         // 2: Submit to network
@@ -74,9 +89,9 @@ const actions = {
         const user = rootState.User.username
         await walletManager.submitAddress(user, address, password)
     },
-    async updateWalletName({ commit }, { address, name }) {
-        await walletManager.updateWalletName({ address, name });
-        commit("updateWalletName", { address, name });
+    async walletListUpdateName({ commit }, { address, name }) {
+        await walletManager.walletListUpdateName({ address, name });
+        commit("walletListUpdateName", { address, name });
     },
 }
 
