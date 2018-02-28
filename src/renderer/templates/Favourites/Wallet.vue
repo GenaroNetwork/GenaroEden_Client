@@ -260,7 +260,7 @@
 
         <!-- transfer popup -->
         <el-popover ref="payFormPop" v-model="payFormPop" placement="bottom" width="350" trigger="click" @show="payPopped">
-            <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline">
+            <el-form ref="payOption" status-icon :model="payOption" :rules="ruleInline" @submit.native.prevent>
                 <template v-if="payStep === 0">
                     <el-form-item prop="recipient">
                         <el-input type="text" v-model="payOption.recipient" :placeholder="$t('dashboard.mywallet.recipientaddress')" size="mini">
@@ -413,6 +413,7 @@
                 </el-table-column>
                 <el-table-column prop="recipient" :label="$t('dashboard.mywallet.to')" class-name="no-wrap" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="amount" :label="$t('dashboard.mywallet.amount')" class-name="no-wrap"></el-table-column>
+                <el-table-column prop="payType" label="Token" class-name="no-wrap"></el-table-column>
                 <span slot="empty">{{ $t('dashboard.mywallet.tip2') }}</span>
             </el-table>
         </div>
@@ -434,8 +435,6 @@ export default {
     async created() {
         const address = this.$route.params.walletAddress;
         this.$store.dispatch("loadTransactions");
-        this.$store.dispatch("initWallet");
-        await this.$store.dispatch("walletListInit");
     },
     mounted() {
         // init balance
@@ -458,7 +457,7 @@ export default {
                 let balance;
                 switch (this.payOption.payType) {
                     case "ETH":
-                        balance = this.balanceEth;
+                        balance = parseInt(this.balanceEth);
                         if (utils.toWei(value) > balance) {
                             callback(new Error(this.$t('dashboard.mywallet.amounterrmsg')));
                         } else {
@@ -555,26 +554,25 @@ export default {
     },
     computed: {
         wallets() {
-            return this.$store.state.WalletManage.wallets;
+            return this.$store.state.WalletList.wallets;
         },
         wallet() {
-            return this.$store.state.CurrentWallet.wallet;
+            return this.$store.getters.currentWallet;
         },
         balanceEth() {
-            return this.$store.state.CurrentWallet.balanceEth;
+            return this.$store.getters.currentWalletEth;
         },
         dollarEth() {
             return "9,999,999.00";
         },
         balanceGnx() {
-            return this.$store.state.CurrentWallet.balanceGnx;
+            return this.$store.getters.currentWalletGnx;
         },
         dollarGnx() {
             return "9,999,999.00";
         },
         txList() {
-            this.$store.getters.transactionsByWallet(this.wallet);
-            return this.$store.state.Transaction.transactions;
+            return this.$store.getters.transactionsByWallet;
         }
     },
     watch: {
@@ -593,14 +591,15 @@ export default {
         async pay() {
             try {
                 await this.$refs.payOption.validate();
-                await this.$store.dispatch("payByCurrentWallet", this.payOption);
+                await this.$store.dispatch("walletListPayByCurrent", this.payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
+                debugger;
                 this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", e));
             }
         },
         changeWallet(address) {
-            this.$store.dispatch("initWallet", { address });
+            this.$store.dispatch("walletListSetCurrent", { address });
         },
         refreshStatus(row) {
             this.$store.commit("updateSingleTransaction", {
@@ -614,7 +613,7 @@ export default {
         hashCheck(hash) {
             shell.openExternal(EtherscanURL + hash);
         },
-        calculateGas: async function () {
+        async calculateGas() {
             this.defaultGas.price = await getGasPrice();
             this.defaultGas.limit = ETH_SUGGEST;
         },
@@ -624,10 +623,7 @@ export default {
             this.payOption.amount = null;
             this.payOption.payType = "ETH";
             this.payOption.password = null;
-            function wei2Gwei(wei) {
-                return utils.fromWei(wei, "Gwei");
-            }
-            this.payOption.gasPrice = parseInt(wei2Gwei(this.defaultGas.price));
+            this.payOption.gasPrice = parseInt(utils.fromWei(this.defaultGas.price.toString(), "Gwei"));
             this.payOption.gasLimit = this.defaultGas.limit;
             this.$refs.payOption.clearValidate();
         },

@@ -7,7 +7,6 @@ const path = require('path')
 const os = require('os')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
-const keytar = require('keytar')
 const Wallet = require('ethereumjs-wallet')
 const hdkey = require('ethereumjs-wallet/hdkey')
 const Tx = require('ethereumjs-tx')
@@ -29,13 +28,13 @@ const db = low(adapter)
 db.defaults({ wallet: [] }).write()
 
 function generateWalletName() {
-    const names = new Set()
-    db.get('wallet').value().forEach(e => {
+    const names = new Set();
+    let dbs = db.get('wallet').value() || [];
+    dbs.forEach(e => {
         names.add(e.name)
-    })
-    var i = 0
-    while (true) {
-        i++
+    });
+    var i = 0;
+    while (++i) {
         var tmpname = `Account ${i}`
         if (!names.has(tmpname)) {
             return tmpname
@@ -55,29 +54,10 @@ async function updateWalletName({ address, name }) {
         .find({ address })
         .assign({ name })
         .write();
-
 }
 
-function loadWallet() {
-    return new Promise((resolve, reject) => {
-        const wallets = db.get('wallet').cloneDeep().sortBy(item => -item.created).value()
-        let count = wallets.length
-        if (count === 0) {
-            resolve([])
-        } else {
-            wallets.forEach(w => {
-                keytar.getPassword(KEYCHAIN_WALLET, w.address).then(v3str => {
-                    count--
-                    w.v3 = JSON.parse(v3str)
-                    w.address = w.v3.address
-                    w.rawWallet = null
-                    if (count === 0) {
-                        resolve(wallets)
-                    }
-                }).catch(e => reject(e))
-            })
-        }
-    })
+async function loadWallet() {
+    return db.get('wallet').cloneDeep().sortBy(item => -item.created).value();
 }
 
 function loadFirstWallet() {
@@ -95,95 +75,67 @@ function loadWalletFromAddr(address) {
     return null;
 }
 
-function loadRawWallet(address, password) {
-    return new Promise((resolve, reject) => {
-        keytar.getPassword(KEYCHAIN_WALLET, address).then(v3str => {
-            const w = Wallet.fromV3(v3str, password)
-            resolve(w)
-        }).catch(e => reject(e))
-    })
+async function loadRawWallet(address, password) {
+    let v3str = JSON.stringify(db.get("wallet").find({ address }).value());
+    return Wallet.fromV3(v3str, password);
 }
 
 async function validateWalletPassword(address, password) {
-    return new Promise((resolve, reject) => {
-        const w = loadRawWallet(address, password).then(() => {
-            resolve(true)
-        }).catch(e => {
-            reject('incorrect password')
-        })
-    })
+    try {
+        const w = await loadRawWallet(address, password);
+        return true;
+    } catch (e) {
+        reject('incorrect password');
+    }
 }
 
 async function exportV3Json(address) {
-    return await keytar.getPassword(KEYCHAIN_WALLET, address)
+    return JSON.stringify(db.get("wallet").find({ address }).value());
 }
 
-function saveWallet(wa, name, pass) {
-    return new Promise((resolve, reject) => {
-        const v3 = wa.toV3(pass)
-        const address = v3.address
-
-        const found = db.get('wallet').find({ address: address }).value()
-        if (found) {
-            reject({ code: 1, message: `address ${address} already exists. Please delete it first.` })
-            return
-        }
-        keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
-            db.get('wallet').push({
-                name,
-                created: Date.now(),
-                address
-            }).write()
-            resolve()
-        })
-    })
+async function saveWallet(wa, name, pass) {
+    let v3 = wa.toV3(pass);
+    const address = v3.address;
+    const found = db.get('wallet').find({ address: address }).value();
+    if (found) throw ({ code: 1, message: `address ${address} already exists. Please delete it first.` });
+    v3.name = name;
+    v3.created = Date.now();
+    db.get('wallet').push(v3).write();
 }
 
-function updateWalletPassword(wa, newPass) {
-    return new Promise((resolve, reject) => {
-        const v3 = wa.toV3(newPass)
-        const address = v3.address
-
-        const found = db.get('wallet').find({ address: address }).value()
-        if (!found) {
-            reject({ message: `address ${address} not found` })
-            return
-        }
-        keytar.setPassword(KEYCHAIN_WALLET, v3.address, JSON.stringify(v3)).then(() => {
-            resolve()
-        })
-    })
+async function updateWalletPassword(wa, newPass) {
+    const v3 = wa.toV3(newPass);
+    const address = v3.address;
+    const found = db.get('wallet').find({ address: address }).assign(v3).write();
 }
 
 async function importFromV3Json(json, password, name) {
-    if (!name) {
-        name = generateWalletName()
-    }
-    const jsonv3 = JSON.parse(json)
+    const jsonv3 = JSON.parse(json);
+    name = name || jsonv3.name || generateWalletName();
     const w = Wallet.fromV3(json, password)
     await saveWallet(w, name, password)
 }
 
-function importFromMnemonic(mnemonic, password) {
-    return new Promise((resolve, reject) => {
-        // compatible with metamask/jaxx
-        const bip39 = require('bip39')
-        const seed = bip39.mnemonicToSeed(mnemonic)
-        let wallet = hdkey.fromMasterSeed(seed).derivePath(`m/44'/60'/0'/0`).deriveChild(0).getWallet()
+async function importFromMnemonic(mnemonic, password) {
+    // compatible with metamask/jaxx
+    const bip39 = require('bip39');
+    const seed = bip39.mnemonicToSeed(mnemonic);
+    let wallet = hdkey.fromMasterSeed(seed).derivePath(`m/44'/60'/0'/0`).deriveChild(0).getWallet();
 
-        //const ss = wallet.getAddress().toString()
-        const ss2 = wallet.getAddress().toString('hex')
-        saveWallet(wallet, generateWalletName(), password).then(() => resolve()).catch(e => reject(e))
-    })
+    //const ss = wallet.getAddress().toString()
+    await saveWallet(wallet, generateWalletName(), password);
 }
 
 function importFromPrivateKey() {
     // TODO:
 }
 
-async function forgetWallet(address) {
-    db.get('wallet').remove({ address }).write()
-    await keytar.deletePassword(KEYCHAIN_WALLET, address)
+async function deleteWallet(address) {
+    db.get('wallet').remove({ address }).write();
+}
+
+async function clearWallets() {
+    db.set('wallet', []).write();
 }
 
 async function changePassword(address, passoword, newPassword) {
@@ -353,7 +305,7 @@ export default {
     generateSignedTx,
     generateSignedGnxTx,
     generateSignedApproveTx,
-    forgetWallet,
+    deleteWallet,
     changePassword,
     validateWalletPassword,
     exportV3Json,
@@ -361,4 +313,5 @@ export default {
     loadWalletFromAddr,
     submitAddress,
     updateWalletName,
+    clearWallets,
 }

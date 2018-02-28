@@ -8,6 +8,7 @@
 
 import css from 'tether-shepherd/dist/css/shepherd-theme-arrows.css';
 import { Storj } from "./utils/storjApiClient";
+
 export default {
     name: 'Genaro-Eden',
     created() {
@@ -16,7 +17,6 @@ export default {
             this.$store.commit("updatePassword", localStorage.bridgePass);
             this.$store.commit("setEncryptionKey", localStorage.bridgeKey);
         }
-        this.$store.commit('taskListLoad');
     }
 }
 </script>
@@ -26,6 +26,9 @@ html,
 body,
 .fullheight {
   height: 100%;
+}
+* {
+  outline: none;
 }
 /* CSS */
 body {

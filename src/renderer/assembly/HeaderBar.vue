@@ -1,4 +1,5 @@
-<style scoped>
+<style scoped lang="less">
+@import "../cssConfig/color.less";
 .layout-header {
   height: 60px;
   background: #fff;
@@ -9,6 +10,10 @@
 }
 .dropItem {
   margin-left: 20px;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
 }
 .logo {
   flex-grow: 1;
@@ -27,57 +32,177 @@
 .api {
   padding: 15px;
 }
+.popover {
+  margin: -12px;
+  & > div {
+    & > div {
+      line-height: 50px;
+      padding: 0 12px;
+      border-bottom: 1px solid #e8e8e8;
+      &:last-of-type {
+        border-bottom: none;
+      }
+      span {
+        float: right;
+      }
+      &.new-version-check {
+        cursor: pointer;
+        .avalible {
+          display: block;
+          height: 6px;
+          width: 6px;
+          background: @error;
+          border-radius: 50%;
+          margin: 22px 0;
+        }
+      }
+    }
+  }
+}
 </style>
 
 <template>
     <div class="layout-header">
+        <!-- popover -->
+        <el-popover ref="popover" placement="bottom" width="250" trigger="click" @show="pulldownStep=0" v-model="pulldownShown">
+            <div class="popover">
+                <div v-if="pulldownStep===0" @click="updateState ? pulldownStep = updateState : checkUpdate()">
+                    <div>当前版本
+                        <span style="float: right;">{{ version }}</span>
+                    </div>
+                    <div class="new-version-check">新版本检测
+                        <span v-if="updateState===1">有新版本</span>
+                        <span v-else-if="updateState===2">正在下载</span>
+                        <span v-else-if="updateState===3">下载完成</span>
+                        <span v-else-if="updateState===4">下载失败</span>
+                    </div>
+                    <div>
+                        <el-button type="text" @click="logout">{{ $t('common.login.logout') }}</el-button>
+                    </div>
+                </div>
+                <div v-else-if="pulldownStep===1">
+                    <div>最新版本
+                        <span>{{ latest.version }}</span>
+                    </div>
+                    <div style="white-space: pre-wrap;">{{ latest.notes }}</div>
+                    <div>
+                        <el-button type="text" @click="pulldownShown = false">稍后</el-button>
+                        <el-button type="text" @click="downloadNow()">立即更新</el-button>
+                    </div>
+                </div>
+                <div v-else-if="pulldownStep===2">
+                    <div>正在下载</div>
+                </div>
+                <div v-else-if="pulldownStep===3"></div>
+            </div>
+        </el-popover>
+
         <div class="logo">
             <img shape="circle" src="~@/assets/img/logo_words.png">
         </div>
+
         <div class="demo-avatar-badge">
-            <el-dropdown>
-                <span class="el-dropdown-link">
-                    {{username}}
-                    <i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                    <div class="api">
-                        <storage-usage></storage-usage>
-                        <div class="logout">
-                            <a href="" @click="logout">{{ $t('common.login.logout') }}</a>
-                        </div>
-                    </div>
-                </el-dropdown-menu>
-            </el-dropdown>
+            <span class="el-dropdown-link" v-popover:popover>
+                {{username}}
+                <i class="el-icon-caret-bottom el-icon--right"></i>
+            </span>
         </div>
     </div>
 </template>
-
 <script>
-import router from '../router'
 import StorageUsage from '@/assembly/StorageUsage'
-import store from '../store'
 import { stepReady } from "../utils/guide"
 import { deleteCredentials } from '../utils/dbUtil'
+import walletManager from "../../wallet/walletManager";
+import { ipcRenderer } from "electron";
+import { remote } from "electron";
+import { AUTO_UPLOAD_URL } from "../../config";
+
 
 export default {
+    data() {
+        return {
+            // 0: didn't checked || no new version
+            // 1: new version avalible
+            // 2: downloading
+            // 3: downloaded
+            // 4: error 
+            updateState: 0,
+            pulldownShown: false,
+            pulldownStep: 0,
+            latest: {
+                version: null,
+                notes: null,
+            }
+        };
+    },
     methods: {
-        logout() {
-            deleteCredentials().then(() => {
-                router.push({ path: '/' })
-            })
-        }
+        async logout() {
+            await deleteCredentials();
+            await walletManager.clearWallets();
+            this.$router.push({ path: '/' });
+        },
+        async checkUpdate() {
+            this.downloaded();
+            let feedURL = `${AUTO_UPLOAD_URL}?v=${remote.app.getVersion()}`;
+            let response = await this.$http.get(feedURL);
+            let data = response.data;
+            if (!data) this.updateState = 0;
+            else {
+                this.updateState = 1;
+                this.latest.version = data.version;
+                this.latest.notes = data.notes;
+            };
+        },
+        downloadNow() {
+            this.pulldownStep = 2;
+            remote.autoUpdater.setFeedURL(feedURL);
+            remote.autoUpdater.checkForUpdates();
+            remote.autoUpdater.on("update-downloaded", () => this.downloaded);
+        },
+        downloaded() {
+            if (this.pulldownShown && this.pulldownStep === 2) this.pulldownStep = 3;
+            else this.$notify({
+                title: '下载完成',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                message: `是否立即重启应用完成更新?
+                <div>
+                <div data-action="ignore" style="width: 75px; float: left; height: 30px; line-height: 30px; cursor: pointer;">稍后</div>
+                <div data-action="confirm" style="width: 75px; float: left; height: 30px; line-height: 30px; cursor: pointer;">立即重启</div>
+                <div>
+                `,
+                onClick: () => {
+                    let action = event.target.dataset.action;
+                    if (!action) return;
+                    if (action === "ignore") {
+                        console.log(this.$notify);
+                        debugger;
+                        this.$notify.closeAll();
+                    } else {
+                        this.installNow();
+                    }
+                },
+                duration: 0
+            });
+        },
+        installNow() {
+            console.log("installNow");
+        },
     },
     components: {
         StorageUsage
     },
     computed: {
         username() {
-            return this.$store.state.User.username
+            return this.$store.state.User.username;
+        },
+        version() {
+            return remote.app.getVersion();
         }
     },
-    mounted: function () {
-        stepReady('account-info')
-    }
+    async mounted() {
+        stepReady('account-info');
+    },
 }
 </script>

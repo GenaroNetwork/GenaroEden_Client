@@ -177,7 +177,6 @@ export default {
             walletManager.importFromMnemonic(mnemonic, password).then(() => {
                 this.submitLogin();
             }).catch((e) => {
-                console.error(e)
                 if (e.code === 1) {
                     this.submitLogin()
                 } else {
@@ -223,7 +222,7 @@ export default {
         submitLogin() {
             const pwd = this.$store.state.User.password;
             saveEncryptionKey(this.encryptionKey, pwd).then(() => {
-                this.checkKeyOkAndContinue()
+                this.checkKeyOkAndContinue();
             }).catch((e) => {
                 console.error(e)
             })

@@ -423,6 +423,7 @@ export default {
                     }), 0);
                     return;
                 }
+
                 if (fileList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",

@@ -285,7 +285,7 @@
 
         <!-- wallet list -->
         <div class="wallet-list">
-            <div v-for="item, index of wallets" :class="['wallet',{current: item.address === defaultWallet}]" :key="`walletId-${index}`">
+            <div v-for="item, index of wallets" :class="['wallet',{current: item.address === paymentWallet}]" :key="`walletId-${index}`">
                 <div class="card">
                     <div class="account">
                         <img class="avatar" :src="avatarUrl(item.address)">
@@ -361,15 +361,13 @@ import storj from 'storj-lib';
 
 export default {
     created: async function () {
-        await this.$store.dispatch("walletListInit");
-        await this.$store.dispatch("loadAllWalletsBalances");
         let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
             auth: {
                 username: this.$store.state.User.username,
                 password: storj.utils.sha256(this.$store.state.User.password),
             }
         });
-        this.defaultWallet = data.data.wallet;
+        this.$store.dispatch("walletListSetPayment", { address: data.data.wallet });
     },
     mounted: function () {
         // init balance
@@ -380,7 +378,6 @@ export default {
             copiedIndex: -1,
             editNameIndex: -1,
             largeQRCode: null,
-            defaultWallet: null,
             changePass: {
                 show: false,
                 address: null,
@@ -432,6 +429,9 @@ export default {
     computed: {
         wallets() {
             return this.$store.state.WalletList.wallets;
+        },
+        paymentWallet() {
+            return this.$store.state.WalletList.paymentWallet;
         },
         balanceEth() {
             return address => this.$store.state.WalletList.balances.eth[address];
@@ -545,7 +545,6 @@ export default {
             this.copiedIndex = index;
         },
         exportWalletV3: async function (item) {
-            const this2 = this;
             this.$prompt("Password:", "Export Wallet", {
                 confirmButtonText: "Export",
                 cancelButtonText: "Cancel",
@@ -566,9 +565,9 @@ export default {
                             if (path != undefined && path.length > 0) {
                                 fs.writeFile(path, v3, function (err) {
                                     if (err) {
-                                        this2.$message.error(err);
+                                        this.$message.error(err);
                                     } else {
-                                        this2.$message.success("Wallet exported");
+                                        this.$message.success("Wallet exported");
                                     }
                                 });
                             }
@@ -576,7 +575,7 @@ export default {
                     );
                 }
             }).catch(e => {
-                this2.$message.error(e);
+                this.$message.error(e);
             });
         },
         popSubmitPay: async function (item) {

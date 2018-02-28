@@ -74,9 +74,19 @@
                         <el-button v-if="scope.row.taskState === TASK_STATE.INPROGRESS" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
                             <i class="material-icons">cancel</i>
                         </el-button>
-                        <el-button v-if="scope.row.taskState !== TASK_STATE.INPROGRESS" class="row-action" @click="removeTask(scope.row)" type="text" size="small">
-                            <i class="material-icons">close</i>
-                        </el-button>
+                        <el-tooltip placement="top" :manual="true" :value="scope.row.taskId === deleteTaskId">
+                            <div slot="content">
+                                <p>Are you sure to delete?</p>
+                                <div style="text-align: right; margin: 0">
+                                    <el-button size="mini" type="text" @click="deleteTaskId = null">取消</el-button>
+                                    <el-button type="primary" size="mini" @click="removeTask(scope.row)">确定</el-button>
+                                </div>
+                            </div>
+                            <el-button v-if="scope.row.taskState !== TASK_STATE.INPROGRESS" class="row-action" @click="deleteTaskId = scope.row.taskId" type="text" size="small">
+                                <i class="material-icons">close</i>
+                            </el-button>
+                            {{scope.row}}
+                        </el-tooltip>
                     </div>
                 </template>
             </el-table-column>
@@ -97,6 +107,7 @@ export default {
         return {
             TASK_STATE,
             TASK_TYPE,
+            deleteTaskId: null,
             fileTableColums: [{
                 title: 'File Name',
                 key: 'filename',

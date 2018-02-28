@@ -1,7 +1,8 @@
-import { app, BrowserWindow, Menu, shell } from 'electron'
+import { app, BrowserWindow, Menu, shell, IpcMain, AutoUpdater, ipcMain, autoUpdater } from 'electron'
 import registerProtocals from './customProtocol'
 const defaultMenu = require('./appMenu');
-import i18n, { writeLangJsonConfigFile} from '../renderer/i18n'
+import i18n, { writeLangJsonConfigFile } from '../renderer/i18n';
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -29,7 +30,7 @@ function setMenu() {
 function addMenu() {
     // Get template for default menu 
     const menu = defaultMenu(app, shell);
- 
+
     // Set top-level application menu, using modified template 
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
@@ -67,10 +68,10 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     }
-})
+});
 
 app.on('activate', () => {
     if (mainWindow === null) {
         createWindow()
     }
-})
+});

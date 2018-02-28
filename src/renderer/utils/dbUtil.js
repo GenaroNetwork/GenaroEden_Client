@@ -18,8 +18,10 @@ const db = low(adapter)
 
 db.defaults({ username: null, uploadSize: 0, tasks: [], encryptionKey: null }).write()
 
-const KEYCHAIN_LOGIN = 'network.genaro.eden.login'
-const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey'
+const KEYCHAIN_LOGIN = 'network.genaro.eden.login';
+const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey';
+const KEYCHAIN_WALLET = 'network.genaro.eden.wallet';
+
 
 function addUploadSize(sizeByte) {
     db.set('uploadSize', getUploadSize() + sizeByte).write()
@@ -107,9 +109,14 @@ function getCredentials() {
 
 function deleteCredentials() {
     const account = db.get('username').value()
-    db.set('username', null).set('encryptionKey', null).write()
-    keytar.deletePassword(KEYCHAIN_ENCRYPTIONKEY, account)
-    return keytar.deletePassword(KEYCHAIN_LOGIN, account)
+    db
+        .set('username', null)
+        .set('encryptionKey', null)
+        .set('tasks', null)
+        .write();
+    if (!account) return;
+    keytar.deletePassword(KEYCHAIN_ENCRYPTIONKEY, account);
+    return keytar.deletePassword(KEYCHAIN_LOGIN, account);
 }
 
 function saveEncryptionKey(key, password) {

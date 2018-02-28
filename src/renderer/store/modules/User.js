@@ -2,13 +2,7 @@ const state = {
     username: '',
     password: '',
     encryptionKey: '',
-    totalUploadSize: 0
-}
-
-const getters = {
-    username: state => state.username,
-    password: state => state.password,
-    totalUploadSize: state => state.totalUploadSize
+    totalUploadSize: 0,
 }
 
 const mutations = {

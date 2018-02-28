@@ -15,6 +15,8 @@ const REGISTER_REDIRECT = 'https://genaro.network/en/register-success';
 const GNX_PER_GB_BANDWIDTH = 5.0;
 const GNX_PER_GB_HOUR_STORAGE = 0.002054795;
 
+const AUTO_UPLOAD_URL = "http://eden-auto-update.oss-cn-shanghai.aliyuncs.com/update.json";
+
 const TASK_STATE = Object.freeze({
     INIT: 1,
     INPROGRESS: 2,
@@ -38,4 +40,5 @@ export {
     TASK_TYPE,
     GNX_PER_GB_BANDWIDTH,
     GNX_PER_GB_HOUR_STORAGE,
+    AUTO_UPLOAD_URL,
 }

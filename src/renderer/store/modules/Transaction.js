@@ -7,9 +7,9 @@ const state = {
 }
 
 const getters = {
-    transactionsByWallet(state) {
-        return wallet => {
-        }
+    transactionsByWallet(state, getters, rootState, rootGetters) {
+        let wallet = rootGetters.currentWallet.address;
+        return state.transactions.filter(transaction => transaction.from === wallet || transaction.recipient === '0x' + wallet);
     }
 }
 
