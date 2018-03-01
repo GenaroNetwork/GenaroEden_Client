@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { BRIDGE_API_URL, PASSWORD_RESET_REDIRECT, REGISTER_REDIRECT } from '../config'
 const storj = require('storj-lib')
+axios.defaults.adapter = require('axios/lib/adapters/http')
 
 /*
   ['POST', '/users', this.getLimiter(limiter(5)), rawbody, this.createUser],
