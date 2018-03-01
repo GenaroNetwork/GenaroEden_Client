@@ -604,7 +604,7 @@ export default {
                 background: 'rgba(0, 0, 0, 0.7)'
             });
             this.$store
-                .dispatch("walletListSetPayment", { address: this.submitPay.address, password, amount, gasPrice })
+                .dispatch("setPaymentWallet", { address: this.submitPay.address, password, amount, gasPrice })
                 .then(() => {
                     this.$message({
                         type: "success",

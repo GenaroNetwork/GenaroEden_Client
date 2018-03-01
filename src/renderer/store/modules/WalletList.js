@@ -91,7 +91,7 @@ const actions = {
         await walletManager.changePassword(address, password, newPassword)
         await dispatch('walletListInit')
     },
-    async walletListSetPayment({ commit, dispatch, rootState }, { address, password, amount, gasPrice }) {
+    async setPaymentWallet({ commit, dispatch, rootState }, { address, password, amount, gasPrice }) {
         // first set to 0 or transaction will fail: https://github.com/ethereum/EIPs/issues/738
         // 1: GNX approve
         // 2: Submit to network
