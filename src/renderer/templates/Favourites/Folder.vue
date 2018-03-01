@@ -176,10 +176,6 @@ td.right-td {
                         <td class="right-td">{{ receiptModal.fileId }}</td>
                     </tr>
                     <tr>
-                        <td class="left-td">GNX Paid:</td>
-                        <td class="right-td">0 (free for beta testing)</td>
-                    </tr>
-                    <tr>
                         <td class="left-td">QR Code:</td>
                         <td class="right-td"><img :src="receiptModal.fileQrCode"></td>
                     </tr>
