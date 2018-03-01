@@ -92,8 +92,8 @@
                 </div>
                 <div v-else-if="pulldownStep===2">
                     <div>正在下载</div>
-                    <div>正在下载更新。</div>
-                    <div v-loading="true">
+                    <div>
+                        <div v-loading="true">正在下载更新。</div>
                         <div>
                             下载完成后需重启 Eden 客户端安装.
                         </div>
@@ -140,6 +140,7 @@ import walletManager from "../../wallet/walletManager";
 import { ipcRenderer } from "electron";
 import { remote } from "electron";
 import { AUTO_UPLOAD_URL, TASK_STATE } from "../../config";
+import { setInterval } from 'timers';
 let feedURL = `${AUTO_UPLOAD_URL}?v=${remote.app.getVersion()}`;
 
 
@@ -167,14 +168,29 @@ export default {
             this.$router.push({ path: '/' });
         },
         async checkUpdate() {
+            if (this.updateState === 2 || this.updateState === 3) return;
             let response = await this.$http.get(feedURL);
             let data = response.data;
-            if (!data) this.updateState = 0;
-            else {
-                this.updateState = 1;
-                this.latest.version = data.version;
-                this.latest.notes = data.notes;
-            };
+            this.updateState = 0;
+            if (!data || !data.version) return;
+            let latestVersion = data.version;
+            let lv = latestVersion.split(".");
+            let currentVersion = remote.app.getVersion();
+            let cv = currentVersion.split(".");
+            let isLatest = true;
+            cv.every((v, i) => {
+                if (v > lv[i]) return false;
+                if (v === lv[i]) return true;
+                isLatest = false;
+                return false;
+            });
+            if (isLatest) return;
+
+
+            this.updateState = 1;
+            this.latest.version = data.version;
+            this.latest.notes = data.notes;
+            ;
         },
         downloadNow() {
             this.updateState = 2;
@@ -238,6 +254,7 @@ export default {
     async mounted() {
         stepReady('account-info');
         this.checkUpdate();
+        setInterval(this.checkUpdate, 1000 * 3600);
     },
 }
 </script>
