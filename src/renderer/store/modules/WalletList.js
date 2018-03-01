@@ -21,10 +21,14 @@ const getters = {
         return {};
     },
     currentWalletEth(state) {
-        return state.balances.eth[state.currentWallet];
+        if (state.currentWallet) return state.balances.eth[state.currentWallet];
+        if (state.wallets[0]) return state.balances.eth[state.wallets[0].address];
+        return 0;
     },
     currentWalletGnx(state) {
-        return state.balances.gnx[state.currentWallet];
+        if (state.currentWallet) return state.balances.gnx[state.currentWallet];
+        if (state.wallets[0]) return state.balances.gnx[state.wallets[0].address];
+        return 0;
     },
     paymentWallet(state) {
         let wallet = state.wallets.find(wallet => wallet.address === state.paymentWallet);

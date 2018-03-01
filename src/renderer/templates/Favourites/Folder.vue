@@ -201,7 +201,7 @@ import { fileName2Icon } from "../../utils/file2icon";
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import { Bucket } from "../../utils/storjApiClient";
 import fs from "fs";
-import { BRIDGE_API_URL } from "../../../config";
+import { BRIDGE_API_URL, TASK_TYPE } from "../../../config";
 import storj from 'storj-lib';
 
 export default {
@@ -410,6 +410,8 @@ export default {
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
             fileList = fileList.map(file => file.filename);
+            let uploadTaskList = this.$store.TaskList.tasks.filter(task => task.taskType === TASK_TYPE.UPLOAD && task.folderName === bucketId);
+            uploadTaskList = uploadTaskList.map(task => task.fileName);
             let errorMessage = [];
             let preUpload = [];
             files.forEach(file => {
@@ -431,6 +433,16 @@ export default {
                     }), 0);
                     return;
                 };
+
+                if (uploadTaskList.includes(filename)) {
+                    setTimeout(() => this.$notify.error({
+                        title: "Error",
+                        message: `File ${filename} is already exists.`,
+                    }), 0);
+                    return;
+                };
+
+
                 preUpload.push(file);
             });
 

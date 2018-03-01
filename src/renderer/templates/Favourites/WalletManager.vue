@@ -215,7 +215,7 @@
         </el-dialog>
 
         <!-- reset Password dialog -->
-        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('resetPassword')">
+        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center @open="clearDialog('resetPassword')">
             <el-form ref="changePassFormRef" :model="changePass" :rules="ruleInline">
                 <el-form-item prop="password">
                     <el-input type="password" v-model="changePass.password" placeholder="Wallet Password" size="small">
@@ -237,7 +237,7 @@
         </el-dialog>
 
         <!-- submit payment -->
-        <el-dialog title="Set As Paying Wallet" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('submitPayment')">
+        <el-dialog title="Set As Paying Wallet" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center @open="clearDialog('submitPayment')">
             <el-form ref="submitPayFormRef" :model="submitPay" :rules="ruleInline">
                 <el-form-item prop="password">
                     <el-input type="password" v-model="submitPay.password" placeholder="Wallet Password" size="small">
@@ -254,7 +254,7 @@
         </el-dialog>
 
         <!-- import wallet dialog -->
-        <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center @close="clearDialog('importWallet')">
+        <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center @open="clearDialog('importWallet')">
             <template v-if="importV3WalletDialog.step === 0">
                 <div class="choose-file" @click="importV3Wallet().selectFile($event)">
                     <i class="material-icons">{{ importV3WalletDialog.files ? "remove" : "add" }}</i>
@@ -385,6 +385,9 @@ export default {
                 newPassword: null,
                 newPasswordRepeat: null
             },
+            passwordError: {
+                deleteWallet: null
+            },
             submitPay: {
                 show: false,
                 password: "",
@@ -461,6 +464,9 @@ export default {
                     break;
                 case "importWallet":
                     break;
+                case "deleteWallet":
+                    this.passwordError.deleteWallet = e.message;
+                    break;
             }
         },
         moreActions({ action, item }) {
@@ -492,18 +498,19 @@ export default {
                 }
             }
         },
-        forgetWallet(item) {
-            this.$prompt("Password (of wallet):", "Delete Wallet", {
+        async forgetWallet(item) {
+            this.passwordError.deleteWallet = null;
+            let value = await this.$prompt("Password (of wallet):", "Delete Wallet", {
                 confirmButtonText: "OK",
                 cancelButtonText: "Cancel",
-                inputType: "password"
-            }).then(({ value }) => {
-                this.$store
-                    .dispatch("walletListDelete", { address: item.address, password: value })
-                    .catch(e => {
-                        this.$message.error(e);
-                    });
+                inputType: "password",
             });
+            try {
+                await this.$store.dispatch("walletListDelete", { address: item.address, password: value });
+            } catch (e) {
+                this.$message.error(e.message);
+                this.passwordError.deleteWallet = e.message;
+            }
         },
         saveName(index, event) {
             this.editNameIndex = -1;

@@ -92,6 +92,15 @@
                 </div>
                 <div v-else-if="pulldownStep===2">
                     <div>正在下载</div>
+                    <div v-loading="true">
+                        <div>
+                            正在下载更新。
+                        </div>
+                        <div>
+                            下载完成后需重启 Eden 客户端安装.
+                        </div>
+                    </div>
+
                 </div>
                 <div v-else-if="pulldownStep===3"></div>
             </div>
@@ -117,6 +126,7 @@ import walletManager from "../../wallet/walletManager";
 import { ipcRenderer } from "electron";
 import { remote } from "electron";
 import { AUTO_UPLOAD_URL } from "../../config";
+let feedURL = `${AUTO_UPLOAD_URL}?v=${remote.app.getVersion()}`;
 
 
 export default {
@@ -143,8 +153,6 @@ export default {
             this.$router.push({ path: '/' });
         },
         async checkUpdate() {
-            this.downloaded();
-            let feedURL = `${AUTO_UPLOAD_URL}?v=${remote.app.getVersion()}`;
             let response = await this.$http.get(feedURL);
             let data = response.data;
             if (!data) this.updateState = 0;
@@ -155,19 +163,29 @@ export default {
             };
         },
         downloadNow() {
+            this.updateState = 2;
             this.pulldownStep = 2;
             remote.autoUpdater.setFeedURL(feedURL);
             remote.autoUpdater.checkForUpdates();
+            /*
+            let loading = () => {
+                if (this.percentageSaved >= 100) return;
+                this.percentageSaved += (100 - this.percentageSaved) * 0.03;
+                setTimeout(loading, 1000);
+            };
+            loading();
+            */
             remote.autoUpdater.on("update-downloaded", () => this.downloaded);
         },
         downloaded() {
+            this.updateState = 3
             if (this.pulldownShown && this.pulldownStep === 2) this.pulldownStep = 3;
             else this.$notify({
                 title: '下载完成',
                 dangerouslyUseHTMLString: true,
                 showClose: false,
                 message: `是否立即重启应用完成更新?
-                <div>
+                <div style="margin-top: 10px;">
                 <div data-action="ignore" style="width: 75px; float: left; height: 30px; line-height: 30px; cursor: pointer;">稍后</div>
                 <div data-action="confirm" style="width: 75px; float: left; height: 30px; line-height: 30px; cursor: pointer;">立即重启</div>
                 <div>
@@ -187,7 +205,7 @@ export default {
             });
         },
         installNow() {
-            console.log("installNow");
+            remote.autoUpdater.quitAndInstall();
         },
     },
     components: {
@@ -199,10 +217,11 @@ export default {
         },
         version() {
             return remote.app.getVersion();
-        }
+        },
     },
     async mounted() {
         stepReady('account-info');
+        this.checkUpdate();
     },
 }
 </script>

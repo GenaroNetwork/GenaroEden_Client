@@ -85,7 +85,7 @@ async function validateWalletPassword(address, password) {
         const w = await loadRawWallet(address, password);
         return true;
     } catch (e) {
-        reject('incorrect password');
+        throw new Error('incorrect password');
     }
 }
 

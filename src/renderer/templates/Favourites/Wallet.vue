@@ -300,7 +300,7 @@
                         <el-col :span="14" class="preview-value">{{ payOption.amount }}</el-col>
                     </el-row>
                     <el-form-item :label="$t('dashboard.mywallet.walletpassword')" prop="password" key="password">
-                        <el-input type="password" v-model="payOption.password" :placeholder="$t('dashboard.mywallet.walletpassword')">
+                        <el-input type="password" v-model="payOption.password" :placeholder="$t('dashboard.mywallet.walletpassword')" :error="passwordError">
                         </el-input>
                     </el-form-item>
                     <el-form-item>
@@ -517,6 +517,7 @@ export default {
                 gasLimit: 0,
                 password: null
             },
+            passwordError: null,
             defaultGas: {
                 price: 0,
                 limit: 0
@@ -594,8 +595,9 @@ export default {
                 await this.$store.dispatch("walletListPayByCurrent", this.payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
-                debugger;
-                this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", e));
+                if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";
+                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", e));
+
             }
         },
         changeWallet(address) {
@@ -625,6 +627,7 @@ export default {
             this.payOption.password = null;
             this.payOption.gasPrice = parseInt(utils.fromWei(this.defaultGas.price.toString(), "Gwei"));
             this.payOption.gasLimit = this.defaultGas.limit;
+            this.passwordError = null;
             this.$refs.payOption.clearValidate();
         },
         avatarUrl(id) {
