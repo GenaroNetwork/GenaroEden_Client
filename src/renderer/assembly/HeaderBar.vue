@@ -92,17 +92,31 @@
                 </div>
                 <div v-else-if="pulldownStep===2">
                     <div>正在下载</div>
+                    <div>正在下载更新。</div>
                     <div v-loading="true">
-                        <div>
-                            正在下载更新。
-                        </div>
                         <div>
                             下载完成后需重启 Eden 客户端安装.
                         </div>
                     </div>
-
                 </div>
-                <div v-else-if="pulldownStep===3"></div>
+                <div v-else-if="pulldownStep===3">
+                    <div>下载完成</div>
+                    <div>
+                        重启客户端完成更新
+                    </div>
+                    <div>
+                        <el-button type="text" @click="pulldownShown = false">稍后</el-button>
+                        <el-button type="text" @click="installNow()">立即重启</el-button>
+                    </div>
+                </div>
+                <div v-else-if="pulldownStep===4" style="text-align:  center;">
+                    <div>
+                        <div>安装更新需要退出当前任务</div>
+                    </div>
+                    <div>
+                        <el-button type="text" @click="pulldownShown = false">确定</el-button>
+                    </div>
+                </div>
             </div>
         </el-popover>
 
@@ -125,7 +139,7 @@ import { deleteCredentials } from '../utils/dbUtil'
 import walletManager from "../../wallet/walletManager";
 import { ipcRenderer } from "electron";
 import { remote } from "electron";
-import { AUTO_UPLOAD_URL } from "../../config";
+import { AUTO_UPLOAD_URL, TASK_STATE } from "../../config";
 let feedURL = `${AUTO_UPLOAD_URL}?v=${remote.app.getVersion()}`;
 
 
@@ -205,7 +219,9 @@ export default {
             });
         },
         installNow() {
-            remote.autoUpdater.quitAndInstall();
+            let runningtasks = this.$store.state.TaskList.tasks.filter(task => task.taskState === TASK_STATE.INPROGRESS).length;
+            if (runningtasks > 0) this.pulldownStep = 4;
+            else remote.autoUpdater.quitAndInstall();
         },
     },
     components: {
