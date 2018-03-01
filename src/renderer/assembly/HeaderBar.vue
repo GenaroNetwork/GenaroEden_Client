@@ -205,7 +205,7 @@ export default {
             };
             loading();
             */
-            remote.autoUpdater.on("update-downloaded", () => this.downloaded);
+            remote.autoUpdater.on("update-downloaded", () => this.downloaded());
         },
         downloaded() {
             this.updateState = 3
