@@ -38,7 +38,7 @@
 <template>
     <div class="fullheight right-container">
         <div class="top-bar">
-            History
+            {{ $t("dashboard.recent.history") }}
         </div>
         <el-table :data="taskListSuccess" class="files-table" row-class-name="file-row">
             <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" min-width="180" :show-overflow-tooltip="true">

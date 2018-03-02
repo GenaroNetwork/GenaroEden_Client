@@ -128,7 +128,7 @@
                                 </el-table-column>
                                 <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">
-                                        <span class="innertable-label">{{ $t('dashboard.debits.stroagetraffic') }}:</span> {{data.row.storage | formatHourSize}} / {{data.row.bandwidth | formatSize}}</template>
+                                        <span class="innertable-label">{{ $t('dashboard.debits.storagetraffic') }}:</span> {{data.row.storage | formatHourSize}} / {{data.row.bandwidth | formatSize}}</template>
                                 </el-table-column>
                                 <el-table-column class-name="no-wrap">
                                     <template slot-scope="data">
@@ -164,7 +164,7 @@
                 <el-table-column :label="$t('dashboard.debits.wallet')" class-name="no-wrap">
                     <template slot-scope="data">{{ data.row.payMethod === "none" ? "--" : data.row.payMethod }}</template>
                 </el-table-column>
-                <el-table-column :label="$t('dashboard.debits.stroagetraffic')" class-name="no-wrap">
+                <el-table-column :label="$t('dashboard.debits.storagetraffic')" class-name="no-wrap">
                     <template slot-scope="data">{{ data.row.storage | formatHourSize}} / {{ data.row.bandwidth | formatSize}}</template>
                 </el-table-column>
                 <el-table-column :label="$t('dashboard.debits.storagefee')" class-name="no-wrap">

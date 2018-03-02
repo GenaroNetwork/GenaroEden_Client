@@ -107,7 +107,7 @@ exports.default = {
         updatetime: '最新更新时间',
         pricemsg: '用户首次使用将免费获得25 GB空间一年使用权.详情请阅读资费说明.',
         time: '时间',
-        stroagetraffic: '存储 / 带宽占用',
+        storagetraffic: '存储 / 带宽占用',
         wallet: '钱包',
         storagefee: '存储费用',
         trafficfee: '带宽费用',

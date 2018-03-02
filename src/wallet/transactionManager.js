@@ -53,16 +53,16 @@ function getBalanceGnx(address) {
     return gnx.getBalance(address)
 }
 
-let GasPrice = 40
-function _getPrice() {
-    web3.eth.getGasPrice().then((p) => {
-        GasPrice = p
-    })
-}
-_getPrice()
-setInterval(_getPrice, 5000)
+// let GasPrice = 40
+// function _getPrice() {
+//     web3.eth.getGasPrice().then((p) => {
+//         GasPrice = p
+//     })
+// }
+// _getPrice()
+// setInterval(_getPrice, 5000)
 function getGasPrice() {
-    return GasPrice
+    return 40 // web3.eth.getGasPrice sometimes give very low value which will fail transaction. default to 40 now
 }
 
 async function getGasLimit() {
