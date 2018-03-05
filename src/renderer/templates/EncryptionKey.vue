@@ -57,83 +57,74 @@ div.key-area {
     <div class="content">
         <el-card v-if="showPage === 'newOrReturn'">
             <div class="navigation clearfix" slot="header">
-                <h1>Set Encryption Key</h1>
+                <h1>{{ $t('encryption.setkey') }}</h1>
             </div>
             <div class='newOrReturn'>
                 <img class="explain-img" src="~@/assets/img/key_generate.png">
                 <br>
-                <el-button type="primary" @click="gotoGenerate()" long>I'm a new user and I don't have an Encryption Key, generate now</el-button>
+                <el-button type="primary" @click="gotoGenerate()" long>{{ $t('encryption.nokey') }}</el-button>
                 <br>
-                <el-button type="text" @click="gotoInput()" long>I already have an Encryption Key, go to input</el-button>
+                <el-button type="text" @click="gotoInput()" long>{{ $t('encryption.havekey') }}</el-button>
             </div>
         </el-card>
         <el-card v-if="showPage === 'generate'">
             <div class="navigation clearfix" slot="header">
-                <el-button class="back-btn" type="text" @click="gotoNewOrReturn()" icon="el-icon-arrow-left">Back</el-button>
-                <h1>Set Encryption Key</h1>
+                <el-button class="back-btn" type="text" @click="gotoNewOrReturn()" icon="el-icon-arrow-left">{{ $t('common.back') }}</el-button>
+                <h1>{{ $t('encryption.setkey') }}</h1>
             </div>
             <div class='main-area'>
                 <div class="desc">
-                    <h2>Step 1.
-                        <strong>Generate a new Encryption Key</strong>
-                    </h2>
-                    <p>The Encryption Key is used to encrypt/decrypt your files. Once it's lost, so are your files. Please keep it safe and secret!</p>
+                    <span v-html="$t('encryption.genkeystep1')"></span>
                 </div>
 
                 <div class="key-area">
                     <p>{{encryptionKey}}</p>
                     <div class="key-action">
                         <el-button-group>
-                            <el-button @click="randomKey()" icon="el-icon-refresh" size="mini">ReGenarate Key</el-button>
-                            <el-button @click="saveKey()" icon="el-icon-download" size="mini">download</el-button>
-                            <el-button @click="copyKey()" size="mini">copy</el-button>
+                            <el-button @click="randomKey()" icon="el-icon-refresh" size="mini">{{ $t('encryption.regenkey') }}</el-button>
+                            <el-button @click="saveKey()" icon="el-icon-download" size="mini">{{ $t('dashboard.myfiles.download').toLocaleLowerCase() }}</el-button>
+                            <el-button @click="copyKey()" size="mini">{{ $t('menu.edit.copy').toLocaleLowerCase() }}</el-button>
                         </el-button-group>
                     </div>
                 </div>
                 <div class="action-area">
-                    <el-button type="primary" @click="gotoConfirmMatch()" long>I have written down my Encryption Key, Continue</el-button>
+                    <el-button type="primary" @click="gotoConfirmMatch()" long>{{ $t('encryption.keywrittendown') }}</el-button>
                 </div>
             </div>
         </el-card>
         <el-card v-if="showPage === 'confirm'">
             <div class="navigation clearfix" slot="header">
-                <el-button class="back-btn" type="text" @click="regenKey()" icon="el-icon-arrow-left">Back</el-button>
-                <h1>Set Encryption Key</h1>
+                <el-button class="back-btn" type="text" @click="regenKey()" icon="el-icon-arrow-left">{{ $t('common.back') }}</el-button>
+                <h1>{{ $t('encryption.setkey') }}</h1>
             </div>
             <div class="main-area">
                 <div class="desc">
-                    <h2>Step 2.
-                        <strong>Confirm Your Encryption Key</strong>
-                    </h2>
-                    <p>Please Retype your encryption key to confirm</p>
+                    <span v-html="$t('encryption.genkeystep2')"></span>
                 </div>
                 <div class="key-area">
-                    <el-input type="textarea" :rows="2" placeholder="Type your encryption key here to confirm" v-model="keyConfirm">
+                    <el-input type="textarea" :rows="2" :placeholder="$t('encryption.confirmmsg')" v-model="keyConfirm">
                     </el-input>
                 </div>
                 <div class="action-area">
-                    <el-button type="primary" @click="validateKeyMatchAndSubmit()" long>Continue</el-button>
+                    <el-button type="primary" @click="validateKeyMatchAndSubmit()" long>{{ $t('common.continue') }}</el-button>
                 </div>
             </div>
         </el-card>
         <el-card v-if="showPage === 'inputKey'">
             <div class="navigation clearfix" slot="header">
-                <el-button class="back-btn" type="text" @click="gotoNewOrReturn()" icon="el-icon-arrow-left">Back</el-button>
-                <h1>Set Encryption Key</h1>
+                <el-button class="back-btn" type="text" @click="gotoNewOrReturn()" icon="el-icon-arrow-left">{{ $t('common.back') }}</el-button>
+                <h1>{{ $t('encryption.setkey') }}</h1>
             </div>
             <div class='main-area'>
                 <div class="desc">
-                    <h2>
-                        <strong>input existing Encryption Key</strong>
-                    </h2>
-                    <p>Use existing Encryption Key to encrypt/decrypt files.</p>
+                    <span v-html="$t('encryption.inputexistingkey')"></span>                
                 </div>
                 <div class="key-area">
-                    <el-input type="textarea" :rows="2" placeholder="Your encryption key" v-model="encryptionKey">
+                    <el-input type="textarea" :rows="2" :placeholder="$t('encryption.yourkey')" v-model="encryptionKey">
                     </el-input>
                 </div>
                 <div class="action-area">
-                    <el-button type="primary" @click="confirm()" long>Continue</el-button>
+                    <el-button type="primary" @click="confirm()" long>{{ $t('common.continue') }}</el-button>
                 </div>
             </div>
         </el-card>
@@ -180,7 +171,7 @@ export default {
                 if (e.code === 1) {
                     this.submitLogin()
                 } else {
-                    this.$message.error('generate wallet error, ' + e.message || e)
+                    this.$message.error(this.$t('encryption.generrmsg', {errmsg: e.message || e}))
                 }
             })
         },
@@ -191,7 +182,7 @@ export default {
                 this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
                 console.error('bad key')
-                this.$message.error('Not a valid Encryption Key')
+                this.$message.error(this.$t('encryption.invalidkey'))
             }
         },
         regenKey() {
@@ -216,7 +207,7 @@ export default {
                 const pwd = this.$store.state.User.password
                 this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
-                this.$message.error('Your key does not match');
+                this.$message.error(this.$t('encryption.keymismatch'));
             }
         },
         submitLogin() {
@@ -243,7 +234,7 @@ export default {
                         if (err) {
                             return console.log(err);
                         }
-                        console.log("The key file was saved!");
+                        console.log(this.$t('encryption.savekey'));
                     });
                 }
             })

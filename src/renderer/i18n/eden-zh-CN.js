@@ -3,24 +3,53 @@
 exports.__esModule = true;
 exports.default = {
   common: {
-    login: {
-      signin: '登录',
-      signup: '注册',
-      reset: '重置密码',
-      usernameholder: '用户名',
-      passwordholder: '密码',
-      inputname:'请输入用户名',
-      emailerr:'邮箱格式错误',
-      inputpwd: '请输入密码',
-      pwdlength: '密码长度不能少于6位',
-      loginerr: '用户名或密码错误',
-      logout: '退出'
-    },
-    dialog: {
-      submit: '提交',
-      cancel: '取消',
-      next: '下一步'
-    }
+    signin: '登录',
+    signup: '注册',
+    reset: '重置密码',
+    usernameholder: '用户名',
+    passwordholder: '密码',
+    inputname:'请输入用户名',
+    emailerr:'邮箱格式错误',
+    inputpwd: '请输入密码',
+    pwdlength: '密码长度不能少于6位',
+    loginerr: '用户名或密码错误',
+    logout: '退出',
+    register: '注册Genaro账号',
+    emailholder: '邮件地址',
+    confirmholder: '请确认密码',
+    newpasswordholder: '新密码',
+    walletpwd: '钱包密码',
+    newconfirmholder: '确认新密码',
+    inputpwdagain: '请再次输入您的密码',
+    newpwdagain: '再次输入新密码',
+    resetsuccess: '重置成功',
+    pwdmismatch: '两次输入的密码不一致!',
+    activateemail: '已向<{user}>发送了一封邮件,请根据邮件中的步骤激活您的账户，并重新登录.',
+    registersuccess: '注册成功',
+    registererr: '注册失败',
+    userexist: '用户名已被占用',
+    currentversion: '当前版本',
+    checkupdate: '新版本检测',
+    havenewversion: '有新版本',
+    downloading: '正在下载',
+    downloaded: '下载完成',
+    downloadfail: '下载失败',
+    lastestversion: '最新版本',
+    later: '稍后',
+    now: '立即',
+    downloadingupdate: '正在下载更新。',
+    needrestart: '下载完成后需重启 Eden 客户端安装.',
+    torestart: '重启客户端完成更新',
+    exittasks: '安装更新需要退出当前任务',
+    submit: '提交',
+    next: '下一步',
+    delete: '删除',
+    continue: '继续',
+    back: '返回',
+    done: '完成',
+    choose: '请选择',
+    close: '关闭',
+    error: '错误'
   },
   dashboard: {
     myfiles: {
@@ -28,30 +57,46 @@ exports.default = {
       folder: '文件夹',
       create: '新建文件夹',
       foldername: '文件夹名称',
-      deleteconfirm: {
-        delete: '删除',
-        cancel: '取消',
-        title: '确定要删除文件夹: {name}', // 翻译时，{name}是调用参数，请保留原样，不要翻译
-        message: '文件夹 {name} 中所有文件都会被删除. 文件删除后将无法恢复.' // 翻译时，{name}是调用参数，请保留原样，不要翻译
-      },
+      folderdelsucc: '文件夹成功删除',
+      delconfirmtitle: '确定要删除文件夹: {name}',
+      delconfirmmessage: '文件夹 {name} 中所有文件都会被删除. 文件删除后将无法恢复.',
       fileid: '文件ID',
       download: '下载',
+      downloadfile: '下载文件',
+      downloadfilesucc: '文件: {filename}下载完成',
+      downloadfileerr: '文件下载出错: {errmsg}',
       delete: '删除',
+      deletefile: '删除文件',
+      filedeled: '文件已删除',
+      filedelerr: '文件删除出错: {error}',
       upload: '上传',
       emptyfilemsg: '空文件夹. <br>点击' + 
                     '<el-button type="text" @click="upload" size="small">上传' +
                       '<i class="el-icon-upload el-icon--right"></i>' +
-                    '</el-button> 按钮或拖拽文件到此处上传文件.'
+                    '</el-button> 按钮或拖拽文件到此处上传文件.',
+      droptouploadfiles: '拖拽文件上传到{bucketName}',
+      defaultpaymsg: '请先设置默认的支付钱包.',
+      selectfile: '请先选择文件',
+      confirmdelmsg1: '确定删除选定的文件吗',
+      confirmdelmsg2: '确定删除文件: {filename}',
+      uploadmsg: '仅支持上传文件. {filename}并不是一个文件.',
+      fileexist: '文件{filename}已存在.',
+      fileuploading: '文件{fileName}正在上传中. 你可以在左侧的最近任务面板中查看该任务的状态.',
+      fileuploaded: '文件已上传至: {filePath}',
+      fileuploaderr: '文件上传失败: {errmsg}'
     },
     recent: {
       recent: '操作记录',
       runningtask: '正在进行的任务',
       history: '历史记录',
       filename: '文件名',
+      filepath: 'File Path',
       size: '文件大小',
       created: '创建日期',
       folder: '此文件所属文件夹',
-      tip1: '无上传/下载记录'
+      tip1: '无上传/下载记录',
+      filenotexist: '文件不存在，可能已被删除或移动.',
+      foldernotexist: '文件夹{folderName}不存在.'
     },
     mywallet: {
       mywallet: '我的钱包',
@@ -64,9 +109,12 @@ exports.default = {
       from: '发出地址',
       to: '接收地址',
       amount: '数量',
-      recipientaddress:"接收地址", // the word 'Recippient' is written wrong?
+      recipientaddress:"接收地址",
       ETH: 'ETH',
       GNX: 'GNX',
+      paylimitGNX: 'GNX付款限额',
+      maxGNX: '允许的最大GNX',
+      setaspay: '设置为付款钱包',
       gasprice: ' 燃料价格 (Gwei)',
       gaspriceholder: '输入Gas',
       gaslimit: '燃料供给上限 (Unit)',
@@ -84,14 +132,14 @@ exports.default = {
       amountmsg: '请输入数量',
       transactionsubmitted: '交易已提交',
       createtransactionerr: '交易失败',
-      tip1: '复制地址',
-      tip2: '尚无交易记录',
-      tip3: '地址已复制到剪贴板.'
+      copyaddress: '复制地址',
+      notransactions: '尚无交易记录',
+      addresscopied: '地址已复制到剪贴板.'
     },
     walletmanage: {
       walletmanage: '管理我的钱包',
       importwallet: '导入钱包',
-      import: '导入{name}', // 翻译时，{name}是调用参数，请保留原样，不要翻译
+      import: '导入{name}',
       uploadjson: '上传JSON文件',
       deletewallet: '删除钱包',
       changepassword: '修改（钱包）密码',
@@ -125,7 +173,7 @@ exports.default = {
     edit: {
       edit: '编辑',
       undo: '撤消',
-      redo: 'Redo',
+      redo: '重做',
       cut: '剪切',
       copy: '复制',
       paste: '粘贴',
@@ -157,5 +205,30 @@ exports.default = {
       quit: '退出',
       front: '前端显示'
     }
+  },
+  encryption: {
+    setkey: '设置密钥',
+    nokey: "我是新用户，没有密钥.立即生成密钥.",
+    havekey: '我已有一个密钥，输入密钥',
+    regenkey: '重新生成密钥',
+    genkeystep1: "<h2>步骤1.\
+                    <strong>生成新密钥</strong>\
+                  </h2>\
+                  <p>密钥是用来对你的文件进行加密和解密的.密钥一旦丢失，你的所有文件也将丢失.请务必保证密钥安全并注意保密!</p>",
+    genkeystep2: "<h2>步骤2.\
+                    <strong>确认你的密钥</strong>\
+                  </h2>\
+                  <p>请再次输入你的密钥以确认</p>",
+    inputexistingkey: "<h2>\
+                        <strong>输入已有的密钥</strong>\
+                      </h2>\
+                      <p>使用已有的密钥来对文件进行加密和解密.</p>",
+    keywrittendown: '我已确认记下我的密钥, 继续下一步',
+    confirmmsg: '在此输入你的密钥以确认',
+    yourkey: '你的密钥',
+    generrmsg: '产生密钥出错: {errmsg}',
+    invalidkey: '不是一个有效的密钥',
+    keymismatch: '你的密钥不匹配',
+    savekey: '保存密钥'
   }
 };

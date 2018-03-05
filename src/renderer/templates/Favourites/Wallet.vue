@@ -268,7 +268,7 @@
                     </el-form-item>
                     <el-form-item prop="amount">
                         <el-input type="number" v-model="payOption.amount" :placeholder="$t('dashboard.mywallet.amount')" size="mini" min="0">
-                            <el-select v-model="payOption.payType" placeholder="Please choose" slot="append">
+                            <el-select v-model="payOption.payType" :placeholder="$t('common.choose')" slot="append">
                                 <el-option key="ETH" :label="$t('dashboard.mywallet.ETH')" value="ETH"></el-option>
                                 <el-option key="GNX" :label="$t('dashboard.mywallet.GNX')" value="GNX"></el-option>
                             </el-select>
@@ -283,7 +283,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="nextStep" type="primary">{{ $t('common.dialog.next') }}</el-button>
+                        <el-button @click="nextStep" type="primary">{{ $t('common.next') }}</el-button>
                     </el-form-item>
                 </template>
                 <template v-if="payStep === 1">
@@ -304,8 +304,8 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="payFormPop = false">{{ $t('common.dialog.cancel') }}</el-button>
-                        <el-button @click="pay()" type="primary">{{ $t('common.dialog.submit') }}</el-button>
+                        <el-button @click="payFormPop = false">{{ $t('el.messagebox.cancel') }}</el-button>
+                        <el-button @click="pay()" type="primary">{{ $t('common.submit') }}</el-button>
                     </el-form-item>
                 </template>
             </el-form>
@@ -319,7 +319,7 @@
                 <img :src="'qr://' + wallet.address">
                 <div class="actions">
                     <el-button class="btn" size="small" @click="depositPop=false">{{ $t('el.messagebox.cancel') }}</el-button>
-                    <el-button class="btn" type="primary" size="small" @click="copy(wallet.address)">{{ $t('dashboard.mywallet.tip1') }}</el-button>
+                    <el-button class="btn" type="primary" size="small" @click="copy(wallet.address)">{{ $t('dashboard.mywallet.copyaddress') }}</el-button>
                 </div>
             </div>
         </el-popover>
@@ -330,7 +330,7 @@
             <div class="balance gnx">
                 <div>
                     <span :title="balanceGnx">{{balanceGnx | wei2gnx}}</span>
-                    <span class="unit"> GNX</span>
+                    <span class="unit">{{ $t('dashboard.mywallet.GNX') }}</span>
                 </div>
                 <!-- <div>≈${{ dollarGnx }}</div> -->
             </div>
@@ -338,7 +338,7 @@
             <div class="balance eth">
                 <div>
                     <span :title="balanceEth">{{balanceEth | wei2eth | numslice}}</span>
-                    <span class="unit"> ETH</span>
+                    <span class="unit">{{ $t('dashboard.mywallet.ETH') }}</span>
                 </div>
                 <!-- <div>≈${{ dollarEth }}</div> -->
             </div>
@@ -362,7 +362,7 @@
                     <div>
                         <span :title="wallet.address">0x{{wallet.address}}</span>
                         <span class="copy">
-                            <el-tooltip :value="copiedPopup" :content="$t('dashboard.mywallet.tip3')" placement="bottom" :manual="true">
+                            <el-tooltip :value="copiedPopup" :content="$t('dashboard.mywallet.addresscopied')" placement="bottom" :manual="true">
                                 <i class="material-icons" @click="copy(wallet.address)" @mouseleave="copiedPopup=false">content_copy</i>
                             </el-tooltip>
                         </span>
@@ -414,7 +414,7 @@
                 <el-table-column prop="recipient" :label="$t('dashboard.mywallet.to')" class-name="no-wrap" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="amount" :label="$t('dashboard.mywallet.amount')" class-name="no-wrap"></el-table-column>
                 <el-table-column prop="payType" label="Token" class-name="no-wrap"></el-table-column>
-                <span slot="empty">{{ $t('dashboard.mywallet.tip2') }}</span>
+                <span slot="empty">{{ $t('dashboard.mywallet.notransactions') }}</span>
             </el-table>
         </div>
     </div>
@@ -543,10 +543,10 @@ export default {
                     { validator: validator.gasLimit, trigger: "blur" }
                 ],
                 password: [
-                    { required: true, message: this.$t("common.login.inputpwd"), trigger: "blur" },
+                    { required: true, message: this.$t("common.inputpwd"), trigger: "blur" },
                     {
                         min: 6,
-                        message: this.$t("common.login.pwdlength"),
+                        message: this.$t("common.pwdlength"),
                         trigger: "blur"
                     }
                 ]

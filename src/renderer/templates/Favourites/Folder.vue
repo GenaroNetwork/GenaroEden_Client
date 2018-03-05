@@ -159,7 +159,7 @@ td.right-td {
             <div class="overlay" v-show="dragging">
                 <div>
                     <i class="el-icon-upload el-icon--right"></i>
-                    <h2>drop to upload your files to {{bucketName}}</h2>
+                    <h2>{{ $t('dashboard.myfiles.droptouploadfiles', {bucketName: bucketName}) }}</h2>
                 </div>
             </div>
         </div>
@@ -182,8 +182,8 @@ td.right-td {
                 </table>
             </div>
             <div slot="footer">
-                <el-button type="primary" size="large" @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Download File</el-button>
-                <el-button type="error" size="large" @click="deleteFile({filename: receiptModal.fileName, id: receiptModal.fileId})">Delete File</el-button>
+                <el-button type="primary" size="large" @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">{{ $t('dashboard.myfiles.downloadfile') }}</el-button>
+                <el-button type="error" size="large" @click="deleteFile({filename: receiptModal.fileName, id: receiptModal.fileId})">{{ $t('dashboard.myfiles.deletefile') }}</el-button>
             </div>
         </el-dialog>
     </div>
@@ -271,7 +271,7 @@ export default {
                 }
             })
             if (!data.data.wallet) {
-                this.$alert("Please set default payment wallet first.", "Error", {
+                this.$alert(this.$t('dashboard.myfiles.defaultpaymsg'), this.$t('common.error'), {
                     type: "error"
                 });
                 throw (error);
@@ -292,12 +292,12 @@ export default {
         },
         async deleteSelected() {
             if (!this.anyRowSelected) {
-                this.$message('Please select file first');
+                this.$message(this.$t('dashboard.myfiles.selectfile'));
                 return;
             }
-            await this.$confirm('Are you sure to delete selected files', 'Confirm', {
-                confirmButtonText: 'Delete',
-                cancelButtonText: 'Cancel',
+            await this.$confirm(this.$t('dashboard.myfiles.confirmdelmsg1'), 'Confirm', {
+                confirmButtonText: this.$t('common.delete'),
+                cancelButtonText: this.$t('el.messagebox.cancel'),
                 type: 'warning'
             });
 
@@ -308,11 +308,11 @@ export default {
         },
         async deleteFile({ filename, id }) {
             await this.$confirm(
-                `Are you sure to delete file: ${filename}`,
+                this.$t('dashboard.myfiles.confirmdelmsg2', { filename: filename }),
                 'Confirm',
                 {
-                    confirmButtonText: 'Delete',
-                    cancelButtonText: 'Cancel',
+                    confirmButtonText: this.$t('common.delete'),
+                    cancelButtonText: this.$t('el.messagebox.cancel'),
                     type: 'warning'
                 });
             this.closeReceipt();
@@ -321,15 +321,15 @@ export default {
         async deleteRow({ fileId }) {
             try {
                 await this.$store.dispatch('fileListDelete', { fileId });
-                this.$message.success('File Deleted');
+                this.$message.success(this.$t('dashboard.myfiles.filedeled'));
             } catch (error) {
-                this.$message.error(`File Delete Error: ${error}`);
+                this.$message.error(this.$t('dashboard.myfiles.filedelerr', { error: error }));
             }
 
         },
         async downloadSelected() {
             if (!this.anyRowSelected) {
-                this.$message('Please select file first');
+                this.$message(this.$t('dashboard.myfiles.selectfile'));
                 return;
             }
             await this.checkDebit();
@@ -344,9 +344,9 @@ export default {
                             filePath: folderPath + '/' + file.filename,
                             folderName: this.bucketName,
                         });
-                        this.$message.success(`File Download Success: ${file.filename}`);
+                        this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: file.filename }));
                     } catch (err) {
-                        this.$message.error(`File Download Error: ${err.message}`);
+                        this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }));
                     }
                 })
             })
@@ -366,16 +366,16 @@ export default {
                     filePath: filePath,
                     folderName: this.bucketName,
                 }).then(() => {
-                    this.$message.success(`File Download Success: ${filename}`);
+                    this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: filename }));
                 }).catch((err) => {
-                    this.$message.error(`File Download Error: ${err.message}`);
+                    this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }));
                 });
             })
         },
         // Bucket 删除操作
         async deleteBucket() {
             await this.$store.dispatch('bucketListDelete', { bucketId: this.bucketId })
-            this.$message.success('Folder Delete Success');
+            this.$message.success(this.$t('dashboard.myfiles.folderdelsucc'));
         },
         fileDragOver(e) {
             // TODO: check contain file
@@ -401,6 +401,11 @@ export default {
             await this.rawUpload(bucketId, files);
         },
         async rawUpload(bucketId, files) {
+<<<<<<< HEAD
+=======
+
+            let thisVue = this;
+>>>>>>> 06093fbe9d3d29f72b970a8428c534fa4e5fc3ab
             await this.checkDebit();
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
@@ -416,7 +421,7 @@ export default {
 
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: `Only file can be uploaded. ${file} is not a file.`,
+                        message: thisVue.$t('dashboard.myfiles.uploadmsg', { filename: file }),
                     }), 0);
                     return;
                 }
@@ -424,7 +429,7 @@ export default {
                 if (fileList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: `File ${filename} is already exists.`,
+                        message: thisVue.$t('dashboard.myfiles.fileexist', { filename: filename }),
                     }), 0);
                     return;
                 };
@@ -432,7 +437,7 @@ export default {
                 if (uploadTaskList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: `File ${filename} is already exists.`,
+                        message: thisVue.$t('dashboard.myfiles.fileexist', { filename: filename }),
                     }), 0);
                     return;
                 };
@@ -447,17 +452,17 @@ export default {
                     fileName = fileName[fileName.length - 1];
                     setTimeout(() => this.$notify.info({
                         title: "Info",
-                        message: `File ${fileName} Uploading. You can see this task in Recent panel on the left.`,
+                        message: thisVue.$t('dashboard.myfiles.fileuploading', { filename: fileName }),
                     }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
                         bucketId,
                         folderName: this.bucketName,
                     });
-                    this.$message.success(`File Uploaded: ${filePath}`);
+                    this.$message.success(thisVue.$t('dashboard.myfiles.fileuploaded', { filePath: filePath }));
                     console.log(this.fileList);
                 } catch (error) {
-                    this.$message.error(`File Upload Failed: ${error.message}`);
+                    this.$message.error(thisVue.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));
                 };
             });
         },

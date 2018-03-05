@@ -75,10 +75,10 @@
                         <template slot-scope="scope">
                             <div class="action-cell">
                                 <el-button v-if="scope.row.taskState === TASK_STATE.INPROGRESS" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
-                                    <i class="material-icons">cancel</i>
+                                    <i class="material-icons">{{ $t('el.messagebox.cancel').toLocaleLowerCase() }}</i>
                                 </el-button>
                                 <el-button v-if="scope.row.taskState !== TASK_STATE.INPROGRESS" class="row-action" @click="removeTask(scope.row)" type="text" size="small">
-                                    <i class="material-icons">close</i>
+                                    <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
                                 </el-button>
                             </div>
                         </template>
@@ -114,7 +114,7 @@
                                     <i class="material-icons">folder</i>
                                 </el-button>
                                 <el-button class="row-action" @click="removeTask(scope.row)" type="text" size="small">
-                                    <i class="material-icons">close</i>
+                                    <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
                                 </el-button>
                             </div>
                         </template>
@@ -140,15 +140,15 @@ export default {
             TASK_STATE,
             TASK_TYPE,
             fileTableColums: [{
-                title: 'File Name',
+                title: this.$t('dashboard.recent.filename'),
                 key: 'filename',
                 width: 230
             }, {
-                title: 'File Path',
+                title: this.$t('dashboard.recent.filepath'),
                 key: 'filePath',
                 width: 230
             }, {
-                title: 'Folder Name',
+                title: this.$t('dashboard.myfiles.foldername'),
                 key: 'bucketName',
                 width: 230
             }]
@@ -198,7 +198,7 @@ export default {
                 if (fs.existsSync(item.filePath)) {
                     shell.showItemInFolder(item.filePath)
                 } else {
-                    this.$message('File no more exist. Maybe deleted or moved.');
+                    this.$message(this.$t('dashboard.recent.filenotexist'));
                 }
             } else if (item.taskType === TASK_TYPE.UPLOAD) {
                 let bucketList = this.$store.state.BucketList.buckets;
@@ -209,7 +209,7 @@ export default {
                     return false;
                 });
                 if (bucketExist) this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } });
-                else this.$message.error(`Folder ${item.folderName} does not exist.`);
+                else this.$message.error(this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}));
             }
         },
         cancelTask(item) {

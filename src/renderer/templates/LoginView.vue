@@ -72,19 +72,19 @@ h1 {
             </div>
             <el-form ref="login" :model="login" :rules="ruleInline">
                 <el-form-item prop="username">
-                    <el-input type="text" v-model="login.username" :placeholder="$t('common.login.usernameholder')">
+                    <el-input type="text" v-model="login.username" :placeholder="$t('common.usernameholder')">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="login.password" :placeholder="$t('common.login.passwordholder')">
+                    <el-input type="password" v-model="login.password" :placeholder="$t('common.passwordholder')">
                     </el-input>
                 </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">{{ $t("common.login.signin") }}</el-button>
+                        <el-button @click="submitLogin()" class="sign-in" type="primary" :loading="signing">{{ $t("common.signin") }}</el-button>
                     </el-form-item>
-                    <router-link class="otherlink pull-left" to="register">{{ $t("common.login.signup") }}</router-link>
-                    <router-link class="otherlink pull-right" to="password-reset">{{ $t("common.login.reset") }}</router-link>
+                    <router-link class="otherlink pull-left" to="register">{{ $t("common.signup") }}</router-link>
+                    <router-link class="otherlink pull-right" to="password-reset">{{ $t("common.reset") }}</router-link>
                 </div>
             </el-form>
         </el-card>
@@ -124,12 +124,12 @@ export default {
             },
             ruleInline: {
                 username: [
-                    { required: true, message: this.$t("common.login.inputname"), trigger: 'blur' },
-                    { type: 'email', message: this.$t("common.login.emailerr"), trigger: 'blur' }
+                    { required: true, message: this.$t("common.inputname"), trigger: 'blur' },
+                    { type: 'email', message: this.$t("common.emailerr"), trigger: 'blur' }
                 ],
                 password: [
-                    { required: true, message: this.$t("common.login.inputpwd"), trigger: 'blur' },
-                    { type: 'string', min: 6, message: this.$t("common.login.pwdlength"), trigger: 'blur' }
+                    { required: true, message: this.$t("common.inputpwd"), trigger: 'blur' },
+                    { type: 'string', min: 6, message: this.$t("common.pwdlength"), trigger: 'blur' }
                 ]
             },
             signing: false
@@ -155,7 +155,7 @@ export default {
                         })
                         .catch(err => {
                             console.log(err);
-                            this.$message.error(this.$t("common.login.loginerr"));
+                            this.$message.error(this.$t("common.loginerr"));
                         });
                     this.signing = false;
                 }

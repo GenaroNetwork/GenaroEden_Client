@@ -215,41 +215,41 @@
         </el-dialog>
 
         <!-- reset Password dialog -->
-        <el-dialog title="Reset Password" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('resetPassword')">
+        <el-dialog :title="$t('common.reset')" :visible.sync="changePass.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('resetPassword')">
             <el-form ref="changePassFormRef" :model="changePass" :rules="ruleInline">
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="changePass.password" placeholder="Wallet Password" size="small">
+                    <el-input type="password" v-model="changePass.password" :placeholder="$t('dashboard.mywallet.walletpassword')" size="small">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="newPassword">
-                    <el-input type="password" v-model="changePass.newPassword" placeholder="New Password" size="small">
+                    <el-input type="password" v-model="changePass.newPassword" :placeholder="$t('common.newpasswordholder')" size="small">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="newPasswordRepeat">
-                    <el-input type="password" v-model="changePass.newPasswordRepeat" placeholder="New Password Again" size="small">
+                    <el-input type="password" v-model="changePass.newPasswordRepeat" :placeholder="$t('common.newpwdagain')" size="small">
                     </el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer">
-                <el-button @click="resetPasswordForm()" :loading="false">Cancel</el-button>
-                <el-button @click="submitChangePassword()" type="primary">Submit</el-button>
+                <el-button @click="resetPasswordForm()" :loading="false">{{ $t('el.messagebox.cancel') }}</el-button>
+                <el-button @click="submitChangePassword()" type="primary">{{ $t('common.submit') }}</el-button>
             </div>
         </el-dialog>
 
         <!-- submit payment -->
-        <el-dialog title="Set As Paying Wallet" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('submitPayment')">
+        <el-dialog :title="$t('dashboard.mywallet.setaspay')" :visible.sync="submitPay.show" width="590px" :close-on-click-modal="true" center @close="clearDialog('submitPayment')">
             <el-form ref="submitPayFormRef" :model="submitPay" :rules="ruleInline">
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="submitPay.password" placeholder="Wallet Password" size="small">
+                    <el-input type="password" v-model="submitPay.password" :placeholder="$t('dashboard.mywallet.walletpassword')" size="small">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="Pay limit in GNX" prop="amount">
-                    <el-input type="number" v-model="submitPay.amount" placeholder="Max GNX approve" size="small">
+                <el-form-item :label="$t('dashboard.mywallet.paylimitGNX')" prop="amount">
+                    <el-input type="number" v-model="submitPay.amount" :placeholder="$t('dashboard.mywallet.maxGNX')" size="small">
                     </el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer">
-                <el-button @click="setAsPayingWallet()" type="primary">Submit</el-button>
+                <el-button @click="setAsPayingWallet()" type="primary">{{ $t('common.submit') }}</el-button>
             </div>
         </el-dialog>
 
@@ -262,8 +262,8 @@
                 </div>
                 <el-input type="password" v-model="importV3WalletDialog.password" :placeholder="$t('dashboard.walletmanage.placeholder1')" size="small"></el-input>
                 <div slot="footer">
-                    <el-button @click="importV3Wallet().cancel($event)">{{ $t('common.dialog.cancel') }}</el-button>
-                    <el-button @click="importV3Wallet().submit($event)" type="primary">{{ $t('common.dialog.submit') }}</el-button>
+                    <el-button @click="importV3Wallet().cancel($event)">{{ $t('el.messagebox.cancel') }}</el-button>
+                    <el-button @click="importV3Wallet().submit($event)" type="primary">{{ $t('common.submit') }}</el-button>
                 </div>
             </template>
             <template v-else>
@@ -271,7 +271,7 @@
                     <i class="material-icons">check_circle</i>
                 </div>
                 <div slot="footer">
-                    <el-button @click="importV3Wallet().cancel($event)" type="primary">done</el-button>
+                    <el-button @click="importV3Wallet().cancel($event)" type="primary">{{ $t('common.done') }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -416,9 +416,9 @@ export default {
                     {
                         validator: (rule, value, callback) => {
                             if (value === "") {
-                                callback(new Error("Please enter your password again"));
+                                callback(new Error(this.$t('common.inputpwdagain')));
                             } else if (value !== this.changePass.newPassword) {
-                                callback(new Error("The two input passwords do not match!"));
+                                callback(new Error(this.$t('common.pwdmismatch')));
                             } else {
                                 callback();
                             }
@@ -501,8 +501,8 @@ export default {
         async forgetWallet(item) {
             this.passwordError.deleteWallet = null;
             let value = await this.$prompt("Password (of wallet):", "Delete Wallet", {
-                confirmButtonText: "OK",
-                cancelButtonText: "Cancel",
+                confirmButtonText: this.$t('el.messagebox.confirm'),
+                cancelButtonText: this.$t('el.messagebox.cancel'),
                 inputType: "password",
             });
             try {
@@ -551,7 +551,7 @@ export default {
         exportWalletV3: async function (item) {
             this.$prompt("Password:", "Export Wallet", {
                 confirmButtonText: "Export",
-                cancelButtonText: "Cancel",
+                cancelButtonText: this.$t('el.messagebox.cancel'),
                 inputType: "password"
             }).then(async ({ value }) => {
                 const passwordOk = await walletManager.validateWalletPassword(

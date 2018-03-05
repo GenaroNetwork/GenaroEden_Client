@@ -68,12 +68,12 @@
                             <div slot="content">
                                 <p>Are you sure to delete?</p>
                                 <div style="text-align: right; margin: 0">
-                                    <el-button size="mini" type="text" @click="deleteTaskId = null">取消</el-button>
-                                    <el-button type="primary" size="mini" @click="removeTask(scope.row)">确定</el-button>
+                                    <el-button size="mini" type="text" @click="deleteTaskId = null">{{ $t('el.messagebox.cancel') }}</el-button>
+                                    <el-button type="primary" size="mini" @click="removeTask(scope.row)">{{ $t('el.messagebox.confirm') }}</el-button>
                                 </div>
                             </div>
                             <el-button class="row-action" type="text" size="small" @click="deleteTaskId = scope.row.taskId">
-                                <i class="material-icons">close</i>
+                                <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
                             </el-button>
                             {{scope.row}}
                         </el-tooltip>
@@ -99,15 +99,15 @@ export default {
             TASK_TYPE,
             deleteTaskId: null,
             fileTableColums: [{
-                title: 'File Name',
+                title: this.$t('dashboard.recent.filename'),
                 key: 'filename',
                 width: 230
             }, {
-                title: 'File Path',
+                title: this.$t('dashboard.recent.filepath'),
                 key: 'filePath',
                 width: 230
             }, {
-                title: 'Folder Name',
+                title: this.$t('dashboard.myfiles.foldername'),
                 key: 'bucketName',
                 width: 230
             }]
@@ -157,7 +157,7 @@ export default {
                 if (fs.existsSync(item.filePath)) {
                     shell.showItemInFolder(item.filePath)
                 } else {
-                    this.$message('File no more exist. Maybe deleted or moved.');
+                    this.$message(this.$t('dashboard.recent.filenotexist'));
                 }
             } else if (item.taskType === TASK_TYPE.UPLOAD) {
                 let bucketList = this.$store.state.BucketList.buckets;
@@ -168,7 +168,7 @@ export default {
                     return false;
                 });
                 if (bucketExist) this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } });
-                else this.$message.error(`Folder ${item.folderName} does not exist.`);
+                else this.$message.error(this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}));
             }
         },
         cancelTask(item) {

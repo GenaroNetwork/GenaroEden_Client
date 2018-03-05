@@ -35,27 +35,27 @@ h1 {
         <el-card class="box-card">
             <div class='login-center'>
                 <span><img id="logo" src="~@/assets/img/logo.png"></span>
-                <h1>Register Genaro Account</h1>
+                <h1>{{ $t("common.register") }}</h1>
             </div>
             <el-form ref="register" :model="register" :rules="ruleInline">
                 <el-form-item prop="username">
-                    <el-input type="text" v-model="register.username" placeholder="Your email">
+                    <el-input type="text" v-model="register.username" :placeholder="$t('common.emailholder')">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="register.password" placeholder="Password">
+                    <el-input type="password" v-model="register.password" :placeholder="$t('common.passwordholder')">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="passwordCheck">
-                    <el-input type="password" v-model="register.passwordCheck" placeholder="Confirm Your Password">
+                    <el-input type="password" v-model="register.passwordCheck" :placeholder="$t('common.confirmholder')">
                     </el-input>
                 </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button class="main-btn" type="primary" @click="submitSignup()" :loading="processing">Sign Up</el-button>
+                        <el-button class="main-btn" type="primary" @click="submitSignup()" :loading="processing">{{ $t("common.signup") }}</el-button>
                     </el-form-item>
                     <router-link class="otherlink pulled-left" to="/">
-                        <i class="el-icon-arrow-left"></i>Sign In</router-link>
+                        <i class="el-icon-arrow-left"></i>{{ $t("common.signin") }}</router-link>
                 </div>
             </el-form>
         </el-card>
@@ -82,19 +82,19 @@ export default {
             },
             ruleInline: {
                 username: [
-                    { required: true, message: 'Please input username', trigger: 'blur' },
-                    { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+                    { required: true, message: this.$t('common.inputname'), trigger: 'blur' },
+                    { type: 'email', message: this.$t("common.emailerr"), trigger: 'blur' }
                 ],
                 password: [
-                    { required: true, message: 'Please input password', trigger: 'blur' },
-                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    { required: true, message: this.$t("common.inputpwd"), trigger: 'blur' },
+                    { type: 'string', min: 6, message: this.$t("common.pwdlength"), trigger: 'blur' }
                 ],
                 passwordCheck: [
                     {                        validator: (rule, value, callback) => {
                             if (value === '') {
-                                callback(new Error('Please enter your password again'));
+                                callback(new Error(this.$t('common.inputpwdagain')));
                             } else if (value !== this.register.password) {
-                                callback(new Error('The two input passwords do not match!'));
+                                callback(new Error(this.$t('common.pwdmismatch')));
                             } else {
                                 callback();
                             }
@@ -113,18 +113,18 @@ export default {
                     var bridgePass = this2.register.password
                     register(bridgeUser, bridgePass).then(result => {
                         this2.processing = false
-                        this.$alert('A mail has been sent to <' + bridgeUser + '>, please follow the instructions in the email to activate your account before login.', 'Register Success', {
+                        this.$alert(this.$t('common.activateemail', {user: bridgeUser}), this.$t('common.registersuccess'), {
                             type: 'success',
-                            confirmButtonText: 'OK',
+                            confirmButtonText: this.$t('el.messagebox.confirm'),
                             callback: action => {
                                 this2.$router.push('/')
                             }
                         })
                     }).catch(err => {
                         this2.processing = false
-                        this.$alert('User already exists', 'Register Error', {
+                        this.$alert(this.$t('common.userexist'), this.$t('common.registererr'), {
                             type: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: this.$t('el.messagebox.confirm')
                         })
                     })
                 }
