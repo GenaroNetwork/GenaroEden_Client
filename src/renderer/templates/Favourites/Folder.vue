@@ -449,7 +449,7 @@ export default {
                     fileName = fileName[fileName.length - 1];
                     setTimeout(() => this.$notify.info({
                         title: "Info",
-                        message: thisVue.$t('dashboard.myfiles.fileuploading', {filename: filename}),
+                        message: thisVue.$t('dashboard.myfiles.fileuploading', {filename: fileName}),
                     }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
