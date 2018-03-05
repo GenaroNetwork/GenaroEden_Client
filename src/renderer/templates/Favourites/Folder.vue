@@ -283,8 +283,8 @@ export default {
                         password: storj.utils.sha256(this.$store.state.User.password),
                     }
                 });
-            if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
-                this.$alert("Please set default payment wallet first.", "Error", {
+            if (payTransaction.data.Data[0] && payTransaction.data.Data[0].state === "fail") {
+                this.$alert("There are billings that failed to pay.", "Error", {
                     type: "error"
                 });
                 throw (error);
@@ -401,7 +401,6 @@ export default {
             await this.rawUpload(bucketId, files);
         },
         async rawUpload(bucketId, files) {
-
             await this.checkDebit();
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();

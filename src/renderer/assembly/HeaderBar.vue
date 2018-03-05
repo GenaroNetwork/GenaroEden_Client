@@ -163,6 +163,11 @@ export default {
     },
     methods: {
         async logout() {
+            await this.$confirm('确定退出客户端?', '提示', {
+                confirmButtonText: '退出',
+                cancelButtonText: '取消',
+                type: 'warning'
+            });
             await deleteCredentials();
             await walletManager.clearWallets();
             this.$router.push({ path: '/' });

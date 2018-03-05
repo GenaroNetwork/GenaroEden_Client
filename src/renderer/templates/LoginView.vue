@@ -1,4 +1,4 @@
-<style scoped>
+<style scoped lang="less">
 .text {
   font-size: 14px;
 }
@@ -43,6 +43,13 @@
 }
 h1 {
   padding: 10px;
+  font-style: italic;
+  font-size: 20px;
+  font-weight: 400;
+  span {
+    font-weight: 200;
+    font-style: normal;
+  }
 }
 .sign-in {
   width: 100%;
@@ -59,7 +66,9 @@ h1 {
         <el-card class="box-card">
             <div class='login-center'>
                 <span><img id="logo" src="~@/assets/img/logo.png"></span>
-                <h1>Genaro</h1>
+                <h1>Genaro
+                    <span>Eden</span>
+                </h1>
             </div>
             <el-form ref="login" :model="login" :rules="ruleInline">
                 <el-form-item prop="username">

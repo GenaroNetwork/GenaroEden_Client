@@ -218,7 +218,6 @@ class DownloadTask extends Task {
             this.progress = 1;
             this.taskState = TASK_STATE.SUCCESS;
             this.emit("load");
-            log.log("Download file completed.", err);
         }
     };
     static cancel(state) {

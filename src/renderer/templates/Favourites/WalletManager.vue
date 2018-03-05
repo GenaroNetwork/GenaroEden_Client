@@ -367,7 +367,7 @@ export default {
                 password: storj.utils.sha256(this.$store.state.User.password),
             }
         });
-        this.$store.dispatch("walletListSetPayment", { address: data.data.wallet });
+        // this.$store.dispatch("walletListSetPayment", { address: data.data.wallet });
     },
     mounted: function () {
         // init balance
