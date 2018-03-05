@@ -24,7 +24,6 @@ require('electron').ipcRenderer.on('locale-language', (event, lang) => {
 })
 Vue.prototype.$http = axios
 
-
 /* import vue filters */
 import filters from "./filter"
 

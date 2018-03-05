@@ -401,11 +401,6 @@ export default {
             await this.rawUpload(bucketId, files);
         },
         async rawUpload(bucketId, files) {
-<<<<<<< HEAD
-=======
-
-            let thisVue = this;
->>>>>>> 06093fbe9d3d29f72b970a8428c534fa4e5fc3ab
             await this.checkDebit();
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
@@ -421,7 +416,7 @@ export default {
 
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: thisVue.$t('dashboard.myfiles.uploadmsg', { filename: file }),
+                        message: this.$t('dashboard.myfiles.uploadmsg', { filename: file }),
                     }), 0);
                     return;
                 }
@@ -429,7 +424,7 @@ export default {
                 if (fileList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: thisVue.$t('dashboard.myfiles.fileexist', { filename: filename }),
+                        message: this.$t('dashboard.myfiles.fileexist', { filename: filename }),
                     }), 0);
                     return;
                 };
@@ -437,7 +432,7 @@ export default {
                 if (uploadTaskList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: thisVue.$t('dashboard.myfiles.fileexist', { filename: filename }),
+                        message: this.$t('dashboard.myfiles.fileexist', { filename: filename }),
                     }), 0);
                     return;
                 };
@@ -452,17 +447,17 @@ export default {
                     fileName = fileName[fileName.length - 1];
                     setTimeout(() => this.$notify.info({
                         title: "Info",
-                        message: thisVue.$t('dashboard.myfiles.fileuploading', { filename: fileName }),
+                        message: this.$t('dashboard.myfiles.fileuploading', { filename: fileName }),
                     }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
                         bucketId,
                         folderName: this.bucketName,
                     });
-                    this.$message.success(thisVue.$t('dashboard.myfiles.fileuploaded', { filePath: filePath }));
+                    this.$message.success(this.$t('dashboard.myfiles.fileuploaded', { filePath: filePath }));
                     console.log(this.fileList);
                 } catch (error) {
-                    this.$message.error(thisVue.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));
+                    this.$message.error(this.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));
                 };
             });
         },
