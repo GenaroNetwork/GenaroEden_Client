@@ -1,4 +1,3 @@
-import store from '../store';
 import { TASK_TYPE, TASK_STATE, BRIDGE_API_URL } from '../../config';
 import log from "./log";
 import events from "events";

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, shell, IpcMain, AutoUpdater, ipcMain, autoUpdater } from 'electron'
+import { app, BrowserWindow, Menu, shell, IpcMain } from 'electron'
 import registerProtocals from './customProtocol'
 const defaultMenu = require('./appMenu');
 import i18n, { writeLangJsonConfigFile } from '../renderer/i18n';
