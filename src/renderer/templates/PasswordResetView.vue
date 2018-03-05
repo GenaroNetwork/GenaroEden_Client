@@ -36,27 +36,27 @@ h1 {
         <el-card class="box-card">
             <div class='login-center'>
                 <span><img id="logo" src="~@/assets/img/logo.png"></span>
-                <h1>Reset Password</h1>
+                <h1>{{ $t('common.reset') }}</h1>
             </div>
             <el-form ref="model" :model="model" :rules="ruleInline">
                 <el-form-item prop="username">
-                    <el-input type="text" v-model="model.username" placeholder="Your email">
+                    <el-input type="text" v-model="model.username" :placeholder="$t('common.emailholder')">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="model.password" placeholder="New Password">
+                    <el-input type="password" v-model="model.password" :placeholder="$t('common.newpasswordholder')">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="passwordCheck">
-                    <el-input type="password" v-model="model.passwordCheck" placeholder="Confirm Your New Password">
+                    <el-input type="password" v-model="model.passwordCheck" :placeholder="$t('common.newconfirmholder')">
                     </el-input>
                 </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button type="primary" class="main-btn" @click="resetPwd()" :loading="processing">Reset Password</el-button>
+                        <el-button type="primary" class="main-btn" @click="resetPwd()" :loading="processing">{{ $("common.reset") }}</el-button>
                     </el-form-item>
                     <router-link class="otherlink pulled-left" to="/">
-                        <i class="el-icon-arrow-left"></i>Sign In</router-link>
+                        <i class="el-icon-arrow-left"></i>{{ $t("common.signin") }}</router-link>
                 </div>
             </el-form>
         </el-card>
@@ -80,19 +80,19 @@ export default {
             },
             ruleInline: {
                 username: [
-                    { required: true, message: 'Please input username', trigger: 'blur' },
-                    { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+                    { required: true, message: this.$t('common.inputname'), trigger: 'blur' },
+                    { type: 'email', message: this.$t('common.emailerr'), trigger: 'blur' }
                 ],
                 password: [
-                    { required: true, message: 'Please input password', trigger: 'blur' },
-                    { type: 'string', min: 6, message: 'Password length must not be less than 6 bits', trigger: 'blur' }
+                    { required: true, message: this.$t('common.inputpwd'), trigger: 'blur' },
+                    { type: 'string', min: 6, message: this.$t('common.pwdlength'), trigger: 'blur' }
                 ],
                 passwordCheck: [
                     {                        validator: (rule, value, callback) => {
                             if (value === '') {
-                                callback(new Error('Please enter your password again'));
+                                callback(new Error(this.$t('common.inputpwdagain')));
                             } else if (value !== this.model.password) {
-                                callback(new Error('The two input passwords do not match!'));
+                                callback(new Error(this.$t('common.pwdmismatch')));
                             } else {
                                 callback();
                             }
@@ -108,9 +108,9 @@ export default {
                     this.processing = true;
                     resetPassword(this.model.username, this.model.password).then(() => {
                         this.processing = false
-                        this.$alert('A mail has been sent to <' + this.model.username + '>, please follow the instructions in the email to confirm.', 'Reset Success', {
+                        this.$alert(this.$t('common.activateemail', {user: this.model.username}), this.$t('common.resetsuccess'), {
                             type: 'success',
-                            confirmButtonText: 'OK',
+                            confirmButtonText: this.$t('el.messagebox.confirm'),
                             callback: action => {
                                 this.$router.push('/')
                             }

@@ -80,7 +80,7 @@
         <div class="bucket-list">
             <div v-for="bucket,index in bucketList" class="folder" @click="enterBucket(bucket)" :key="`buckId-${index}`">
                 <a class="delete-folder" @click.stop.prevent="deleteBucket(bucket)">
-                    <i class="material-icons">close</i>
+                    <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
                 </a>
 
                 <div class="folder-icon">
@@ -143,11 +143,11 @@ export default {
         async deleteBucket(bucket) {
             try {
                 await this.$confirm(
-                    this.$t("dashboard.myfiles.deleteconfirm.message", { name: `${bucket.name}` }),
-                    this.$t("dashboard.myfiles.deleteconfirm.title", { name: `${bucket.name}` }),
+                    this.$t("dashboard.myfiles.delconfirmmessage", { name: `${bucket.name}` }),
+                    this.$t("dashboard.myfiles.delconfirmtitle", { name: `${bucket.name}` }),
                     {
-                        confirmButtonText: this.$t("dashboard.myfiles.deleteconfirm.delete"),
-                        cancelButtonText: this.$t("dashboard.myfiles.deleteconfirm.cancel"),
+                        confirmButtonText: this.$t("common.delete"),
+                        cancelButtonText: this.$t("el.messagebox.cancel"),
                         type: 'warning',
                         confirmButtonClass: 'el-button--danger'
                     });

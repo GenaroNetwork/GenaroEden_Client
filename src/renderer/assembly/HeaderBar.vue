@@ -67,54 +67,54 @@
         <el-popover ref="popover" placement="bottom" width="250" trigger="click" @show="pulldownStep=0" v-model="pulldownShown">
             <div class="popover">
                 <div v-if="pulldownStep===0" @click="updateState ? pulldownStep = updateState : checkUpdate()">
-                    <div>当前版本
+                    <div>{{ $t('common.currentversion') }}
                         <span style="float: right;">{{ version }}</span>
                     </div>
-                    <div class="new-version-check">新版本检测
-                        <span v-if="updateState===1">有新版本</span>
-                        <span v-else-if="updateState===2">正在下载</span>
-                        <span v-else-if="updateState===3">下载完成</span>
-                        <span v-else-if="updateState===4">下载失败</span>
+                    <div class="new-version-check">{{ $t('common.checkupdate') }}
+                        <span v-if="updateState===1">{{ $t('common.havenewversion') }}</span>
+                        <span v-else-if="updateState===2">{{ $t('common.downloading') }}</span>
+                        <span v-else-if="updateState===3">{{ $t('common.downloaded') }}</span>
+                        <span v-else-if="updateState===4">{{ $t('common.downloadfail') }}</span>
                     </div>
                     <div>
-                        <el-button type="text" @click="logout">{{ $t('common.login.logout') }}</el-button>
+                        <el-button type="text" @click="logout">{{ $t('common.logout') }}</el-button>
                     </div>
                 </div>
                 <div v-else-if="pulldownStep===1">
-                    <div>最新版本
+                    <div>{{ $t('common.lastestversion') }}
                         <span>{{ latest.version }}</span>
                     </div>
                     <div style="white-space: pre-wrap;">{{ latest.notes }}</div>
                     <div>
-                        <el-button type="text" @click="pulldownShown = false">稍后</el-button>
-                        <el-button type="text" @click="downloadNow()">立即更新</el-button>
+                        <el-button type="text" @click="pulldownShown = false">{{ $t('common.later') }}</el-button>
+                        <el-button type="text" @click="downloadNow()">{{ $t('common.now') }}</el-button>
                     </div>
                 </div>
                 <div v-else-if="pulldownStep===2">
-                    <div>正在下载</div>
+                    <div>{{ $t('common.downloading') }}</div>
                     <div>
-                        <div v-loading="true">正在下载更新。</div>
+                        <div v-loading="true">{{ $t('common.downloadingupdate') }}</div>
                         <div>
-                            下载完成后需重启 Eden 客户端安装.
+                            {{ $t('common.needrestart') }}
                         </div>
                     </div>
                 </div>
                 <div v-else-if="pulldownStep===3">
-                    <div>下载完成</div>
+                    <div>{{ $t('common.downloaded') }}</div>
                     <div>
-                        重启客户端完成更新
+                        {{ $t('common.torestart') }}
                     </div>
                     <div>
-                        <el-button type="text" @click="pulldownShown = false">稍后</el-button>
-                        <el-button type="text" @click="installNow()">立即重启</el-button>
+                        <el-button type="text" @click="pulldownShown = false">{{ $t('common.later') }}</el-button>
+                        <el-button type="text" @click="installNow()">{{ $t('common.now') }}</el-button>
                     </div>
                 </div>
                 <div v-else-if="pulldownStep===4" style="text-align:  center;">
                     <div>
-                        <div>安装更新需要退出当前任务</div>
+                        <div>{{ $t('common.exittasks') }}</div>
                     </div>
                     <div>
-                        <el-button type="text" @click="pulldownShown = false">确定</el-button>
+                        <el-button type="text" @click="pulldownShown = false">{{ $t('el.messagebox.confirm') }}</el-button>
                     </div>
                 </div>
             </div>
@@ -211,7 +211,7 @@ export default {
             this.updateState = 3
             if (this.pulldownShown && this.pulldownStep === 2) this.pulldownStep = 3;
             else this.$notify({
-                title: '下载完成',
+                title: this.$t('common.downloaded'),
                 dangerouslyUseHTMLString: true,
                 showClose: false,
                 message: `是否立即重启应用完成更新?

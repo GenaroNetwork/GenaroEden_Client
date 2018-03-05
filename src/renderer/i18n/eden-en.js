@@ -3,24 +3,53 @@
 exports.__esModule = true;
 exports.default = {
   common: {
-    login: {
-      signin: 'Sign In',
-      signup: 'Sign Up',
-      reset: 'Reset Password',
-      usernameholder: 'User Name',
-      passwordholder: 'Password',
-      inputname:'Please Enter Username',
-      emailerr:'Incorrect Email Format',
-      inputpwd: 'Please Enter Password',
-      pwdlength: 'Password length must not be less than 6 characters',
-      loginerr: 'Username or Password Error',
-      logout: 'Log Out'
-    },
-    dialog: {
-      submit: 'Submit',
-      cancel: 'Cancel',
-      next: 'Next'
-    }
+    signin: 'Sign In',
+    signup: 'Sign Up',
+    reset: 'Reset Password',
+    usernameholder: 'User Name',
+    passwordholder: 'Password',
+    inputname:'Please Enter Username',
+    emailerr:'Incorrect Email Format',
+    inputpwd: 'Please Enter Password',
+    pwdlength: 'Password length must not be less than 6 characters',
+    loginerr: 'Username or Password Error',
+    logout: 'Log Out',
+    register: 'Register Genaro Account',
+    emailholder: 'Your email',
+    confirmholder: 'Confirm Your Password',
+    newpasswordholder: 'New Password',
+    walletpwd: 'Wallet Password',
+    newconfirmholder: 'Confirm Your New Password',
+    inputpwdagain: 'Please enter your password again',
+    newpwdagain: 'New Password Again',
+    resetsuccess: 'Reset Success',
+    pwdmismatch: 'The two input passwords do not match!',
+    activateemail: 'A mail has been sent to <{user}>, please follow the instructions in the email to activate your account before login.',
+    registersuccess: 'Register Success',
+    registererr: 'Register Error',
+    userexist: 'User already exists',
+    currentversion: 'Current Version',
+    checkupdate: 'Check for updates...',
+    havenewversion: 'it has new version',
+    downloading: 'Downloading',
+    downloaded: 'Download successfully',
+    downloadfail: 'Download failed',
+    lastestversion: 'Lastest Version',
+    later: 'Later',
+    now: 'Now',
+    downloadingupdate: 'Downloading new Version update.',
+    needrestart: 'Eden need restarting after update downloaded.',
+    torestart: 'Restart Eden client to finish updating',
+    exittasks: 'Installing update need exit current running tasks.',
+    submit: 'Submit',
+    next: 'Next',
+    delete: 'Delete',
+    continue: 'Continue',
+    back: 'Back',
+    done: 'Done',
+    choose: 'Please choose',
+    close: 'Close',
+    error: 'Error'
   },
   dashboard: {
     myfiles: {
@@ -28,30 +57,46 @@ exports.default = {
       folder: 'Folders',
       create: 'Create Folder',
       foldername: 'Folder Name',
-      deleteconfirm: {
-        delete: 'Delete',
-        cancel: 'Cancel',
-        title: 'Confirm Delete Folder: {name}',
-        message: 'All files in folder {name} will be deleted. This action cannot be undone.'
-      },
+      folderdelsucc: 'Folder Delete Success',
+      delconfirmtitle: 'Confirm Delete Folder: {name}',
+      delconfirmmessage: 'All files in folder {name} will be deleted. This action cannot be undone.',
       fileid: 'File ID',
       download: 'Download',
+      downloadfile: 'Download File',
+      downloadfilesucc: 'File Download Success: {filename}',
+      downloadfileerr: 'File Download Error: {errmsg}',
       delete: 'Delete',
+      deletefile: 'Delete File',
+      filedeled: 'File Deleted',
+      filedelerr: 'File Delete Error: {error}',
       upload: 'Upload',
       emptyfilemsg: 'No file in this folder. <br>You can click' + 
                     '<el-button type="text" @click="upload" size="small">Upload' +
                       '<i class="el-icon-upload el-icon--right"></i>' +
-                    '</el-button> button or drag and drop file here to upload.'
+                    '</el-button> button or drag and drop file here to upload.',
+      droptouploadfiles: 'drop to upload your files to {bucketName}',
+      defaultpaymsg: 'Please set default payment wallet first.',
+      selectfile: 'Please select file first',
+      confirmdelmsg1: 'Are you sure to delete selected files',
+      confirmdelmsg2: 'Are you sure to delete file: {filename}',
+      uploadmsg: 'Only file can be uploaded. {filename} is not a file.',
+      fileexist: 'File {filename} is already exists.',
+      fileuploading: 'File {fileName} Uploading. You can see this task in Recent panel on the left.',
+      fileuploaded: 'File Uploaded: {filePath}',
+      fileuploaderr: 'File Upload Failed: {errmsg}'
     },
     recent: {
       recent: 'Recent',
       runningtask: 'Running Task',
       history: 'History',
       filename: 'File Name',
+      filepath: 'File Path',
       size: 'Size',
       created: 'Created',
       folder: 'Folder',
-      tip1: 'No Upload/Download History Yet'
+      tip1: 'No Upload/Download History Yet',
+      filenotexist: 'File no more exist. Maybe deleted or moved.',
+      foldernotexist: 'Folder {folderName} does not exist.'
     },
     mywallet: {
       mywallet: 'My Wallet',
@@ -67,6 +112,9 @@ exports.default = {
       recipientaddress:"Recipient Address", 
       ETH: 'ETH',
       GNX: 'GNX',
+      paylimitGNX: 'Pay limit in GNX',
+      maxGNX: 'Max GNX approve',
+      setaspay: 'Set As Paying Wallet',
       gasprice: 'Gas Price (Gwei)',
       gaspriceholder: 'Gas',
       gaslimit: 'Gas Limit (Unit)',
@@ -84,9 +132,9 @@ exports.default = {
       amountmsg: 'Please Input Amount',
       transactionsubmitted: 'Transaction Submitted',
       createtransactionerr: 'Transaction Error',
-      tip1: 'Copy the Address',
-      tip2: 'No Transactions Yet',
-      tip3: 'Address Copied to Clipboard'
+      copyaddress: 'Copy the Address',
+      notransactions: 'No Transactions Yet',
+      addresscopied: 'Address Copied to Clipboard'
     },
     walletmanage: {
       walletmanage: 'Manage Wallet',
@@ -157,5 +205,30 @@ exports.default = {
       quit: 'Quit',
       front: 'Bring All to Front'
     }
+  },
+  encryption: {
+    setkey: 'Set Encryption Key',
+    nokey: "I'm a new user and I don't have an Encryption Key, generate now",
+    havekey: 'I already have an Encryption Key, go to input',
+    regenkey: 'ReGenarate Key',
+    genkeystep1: "<h2>Step 1.\
+                    <strong>Generate a new Encryption Key</strong>\
+                  </h2>\
+                  <p>The Encryption Key is used to encrypt/decrypt your files. Once it's lost, so are your files. Please keep it safe and secret!</p>",
+    genkeystep2: "<h2>Step 2.\
+                    <strong>Confirm Your Encryption Key</strong>\
+                  </h2>\
+                  <p>Please Retype your encryption key to confirm</p>",
+    inputexistingkey: "<h2>\
+                        <strong>input existing Encryption Key</strong>\
+                      </h2>\
+                      <p>Use existing Encryption Key to encrypt/decrypt files.</p>",
+    keywrittendown: 'I have written down my Encryption Key, Continue',
+    confirmmsg: 'Type your encryption key here to confirm',
+    yourkey: 'Your encryption key',
+    generrmsg: 'generate wallet error, {errmsg}',
+    invalidkey: 'Not a valid Encryption Key',
+    keymismatch: 'Your key does not match',
+    savekey: 'Save Key'
   }
 };
