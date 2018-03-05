@@ -579,7 +579,7 @@ export default {
                     );
                 }
             }).catch(e => {
-                this.$message.error(e);
+                this.$message.error(e.message);
             });
         },
         popSubmitPay: async function (item) {

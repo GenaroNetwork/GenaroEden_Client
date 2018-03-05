@@ -38,7 +38,7 @@
 <template>
     <div class="fullheight right-container">
         <div class="top-bar">
-            {{ $t('dashboard.recent.runningtask') }}
+            {{ $t("dashboard.recent.runningtask") }}
         </div>
         <el-table :data="taskListNotSuccess" class="files-table" row-class-name="file-row">
             <el-table-column prop="filename" :label="$t('dashboard.recent.filename')" :show-overflow-tooltip="true" min-width="200">

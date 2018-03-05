@@ -47,10 +47,10 @@ i {
                         <span slot="title">{{ $t("dashboard.recent.recent") }}</span>
                     </template>
                     <el-menu-item index="1-0" route="/task-running">
-                        <span slot="title">{{ $t('dashboard.recent.runningtask') }}</span>
+                        <span slot="title">{{ $t("dashboard.recent.runningtask") }}</span>
                     </el-menu-item>
                     <el-menu-item index="1-1" route="/task-history">
-                        <span slot="title">{{ $t('dashboard.recent.history') }}</span>
+                        <span slot="title">{{ $t("dashboard.recent.history") }}</span>
                     </el-menu-item>
                 </el-submenu>
                 <el-submenu index="2" default-active="2-0">

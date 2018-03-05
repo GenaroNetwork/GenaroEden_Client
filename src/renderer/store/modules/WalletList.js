@@ -106,11 +106,8 @@ const actions = {
         commit("walletListSetPayment", { address });
     },
     async walletListUpdateName({ commit }, { address, name }) {
-        await walletManager.walletListUpdateName({ address, name });
+        await walletManager.updateWalletName({ address, name });
         commit("walletListUpdateName", { address, name });
-    },
-    async walletListSetPayment({ commit }, { address }) {
-        commit("walletListSetPayment", { address });
     },
     async walletListSetCurrent({ commit, dispatch }, { address }) {
         commit("walletListSetCurrent", { address });

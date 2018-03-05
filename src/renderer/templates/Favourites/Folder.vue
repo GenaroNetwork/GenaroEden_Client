@@ -176,10 +176,6 @@ td.right-td {
                         <td class="right-td">{{ receiptModal.fileId }}</td>
                     </tr>
                     <tr>
-                        <td class="left-td">GNX Paid:</td>
-                        <td class="right-td">0 (free for beta testing)</td>
-                    </tr>
-                    <tr>
                         <td class="left-td">QR Code:</td>
                         <td class="right-td"><img :src="receiptModal.fileQrCode"></td>
                     </tr>
@@ -411,7 +407,7 @@ export default {
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
             fileList = fileList.map(file => file.filename);
-            let uploadTaskList = this.$store.TaskList.tasks.filter(task => task.taskType === TASK_TYPE.UPLOAD && task.folderName === bucketId);
+            let uploadTaskList = this.$store.state.TaskList.tasks.filter(task => task.taskType === TASK_TYPE.UPLOAD && task.folderName === bucketId);
             uploadTaskList = uploadTaskList.map(task => task.fileName);
             let errorMessage = [];
             let preUpload = [];
