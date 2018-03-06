@@ -184,7 +184,7 @@
 
 <script>
 import { BRIDGE_API_URL, GNX_PER_GB_BANDWIDTH, GNX_PER_GB_HOUR_STORAGE } from "../../../config";
-import storj from 'storj-lib';
+import { sha256hex } from '../../../lib/cryptUtil'
 
 export default {
     data() {
@@ -260,7 +260,7 @@ export default {
                 {
                     auth: {
                         username: this.$store.state.User.username,
-                        password: storj.utils.sha256(this.$store.state.User.password),
+                        password: sha256hex(this.$store.state.User.password),
                     }
                 });
             payTransactions = payTransactions.data;
@@ -291,7 +291,7 @@ export default {
                 {
                     auth: {
                         username: this.$store.state.User.username,
-                        password: storj.utils.sha256(this.$store.state.User.password),
+                        password: sha256hex(this.$store.state.User.password),
                     }
                 });
 
@@ -303,7 +303,7 @@ export default {
                 {
                     auth: {
                         username: this.$store.state.User.username,
-                        password: storj.utils.sha256(this.$store.state.User.password),
+                        password: sha256hex(this.$store.state.User.password),
                     }
                 });
             this.mergeDebit(payTransaction, debits.data);

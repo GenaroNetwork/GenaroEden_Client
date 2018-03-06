@@ -357,14 +357,14 @@ import { clipboard } from "electron";
 const { dialog } = require("electron").remote;
 const fs = require("fs");
 import { BRIDGE_API_URL } from "../../../config";
-import storj from 'storj-lib';
+import { sha256hex } from '../../../lib/cryptUtil';
 
 export default {
     created: async function () {
         let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
             auth: {
                 username: this.$store.state.User.username,
-                password: storj.utils.sha256(this.$store.state.User.password),
+                password: sha256hex(this.$store.state.User.password),
             }
         });
         this.$store.dispatch("walletListSetPayment", { address: data.data.wallet });

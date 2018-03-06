@@ -198,7 +198,7 @@ import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
 import { Bucket } from "../../utils/storjApiClient";
 import fs from "fs";
 import { BRIDGE_API_URL, TASK_TYPE } from "../../../config";
-import storj from 'storj-lib';
+import { sha256hex } from '../../../lib/cryptUtil';
 
 export default {
     data() {
@@ -267,7 +267,7 @@ export default {
             let data = await this.$http.get(`${BRIDGE_API_URL}/user/${this.$store.state.User.username}`, {
                 auth: {
                     username: this.$store.state.User.username,
-                    password: storj.utils.sha256(this.$store.state.User.password),
+                    password: sha256hex(this.$store.state.User.password),
                 }
             })
             if (!data.data.wallet) {
@@ -280,7 +280,7 @@ export default {
                 {
                     auth: {
                         username: this.$store.state.User.username,
-                        password: storj.utils.sha256(this.$store.state.User.password),
+                        password: sha256hex(this.$store.state.User.password),
                     }
                 });
             if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
