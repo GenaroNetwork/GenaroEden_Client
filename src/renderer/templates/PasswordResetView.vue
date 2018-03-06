@@ -53,7 +53,7 @@ h1 {
                 </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button type="primary" class="main-btn" @click="resetPwd()" :loading="processing">{{ $("common.reset") }}</el-button>
+                        <el-button type="primary" class="main-btn" @click="resetPwd()" :loading="processing">{{ $t("common.reset") }}</el-button>
                     </el-form-item>
                     <router-link class="otherlink pulled-left" to="/">
                         <i class="el-icon-arrow-left"></i>{{ $t("common.signin") }}</router-link>
