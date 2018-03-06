@@ -30,6 +30,7 @@ exports.default = {
     userexist: '用户名已被占用',
     currentversion: '当前版本',
     checkupdate: '新版本检测',
+    nonewversion: '已是最新',
     havenewversion: '有新版本',
     downloading: '正在下载',
     downloaded: '下载完成',
