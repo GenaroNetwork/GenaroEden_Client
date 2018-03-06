@@ -274,7 +274,7 @@ export default {
                 this.$alert(this.$t('dashboard.myfiles.defaultpaymsg'), this.$t('common.error'), {
                     type: "error"
                 });
-                throw (error);
+                throw (this.$t('dashboard.myfiles.defaultpaymsg'));
             }
             let payTransaction = await this.$http.get(`${BRIDGE_API_URL}/paytransactions/${this.$store.state.User.username}?page=1&limit=2`,
                 {
@@ -287,7 +287,7 @@ export default {
                 this.$alert("There are billings that failed to pay.", "Error", {
                     type: "error"
                 });
-                throw (error);
+                throw ("There are billings that failed to pay.");
             }
         },
         async deleteSelected() {

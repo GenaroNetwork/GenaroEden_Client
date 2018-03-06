@@ -190,7 +190,6 @@ export default {
                 isLatest = false;
                 return false;
             });
-            debugger;
             if (isLatest) return;
 
 
@@ -232,7 +231,6 @@ export default {
                     if (!action) return;
                     if (action === "ignore") {
                         console.log(this.$notify);
-                        debugger;
                         this.$notify.closeAll();
                     } else {
                         this.installNow();
