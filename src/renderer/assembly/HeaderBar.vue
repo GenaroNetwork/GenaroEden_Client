@@ -56,6 +56,12 @@
           margin: 22px 0;
         }
       }
+
+      &.update-notes {
+        white-space: pre-wrap;
+        line-height: 24px;
+        padding: 13px 12px;
+      }
     }
   }
 }
@@ -85,7 +91,7 @@
                     <div>{{ $t('common.lastestversion') }}
                         <span>{{ latest.version }}</span>
                     </div>
-                    <div style="white-space: pre-wrap;">{{ latest.notes }}</div>
+                    <div class="update-notes">{{ latest.notes }}</div>
                     <div>
                         <el-button type="text" @click="pulldownShown = false">{{ $t('common.later') }}</el-button>
                         <el-button type="text" @click="downloadNow()">{{ $t('common.now') }}</el-button>
@@ -131,7 +137,7 @@
                 <i class="el-icon-caret-bottom el-icon--right"></i>
             </span>
         </div>
-    </div> 
+    </div>
 </template>
 <script>
 import StorageUsage from '@/assembly/StorageUsage'
@@ -175,29 +181,29 @@ export default {
         },
         async checkUpdate() {
             if (this.updateState === 2 || this.updateState === 3) return;
-            let response = await this.$http.get(feedURL);
-            let data = response.data;
-            this.updateState = 0;
-            if (!data || !data.version) return;
-            let latestVersion = data.version;
-            let lv = latestVersion.split(".");
-            let currentVersion = remote.app.getVersion();
-            let cv = currentVersion.split(".");
-            let isLatest = true;
-            cv.every((v, i) => {
-                if (v > lv[i]) return false;
-                if (v === lv[i]) return true;
-                isLatest = false;
-                return false;
-            });
-            debugger;
-            if (isLatest) return;
-
-
-            this.updateState = 1;
-            this.latest.version = data.version;
-            this.latest.notes = data.notes;
-            ;
+            try {
+                let response = await this.$http.get(feedURL);
+                let data = response.data;
+                this.updateState = 0;
+                if (!data || !data.version) return;
+                let latestVersion = data.version;
+                let lv = latestVersion.split(".");
+                let currentVersion = remote.app.getVersion();
+                let cv = currentVersion.split(".");
+                let isLatest = true;
+                cv.every((v, i) => {
+                    if (v > lv[i]) return false;
+                    if (v === lv[i]) return true;
+                    isLatest = false;
+                    return false;
+                });
+                if (isLatest && false) return;
+                this.updateState = 1;
+                this.latest.version = data.version;
+                this.latest.notes = data.notes;
+            } catch (error) {
+                this.$message.error(error.message);
+            }
         },
         downloadNow() {
             this.updateState = 2;
@@ -213,6 +219,12 @@ export default {
             loading();
             */
             remote.autoUpdater.on("update-downloaded", () => this.downloaded());
+            remote.autoUpdater.on("error", error => {
+                this.pulldownShown = false;
+                this.updateState = 0;
+                this.$message.error(error.message);
+            });
+
         },
         downloaded() {
             this.updateState = 3

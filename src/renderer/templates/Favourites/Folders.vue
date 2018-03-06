@@ -80,7 +80,7 @@
         <div class="bucket-list">
             <div v-for="bucket,index in bucketList" class="folder" @click="enterBucket(bucket)" :key="`buckId-${index}`">
                 <a class="delete-folder" @click.stop.prevent="deleteBucket(bucket)">
-                    <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
+                    <i class="material-icons">close</i>
                 </a>
 
                 <div class="folder-icon">

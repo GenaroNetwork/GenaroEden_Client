@@ -37,7 +37,7 @@ exports.default = {
     downloadfail: 'Download failed',
     lastestversion: 'Lastest Version',
     later: 'Later',
-    now: 'Now',
+    now: 'Download Now',
     downloadingupdate: 'Downloading new Version update.',
     needrestart: 'Eden need restarting after update downloaded.',
     torestart: 'Restart Eden client to finish updating',

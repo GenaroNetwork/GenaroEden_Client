@@ -37,7 +37,7 @@ exports.default = {
     downloadfail: '下载失败',
     lastestversion: '最新版本',
     later: '稍后',
-    now: '立即',
+    now: '立即下载',
     downloadingupdate: '正在下载更新。',
     needrestart: '下载完成后需重启 Eden 客户端安装.',
     torestart: '重启客户端完成更新',
