@@ -132,7 +132,7 @@ exports.default = {
       recipientmsg: '请输入接收地址',
       amountmsg: '请输入数量',
       transactionsubmitted: '交易已提交',
-      createtransactionerr: '交易失败',
+      createtransactionerr: '交易失败: {error}',
       copyaddress: '复制地址',
       notransactions: '尚无交易记录',
       addresscopied: '地址已复制到剪贴板.'

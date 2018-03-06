@@ -435,6 +435,7 @@ export default {
     async created() {
         const address = this.$route.params.walletAddress;
         this.$store.dispatch("loadTransactions");
+        this.$store.dispatch("walletListSetCurrent", {address:this.$store.getters.currentWallet.address})
     },
     mounted() {
         // init balance
@@ -484,9 +485,9 @@ export default {
                     callback(new Error(this.$t('dashboard.mywallet.gaspricemsg')));
                 }
                 let price = await getGasPrice();
-                price = utils.fromWei(price, "Gwei");
+                price = utils.fromWei(price.toString(), "Gwei");
                 if (value < price) {
-                    callback(new Error(this.$t('dashboard.mywallet.gaspriceerrmsg', price)));
+                    callback(new Error(this.$t('dashboard.mywallet.gaspriceerrmsg', { price })));
                 } else {
                     callback();
                 }
@@ -496,9 +497,9 @@ export default {
                     callback(new Error(this.$t('dashboard.mywallet.gaslimitmsg')));
                 }
                 if (this.payOption.payType === "ETH" && value < ETH_LIMIT) {
-                    callback(this.$t('dashboard.mywallet.gaslimiterrmsg', ETH_LIMIT));
+                    callback(this.$t('dashboard.mywallet.gaslimiterrmsg', { limit: ETH_LIMIT }));
                 } else if (this.payOption.payType === "GNX" && value < GNX_LIMIT) {
-                    callback(this.$t('dashboard.mywallet.gaslimiterrmsg', GNX_LIMIT));
+                    callback(this.$t('dashboard.mywallet.gaslimiterrmsg', { limit: GNX_LIMIT }));
                 } else {
                     callback();
                 }
@@ -596,8 +597,7 @@ export default {
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
                 if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";
-                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", e));
-
+                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error:e.message }));
             }
         },
         changeWallet(address) {

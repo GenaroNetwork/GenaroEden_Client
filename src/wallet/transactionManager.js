@@ -62,7 +62,7 @@ function getBalanceGnx(address) {
 // _getPrice()
 // setInterval(_getPrice, 5000)
 function getGasPrice() {
-    return 40 // web3.eth.getGasPrice sometimes give very low value which will fail transaction. default to 40 now
+    return 40e9; // web3.eth.getGasPrice sometimes give very low value which will fail transaction. default to 40 now
 }
 
 async function getGasLimit() {
@@ -90,7 +90,7 @@ function sendTransactionNoLog(rawTx) {
                 if (receipt) {
                     console.debug(receipt)
                     console.debug(receipt.status)
-                    if(receipt.status === '0x0') { //fail
+                    if (receipt.status === '0x0') { //fail
                         resolve(RECEIPTSTATE.FAIL)
                     } else {
                         resolve(RECEIPTSTATE.SUCCESS)
@@ -103,16 +103,16 @@ function sendTransactionNoLog(rawTx) {
             })
         })
     }
-    
+
     function checkTxByHashNtimes(hash, checkCount, interval) {
         return new Promise((resolve, reject) => {
-            const intv = setInterval(function(){
+            const intv = setInterval(function () {
                 console.debug('checkTxByHash checkCount: ' + checkCount)
                 checkTxByHash(hash).then(state => {
-                    checkCount --
+                    checkCount--
                     console.debug('checkTxByHash checkCount: ' + checkCount + ' state: ' + state)
-                    if(state === RECEIPTSTATE.NOTFOUND) {
-                        if(checkCount === 0) {
+                    if (state === RECEIPTSTATE.NOTFOUND) {
+                        if (checkCount === 0) {
                             clearInterval(intv)
                             resolve(RECEIPTSTATE.NOTFOUND)
                         }
@@ -139,7 +139,7 @@ function sendTransactionNoLog(rawTx) {
             if (thisHash) {
                 // recheck hash several times: 5 times, each 20 seconds
                 const state = await checkTxByHashNtimes(thisHash, 15, 20000)
-                if(state === RECEIPTSTATE.NOTFOUND) {
+                if (state === RECEIPTSTATE.NOTFOUND) {
                     reject('receipt not found: ' + thisHash)
                 } else if (state === RECEIPTSTATE.FAIL) {
                     reject('receipt found but failed')
@@ -152,7 +152,7 @@ function sendTransactionNoLog(rawTx) {
         }).then(async (receipt) => {
             console.debug('sendSignedTransaction receipt: ' + receipt)
             const result = await checkTxByHash(thisHash)
-            if(result === RECEIPTSTATE.SUCCESS) {
+            if (result === RECEIPTSTATE.SUCCESS) {
                 resolve('receipt found and success')
             } else {
                 reject('receipt found but failed')

@@ -126,9 +126,9 @@ const actions = {
             rawTransaction = await walletManager.generateSignedGnxTx(state.currentWallet, payOption.password, payOption.recipient, payOption.amount, payOption.gasPrice, payOption.gasLimit)
         }
 
-        payOption.from = state.wallet.address
-        delete payOption.password
-        dispatch('submitTransaction', { payOption, rawTransaction }, { root: true })
+        payOption.from = state.currentWallet;
+        delete payOption.password;
+        dispatch('submitTransaction', { payOption, rawTransaction }, { root: true });
     },
 }
 

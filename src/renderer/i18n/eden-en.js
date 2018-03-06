@@ -132,7 +132,7 @@ exports.default = {
       recipientmsg: 'Please Input Recipient',
       amountmsg: 'Please Input Amount',
       transactionsubmitted: 'Transaction Submitted',
-      createtransactionerr: 'Transaction Error',
+      createtransactionerr: 'Transaction Error: {error}',
       copyaddress: 'Copy the Address',
       notransactions: 'No Transactions Yet',
       addresscopied: 'Address Copied to Clipboard'
