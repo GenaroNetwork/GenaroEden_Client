@@ -197,7 +197,7 @@ export default {
                     isLatest = false;
                     return false;
                 });
-                if (isLatest && false) return;
+                if (isLatest) return;
                 this.updateState = 1;
                 this.latest.version = data.version;
                 this.latest.notes = data.notes;
@@ -244,7 +244,6 @@ export default {
                     if (!action) return;
                     if (action === "ignore") {
                         console.log(this.$notify);
-                        debugger;
                         this.$notify.closeAll();
                     } else {
                         this.installNow();
