@@ -283,8 +283,8 @@ export default {
                         password: sha256hex(this.$store.state.User.password),
                     }
                 });
-            if (payTransaction.data[0] && payTransaction.data[0].state === "fail") {
-                this.$alert(this.$t('dashboard.myfiles.defaultpaymsg'), this.$t('common.error'), {
+            if (payTransaction.data.Data[0] && payTransaction.data.Data[0].state === "fail") {
+                this.$alert("There are billings that failed to pay.", "Error", {
                     type: "error"
                 });
                 throw (error);
@@ -308,7 +308,7 @@ export default {
         },
         async deleteFile({ filename, id }) {
             await this.$confirm(
-                this.$t('dashboard.myfiles.confirmdelmsg2', {filename: filename}),
+                this.$t('dashboard.myfiles.confirmdelmsg2', { filename: filename }),
                 'Confirm',
                 {
                     confirmButtonText: this.$t('common.delete'),
@@ -323,7 +323,7 @@ export default {
                 await this.$store.dispatch('fileListDelete', { fileId });
                 this.$message.success(this.$t('dashboard.myfiles.filedeled'));
             } catch (error) {
-                this.$message.error(this.$t('dashboard.myfiles.filedelerr', {error: error}));
+                this.$message.error(this.$t('dashboard.myfiles.filedelerr', { error: error }));
             }
 
         },
@@ -344,9 +344,9 @@ export default {
                             filePath: folderPath + '/' + file.filename,
                             folderName: this.bucketName,
                         });
-                        this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', {filename: file.filename}));
+                        this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: file.filename }));
                     } catch (err) {
-                        this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', {errmsg: err.message}));
+                        this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }));
                     }
                 })
             })
@@ -366,9 +366,9 @@ export default {
                     filePath: filePath,
                     folderName: this.bucketName,
                 }).then(() => {
-                    this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', {filename: filename}));
+                    this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: filename }));
                 }).catch((err) => {
-                    this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', {errmsg: err.message}));
+                    this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }));
                 });
             })
         },
@@ -401,8 +401,6 @@ export default {
             await this.rawUpload(bucketId, files);
         },
         async rawUpload(bucketId, files) {
-
-            let thisVue = this;
             await this.checkDebit();
             let bucket = new Bucket(bucketId);
             let fileList = await bucket.list();
@@ -418,7 +416,7 @@ export default {
 
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: thisVue.$t('dashboard.myfiles.uploadmsg', {filename: file}),
+                        message: this.$t('dashboard.myfiles.uploadmsg', { filename: file }),
                     }), 0);
                     return;
                 }
@@ -426,7 +424,7 @@ export default {
                 if (fileList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: thisVue.$t('dashboard.myfiles.fileexist', {filename: filename}),
+                        message: this.$t('dashboard.myfiles.fileexist', { filename: filename }),
                     }), 0);
                     return;
                 };
@@ -434,7 +432,7 @@ export default {
                 if (uploadTaskList.includes(filename)) {
                     setTimeout(() => this.$notify.error({
                         title: "Error",
-                        message: thisVue.$t('dashboard.myfiles.fileexist', {filename: filename}),
+                        message: this.$t('dashboard.myfiles.fileexist', { filename: filename }),
                     }), 0);
                     return;
                 };
@@ -449,17 +447,17 @@ export default {
                     fileName = fileName[fileName.length - 1];
                     setTimeout(() => this.$notify.info({
                         title: "Info",
-                        message: thisVue.$t('dashboard.myfiles.fileuploading', {filename: fileName}),
+                        message: this.$t('dashboard.myfiles.fileuploading', { filename: fileName }),
                     }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
                         bucketId,
                         folderName: this.bucketName,
                     });
-                    this.$message.success(thisVue.$t('dashboard.myfiles.fileuploaded', {filePath: filePath}));
+                    this.$message.success(this.$t('dashboard.myfiles.fileuploaded', { filePath: filePath }));
                     console.log(this.fileList);
                 } catch (error) {
-                    this.$message.error(thisVue.$t('dashboard.myfiles.fileuploaderr', {errmsg: error.message}));
+                    this.$message.error(this.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));
                 };
             });
         },

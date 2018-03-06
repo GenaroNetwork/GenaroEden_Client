@@ -66,11 +66,12 @@
         <!-- popover -->
         <el-popover ref="popover" placement="bottom" width="250" trigger="click" @show="pulldownStep=0" v-model="pulldownShown">
             <div class="popover">
-                <div v-if="pulldownStep===0" @click="updateState ? pulldownStep = updateState : checkUpdate()">
+                <div v-if="pulldownStep===0" @click="checkUpdate().then(() => {updateState && (pulldownStep = updateState)}) ">
                     <div>{{ $t('common.currentversion') }}
                         <span style="float: right;">{{ version }}</span>
                     </div>
                     <div class="new-version-check">{{ $t('common.checkupdate') }}
+                        <span v-if="updateState===0">{{ $t('common.nonewversion') }}</span>
                         <span v-if="updateState===1">{{ $t('common.havenewversion') }}</span>
                         <span v-else-if="updateState===2">{{ $t('common.downloading') }}</span>
                         <span v-else-if="updateState===3">{{ $t('common.downloaded') }}</span>
@@ -130,7 +131,7 @@
                 <i class="el-icon-caret-bottom el-icon--right"></i>
             </span>
         </div>
-    </div>
+    </div> 
 </template>
 <script>
 import StorageUsage from '@/assembly/StorageUsage'
@@ -163,6 +164,11 @@ export default {
     },
     methods: {
         async logout() {
+            await this.$confirm('确定退出客户端?', '提示', {
+                confirmButtonText: '退出',
+                cancelButtonText: '取消',
+                type: 'warning'
+            });
             await deleteCredentials();
             await walletManager.clearWallets();
             this.$router.push({ path: '/' });
@@ -184,6 +190,7 @@ export default {
                 isLatest = false;
                 return false;
             });
+            debugger;
             if (isLatest) return;
 
 
