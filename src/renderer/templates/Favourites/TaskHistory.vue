@@ -73,7 +73,7 @@
                                 </div>
                             </div>
                             <el-button class="row-action" type="text" size="small" @click="deleteTaskId = scope.row.taskId">
-                                <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
+                                <i class="material-icons">close</i>
                             </el-button>
                             {{scope.row}}
                         </el-tooltip>

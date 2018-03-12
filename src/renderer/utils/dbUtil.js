@@ -22,7 +22,6 @@ const KEYCHAIN_LOGIN = 'network.genaro.eden.login';
 const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey';
 const KEYCHAIN_WALLET = 'network.genaro.eden.wallet';
 
-
 function addUploadSize(sizeByte) {
     db.set('uploadSize', getUploadSize() + sizeByte).write()
 }
@@ -112,7 +111,7 @@ function deleteCredentials() {
     db
         .set('username', null)
         .set('encryptionKey', null)
-        .set('tasks', null)
+        .set('tasks', [])
         .write();
     if (!account) return;
     keytar.deletePassword(KEYCHAIN_ENCRYPTIONKEY, account);

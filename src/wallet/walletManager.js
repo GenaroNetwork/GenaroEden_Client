@@ -25,7 +25,7 @@ const dbPath = path.join(dbFolder, "wallets.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ wallet: [] }).write()
+db.defaults({ wallet: [], payment: null }).write()
 
 function generateWalletName() {
     const names = new Set();
@@ -136,11 +136,20 @@ async function deleteWallet(address) {
 
 async function clearWallets() {
     db.set('wallet', []).write();
+    db.set('payment', null).write();
 }
 
 async function changePassword(address, passoword, newPassword) {
     const w = await loadRawWallet(address, passoword)
     await updateWalletPassword(w, newPassword)
+}
+
+function setPaymentWallet(address){
+    db.set('payment', address).write();
+}
+
+function getPaymentWallet(address){
+    return db.get('payment').value();
 }
 
 function initRawWallet(v3, pass) {
@@ -303,4 +312,6 @@ export default {
     submitAddress,
     updateWalletName,
     clearWallets,
+    setPaymentWallet,
+    getPaymentWallet,
 }

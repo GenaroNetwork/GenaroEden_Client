@@ -62,6 +62,8 @@ const mutations = {
 const actions = {
     async walletListInit({ commit, dispatch }) {
         let wallets = await walletManager.loadWallet();
+        let address =walletManager.getPaymentWallet();    
+        commit('walletListSetPayment', { address }); 
         commit('walletListInit', wallets);
         dispatch("walletListInitBalances");
     },
@@ -103,6 +105,7 @@ const actions = {
         await txManager.sendTransactionNoLog(rawTrans);
         const user = rootState.User.username;
         await walletManager.submitAddress(user, address, password);
+        walletManager.setPaymentWallet(address);
         commit("walletListSetPayment", { address });
     },
     async walletListUpdateName({ commit }, { address, name }) {

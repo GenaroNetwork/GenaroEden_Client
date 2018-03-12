@@ -445,14 +445,14 @@ export default {
                     fileName = fileName[fileName.length - 1];
                     setTimeout(() => this.$notify.info({
                         title: "Info",
-                        message: this.$t('dashboard.myfiles.fileuploading', { filename: fileName }),
+                        message: this.$t('dashboard.myfiles.fileuploading', { fileName }),
                     }), 0);
                     await this.$store.dispatch("taskListUpload", {
                         filePath,
                         bucketId,
                         folderName: this.bucketName,
                     });
-                    this.$message.success(this.$t('dashboard.myfiles.fileuploaded', { filePath: filePath }));
+                    this.$message.success(this.$t('dashboard.myfiles.fileuploaded', { filePath }));
                     console.log(this.fileList);
                 } catch (error) {
                     this.$message.error(this.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));

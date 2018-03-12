@@ -377,8 +377,8 @@
         </div>
 
         <!-- transaction history -->
-        <div class="flex flex-grow">
-            <el-table :data="txList" class="transactions" row-class-name="file-row">
+        <div class="">
+            <el-table :data="txList" class="transactions" row-class-name="file-row" >
                 <el-table-column prop="state" label="" width="60" class-name="no-wrap">
                     <template slot-scope="scope">
                         <div class="history-icon">

@@ -72,9 +72,9 @@
                 <template slot-scope="scope">
                     <div class="action-cell">
                         <el-button v-if="scope.row.taskState === TASK_STATE.INPROGRESS" class="row-action" @click="cancelTask(scope.row)" type="text" size="small">
-                            <i class="material-icons">{{ $t('el.messagebox.cancel').toLocaleLowerCase() }}</i>
+                            <i class="material-icons">cancel</i>
                         </el-button>
-                        <el-tooltip placement="top" :manual="true" :value="scope.row.taskId === deleteTaskId">
+                        <el-tooltip v-else placement="top" :manual="true" :value="scope.row.taskId === deleteTaskId">
                             <div slot="content">
                                 <p>Are you sure to delete?</p>
                                 <div style="text-align: right; margin: 0">
@@ -82,10 +82,9 @@
                                     <el-button type="primary" size="mini" @click="removeTask(scope.row)">{{ $t('el.messagebox.confirm') }}</el-button>
                                 </div>
                             </div>
-                            <el-button v-if="scope.row.taskState !== TASK_STATE.INPROGRESS" class="row-action" @click="deleteTaskId = scope.row.taskId" type="text" size="small">
-                                <i class="material-icons">{{ $t('common.close').toLocaleLowerCase() }}</i>
+                            <el-button class="row-action" @click="deleteTaskId = scope.row.taskId" type="text" size="small">
+                                <i class="material-icons">close</i>
                             </el-button>
-                            {{scope.row}}
                         </el-tooltip>
                     </div>
                 </template>

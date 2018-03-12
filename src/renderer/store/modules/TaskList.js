@@ -43,11 +43,16 @@ let mutations = {
         tasks.forEach(task => {
             state.tasks.push(Object.assign({}, task));
         });
+        state.tasks.forEach(task => {
+            if (task.taskState !== TASK_STATE.INPROGRESS) return;
+            task.taskState = TASK_STATE.CANCEL;
+            taskListUpdate(task);
+        });
     },
 
     taskListAppend(state, commitTask) {
         taskListAppend(commitTask);
-        state.tasks.push(Object.assign({}, commitTask));
+        state.tasks.unshift(Object.assign({}, commitTask));
     },
 
     taskListUpdate(state, commitTask) {
@@ -125,11 +130,13 @@ let actions = {
                 DownloadTask.cancel(savedTask.state);
                 break;
         }
+        debugger;
         commit("taskListUpdate", {
             taskId,
-            task: null,
             taskState: TASK_STATE.CANCEL,
         });
+        console.log(TASK_STATE.CANCEL);
+        debugger;
     }
 
 }
