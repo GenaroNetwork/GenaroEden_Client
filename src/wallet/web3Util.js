@@ -9,7 +9,7 @@ if (isDev || true) {
     chainId = 3;
     GNXAddr = "0x1F84118c3B0f3f97c63B8e125456d76C78baBed5" //ropsten;
     EtherscanURL = 'https://ropsten.etherscan.io/tx/';
-    EMUAddr = "0xdCb58Fc2251760617F2e2aE9760529A77aCaFa05"
+    EMUAddr = "0xd0c419feC9541d23176A48648d3473d7E5185f70"
 } else {
     web3Provider = 'https://mainnet.infura.io/CPKlwMsRTFVy6idI23Yb';
     chainId = 0;
