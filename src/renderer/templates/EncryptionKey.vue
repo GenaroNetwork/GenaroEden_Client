@@ -117,7 +117,7 @@ div.key-area {
             </div>
             <div class='main-area'>
                 <div class="desc">
-                    <span v-html="$t('encryption.inputexistingkey')"></span>                
+                    <span v-html="$t('encryption.inputexistingkey')"></span>
                 </div>
                 <div class="key-area">
                     <el-input type="textarea" :rows="2" :placeholder="$t('encryption.yourkey')" v-model="encryptionKey">
@@ -171,7 +171,7 @@ export default {
                 if (e.code === 1) {
                     this.submitLogin()
                 } else {
-                    this.$message.error(this.$t('encryption.generrmsg', {errmsg: e.message || e}))
+                    this.$message.error(this.$t('encryption.generrmsg', { errmsg: e.message || e }))
                 }
             })
         },
@@ -230,7 +230,7 @@ export default {
             }, (path) => {
                 if (path != undefined && path.length > 0) {
                     var fs = require('fs');
-                    fs.writeFile(path, theKey, function (err) {
+                    fs.writeFile(path, theKey, err => {
                         if (err) {
                             return console.log(err);
                         }
