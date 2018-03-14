@@ -200,7 +200,9 @@ export default {
             this.showPage = 'inputKey'
         },
         gotoNewOrReturn() {
-            this.showPage = 'newOrReturn'
+            this.encryptionKey = "";
+            this.keyConfirm = "";
+            this.showPage = 'newOrReturn';
         },
         validateKeyMatchAndSubmit() {
             if (this.keyConfirm === this.encryptionKey) {
