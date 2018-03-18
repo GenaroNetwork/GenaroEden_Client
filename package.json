@@ -6,21 +6,6 @@
     "description": "Genaro Eden - A Trustworthy Internet for Everyone",
     "license": "MIT",
     "main": "./dist/electron/main.js",
-    "build": {
-        "linux": {
-            "target": [
-                {
-                    "target": "AppImage",
-                    "arch": [
-                        "x64"
-                    ]
-                }
-            ]
-        },
-        "directories": {
-            "output": "./build"
-        }
-    },
     "scripts": {
         "build": "node .electron-vue/build.js",
         "build:darwin": "cross-env BUILD_TARGET=darwin node .electron-vue/build.js",
@@ -34,6 +19,20 @@
         "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
         "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
         "dist": "npm run pack && electron-builder"
+    },
+    "build": {
+        "linux": {
+            "target": [
+                {
+                    "target": "AppImage",
+                    "arch": ["x64", "ia32"]
+                }
+            ],
+            "category": "Utility"
+        },
+        "directories": {
+            "output": "./build/installers"
+        }
     },
     "dependencies": {
         "@fortawesome/fontawesome": "^1.1.2",
