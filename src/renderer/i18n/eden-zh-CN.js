@@ -8,8 +8,8 @@ exports.default = {
     reset: '重置密码',
     usernameholder: '用户名',
     passwordholder: '密码',
-    inputname:'请输入用户名',
-    emailerr:'邮箱格式错误',
+    inputname: '请输入用户名',
+    emailerr: '邮箱格式错误',
     inputpwd: '请输入密码',
     pwdlength: '密码长度不能少于6位',
     loginerr: '用户名或密码错误',
@@ -50,7 +50,9 @@ exports.default = {
     done: '完成',
     choose: '请选择',
     close: '关闭',
-    error: '错误'
+    error: '错误',
+    confirm: '确认',
+    cancel: '取消',
   },
   dashboard: {
     myfiles: {
@@ -71,10 +73,10 @@ exports.default = {
       filedeled: '文件已删除',
       filedelerr: '文件删除出错: {error}',
       upload: '上传',
-      emptyfilemsg: '空文件夹. <br>点击' + 
-                    '<el-button type="text" @click="upload" size="small">上传' +
-                      '<i class="el-icon-upload el-icon--right"></i>' +
-                    '</el-button> 按钮或拖拽文件到此处上传文件.',
+      emptyfilemsg: '空文件夹. <br>点击' +
+        '<el-button type="text" @click="upload" size="small">上传' +
+        '<i class="el-icon-upload el-icon--right"></i>' +
+        '</el-button> 按钮或拖拽文件到此处上传文件.',
       droptouploadfiles: '拖拽文件上传到{bucketName}',
       defaultpaymsg: '请先设置默认的支付钱包.',
       selectfile: '请先选择文件',
@@ -84,7 +86,8 @@ exports.default = {
       fileexist: '文件{filename}已存在.',
       fileuploading: '文件{fileName}正在上传中. 你可以在左侧的最近任务面板中查看该任务的状态.',
       fileuploaded: '文件已上传至: {filePath}',
-      fileuploaderr: '文件上传失败: {errmsg}'
+      fileuploaderr: '文件上传失败: {errmsg}',
+      viewDetail: '查看详情',
     },
     recent: {
       recent: '操作记录',
@@ -110,7 +113,7 @@ exports.default = {
       from: '发出地址',
       to: '接收地址',
       amount: '数量',
-      recipientaddress:"接收地址",
+      recipientaddress: "接收地址",
       ETH: 'ETH',
       GNX: 'GNX',
       paylimitGNX: 'GNX付款限额',
@@ -146,21 +149,22 @@ exports.default = {
       changepassword: '修改（钱包）密码',
       exportwallet: '导出JSON格式的钱包',
       setdefaultpayment: '设置为默认付款钱包',
-      placeholder1: '请输入该钱包的密码.'
+      placeholder1: '请输入该钱包的密码.',
+      setDeafultCoast: '注意：设置默认钱包需要花费一些ETH',
     },
     debits: {
-        debits: '账单',
-        usage: '已使用',
-        freestorage: '剩余免费存储空间: {free}/年',
-        bonusamount: '新用户奖励： {bonusAmount} GNX',
-        updatetime: '最新更新时间',
-        pricemsg: '用户首次使用将免费获得25 GB空间一年使用权.详情请阅读资费说明.',
-        time: '时间',
-        storagetraffic: '存储 / 带宽占用',
-        wallet: '钱包',
-        storagefee: '存储费用',
-        trafficfee: '带宽费用',
-        totalfee: '费用总计'
+      debits: '账单',
+      usage: '已使用',
+      freestorage: '剩余免费存储空间: {free}/年',
+      bonusamount: '新用户奖励： {bonusAmount} GNX',
+      updatetime: '最新更新时间',
+      pricemsg: '用户首次使用将免费获得25 GB空间一年使用权.详情请阅读资费说明.',
+      time: '时间',
+      storagetraffic: '存储 / 带宽占用',
+      wallet: '钱包',
+      storagefee: '存储费用',
+      trafficfee: '带宽费用',
+      totalfee: '费用总计'
     },
     sharestorage: {
       sharestorage: '分享我的存储空间',

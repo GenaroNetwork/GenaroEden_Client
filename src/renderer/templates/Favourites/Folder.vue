@@ -99,6 +99,12 @@ td.right-td {
 .file-row:hover .row-action {
   visibility: visible;
 }
+.text-hide {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  float: left;
+  max-width: 100%;
+}
 </style>
 
 <template>
@@ -136,17 +142,17 @@ td.right-td {
                 <el-table-column prop="id" :label="$t('dashboard.myfiles.fileid')" class-name="id-col"></el-table-column>
                 <el-table-column width="130" label="">
                     <template slot-scope="scope">
-                        <el-tooltip content="View detail" placement="bottom">
+                        <el-tooltip :content="$t('dashboard.myfiles.viewDetail')" placement="bottom">
                             <el-button class="row-action" @click="showReceipt(scope.row)" type="text" size="small">
                                 <i class="material-icons">receipt</i>
                             </el-button>
                         </el-tooltip>
-                        <el-tooltip content="Download" placement="bottom">
+                        <el-tooltip :content="$t('dashboard.myfiles.download')" placement="bottom">
                             <el-button class="row-action" @click="downloadFile(scope.row)" type="text" size="small">
                                 <i class="material-icons">file_download</i>
                             </el-button>
                         </el-tooltip>
-                        <el-tooltip content="Delete" placement="bottom">
+                        <el-tooltip :content="$t('dashboard.myfiles.delete')" placement="bottom">
                             <el-button class="row-action" @click="deleteFile(scope.row)" type="text" size="small">
                                 <i class="material-icons">delete</i>
                             </el-button>
@@ -165,22 +171,18 @@ td.right-td {
         </div>
         <!-- 显示receipt的modal -->
         <el-dialog :visible.sync="receiptModal.display" width="500" :close-on-click-modal="true">
-            <div>
-                <table>
-                    <tr>
-                        <td class="left-td">Filename:</td>
-                        <td class="right-td">{{ receiptModal.fileName }}</td>
-                    </tr>
-                    <tr>
-                        <td class="left-td">File Id:</td>
-                        <td class="right-td">{{ receiptModal.fileId }}</td>
-                    </tr>
-                    <tr>
-                        <td class="left-td">QR Code:</td>
-                        <td class="right-td"><img :src="receiptModal.fileQrCode"></td>
-                    </tr>
-                </table>
-            </div>
+            <el-row>
+                <el-col :span="4">{{ $t('dashboard.recent.filename') }}:</el-col>
+                <el-col :span="20">
+                    <el-tooltip class="item" effect="dark" :content="receiptModal.fileName" placement="top">
+                        <div class="text-hide">{{ receiptModal.fileName }}</div>
+                    </el-tooltip>
+                </el-col>
+                <el-col :span="4">File Id:</el-col>
+                <el-col :span="20">{{ receiptModal.fileId }}</el-col>
+                <el-col :span="4">QR Code:</el-col>
+                <el-col :span="20"><img :src="receiptModal.fileQrCode"></el-col>
+            </el-row>
             <div slot="footer">
                 <el-button type="primary" size="large" @click="downloadFile({filename: receiptModal.fileName, id: receiptModal.fileId})">{{ $t('dashboard.myfiles.downloadfile') }}</el-button>
                 <el-button type="error" size="large" @click="deleteFile({filename: receiptModal.fileName, id: receiptModal.fileId})">{{ $t('dashboard.myfiles.deletefile') }}</el-button>
@@ -352,16 +354,19 @@ export default {
         async downloadFile({ filename, id }) {
             await this.checkDebit();
             // 弹出保存对话框配置
-            var options = {
+            let options = {
                 title: 'Save File',
-                defaultPath: './' + filename
+                defaultPath: './' + filename,
             }
+            let fileArr = filename.split(".");
+            let extName = fileArr.length > 1 ? "." + fileArr[fileArr.length - 1] : "";
             electronDialog.showSaveDialog(options, filePath => {
                 this.$message('File Downloading...');
+                if (filePath.split(".").length === 1) filePath += extName;
                 this.$store.dispatch("taskListDownload", {
                     bucketId: this.bucketId,
                     fileId: id,
-                    filePath: filePath,
+                    filePath,
                     folderName: this.bucketName,
                 }).then(() => {
                     this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: filename }));
@@ -453,7 +458,6 @@ export default {
                         folderName: this.bucketName,
                     });
                     this.$message.success(this.$t('dashboard.myfiles.fileuploaded', { filePath }));
-                    console.log(this.fileList);
                 } catch (error) {
                     this.$message.error(this.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));
                 };

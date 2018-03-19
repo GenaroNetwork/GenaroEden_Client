@@ -8,8 +8,8 @@ exports.default = {
     reset: 'Reset Password',
     usernameholder: 'User Name',
     passwordholder: 'Password',
-    inputname:'Please Enter Username',
-    emailerr:'Incorrect Email Format',
+    inputname: 'Please Enter Username',
+    emailerr: 'Incorrect Email Format',
     inputpwd: 'Please Enter Password',
     pwdlength: 'Password length must not be less than 6 characters',
     loginerr: 'Username or Password Error',
@@ -50,7 +50,9 @@ exports.default = {
     done: 'Done',
     choose: 'Please choose',
     close: 'Close',
-    error: 'Error'
+    error: 'Error',
+    confirm: '确认',
+    cancel: '取消',
   },
   dashboard: {
     myfiles: {
@@ -71,10 +73,10 @@ exports.default = {
       filedeled: 'File Deleted',
       filedelerr: 'File Delete Error: {error}',
       upload: 'Upload',
-      emptyfilemsg: 'No file in this folder. <br>You can click' + 
-                    '<el-button type="text" @click="upload" size="small">Upload' +
-                      '<i class="el-icon-upload el-icon--right"></i>' +
-                    '</el-button> button or drag and drop file here to upload.',
+      emptyfilemsg: 'No file in this folder. <br>You can click' +
+        '<el-button type="text" @click="upload" size="small">Upload' +
+        '<i class="el-icon-upload el-icon--right"></i>' +
+        '</el-button> button or drag and drop file here to upload.',
       droptouploadfiles: 'drop to upload your files to {bucketName}',
       defaultpaymsg: 'Please set default payment wallet first.',
       selectfile: 'Please select file first',
@@ -84,7 +86,8 @@ exports.default = {
       fileexist: 'File {filename} is already exists.',
       fileuploading: 'File {fileName} Uploading. You can see this task in Recent panel on the left.',
       fileuploaded: 'File Uploaded: {filePath}',
-      fileuploaderr: 'File Upload Failed: {errmsg}'
+      fileuploaderr: 'File Upload Failed: {errmsg}',
+      viewDetail: 'view detail',
     },
     recent: {
       recent: 'Recent',
@@ -110,7 +113,7 @@ exports.default = {
       from: 'From',
       to: 'To',
       amount: 'Amount',
-      recipientaddress:"Recipient Address", 
+      recipientaddress: "Recipient Address",
       ETH: 'ETH',
       GNX: 'GNX',
       paylimitGNX: 'Pay limit in GNX',
@@ -146,21 +149,22 @@ exports.default = {
       changepassword: 'Change password (of wallet)',
       exportwallet: 'Export wallet as JSON',
       setdefaultpayment: 'Set as Default Payment',
-      placeholder1: 'Please Enter the Wallet Password'
+      placeholder1: 'Please Enter the Wallet Password',
+      setDeafultCoast: 'Attention：This action will cost few ETH.',
     },
     debits: {
-        debits: 'Debits',
-        usage: 'Used',
-        freestorage: 'Free storage: {free}/Year',
-        bonusamount: 'New user bandwidth： {bonusAmount} GNX',
-        updatetime: 'Last update',
-        pricemsg: '25GB free storage is available during the first year. Please see billing instructions here.',
-        time: 'Time',
-        storagetraffic: 'Storage/Traffic Used',
-        wallet: 'Wallet',
-        storagefee: 'Storage Fee',
-        trafficfee: 'Traffic Fee',
-        totalfee: 'Total Fee'
+      debits: 'Debits',
+      usage: 'Used',
+      freestorage: 'Free storage: {free}/Year',
+      bonusamount: 'New user bandwidth： {bonusAmount} GNX',
+      updatetime: 'Last update',
+      pricemsg: '25GB free storage is available during the first year. Please see billing instructions here.',
+      time: 'Time',
+      storagetraffic: 'Storage/Traffic Used',
+      wallet: 'Wallet',
+      storagefee: 'Storage Fee',
+      trafficfee: 'Traffic Fee',
+      totalfee: 'Total Fee'
     },
     sharestorage: {
       sharestorage: 'Share My Storage',

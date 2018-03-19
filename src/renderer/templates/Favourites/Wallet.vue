@@ -300,12 +300,12 @@
                         <el-col :span="14" class="preview-value">{{ payOption.amount }}</el-col>
                     </el-row>
                     <el-form-item :label="$t('dashboard.mywallet.walletpassword')" prop="password" key="password">
-                        <el-input type="password" v-model="payOption.password" :placeholder="$t('dashboard.mywallet.walletpassword')" :error="passwordError">
+                        <el-input type="password" :disabled="payLoading" v-model="payOption.password" :placeholder="$t('dashboard.mywallet.walletpassword')" :error="passwordError">
                         </el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="payFormPop = false">{{ $t('el.messagebox.cancel') }}</el-button>
-                        <el-button @click="pay()" type="primary">{{ $t('common.submit') }}</el-button>
+                        <el-button @click="pay()" type="primary" :disabled="payLoading">{{ $t('common.submit') }}</el-button>
                     </el-form-item>
                 </template>
             </el-form>
@@ -378,7 +378,7 @@
 
         <!-- transaction history -->
         <div class="">
-            <el-table :data="txList" class="transactions" row-class-name="file-row" >
+            <el-table :data="txList" class="transactions" row-class-name="file-row">
                 <el-table-column prop="state" label="" width="60" class-name="no-wrap">
                     <template slot-scope="scope">
                         <div class="history-icon">
@@ -435,7 +435,7 @@ export default {
     async created() {
         const address = this.$route.params.walletAddress;
         this.$store.dispatch("loadTransactions");
-        this.$store.dispatch("walletListSetCurrent", {address:this.$store.getters.currentWallet.address})
+        this.$store.dispatch("walletListSetCurrent", { address: this.$store.getters.currentWallet.address })
     },
     mounted() {
         // init balance
@@ -486,7 +486,7 @@ export default {
                 }
                 let price = await getGasPrice();
                 price = utils.fromWei(price.toString(), "Gwei");
-                if (value < price) {
+                if (parseInt(value) < parseInt(price)) {
                     callback(new Error(this.$t('dashboard.mywallet.gaspriceerrmsg', { price })));
                 } else {
                     callback();
@@ -524,6 +524,7 @@ export default {
                 limit: 0
             },
             payStep: 0,
+            payLoading: false,
             ruleInline: {
                 recipient: [
                     {
@@ -591,13 +592,16 @@ export default {
             } catch (e) { }
         },
         async pay() {
+            this.payLoading = true;
             try {
                 await this.$refs.payOption.validate();
                 await this.$store.dispatch("walletListPayByCurrent", this.payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
                 if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";
-                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error:e.message }));
+                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }));
+            } finally {
+                this.payLoading = false;
             }
         },
         changeWallet(address) {

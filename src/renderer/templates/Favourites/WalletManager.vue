@@ -247,6 +247,8 @@
                     <el-input type="number" v-model="submitPay.amount" :placeholder="$t('dashboard.mywallet.maxGNX')" size="small">
                     </el-input>
                 </el-form-item>
+                <el-alert :title="$t('dashboard.walletmanage.setDeafultCoast')" type="info" :closable="false">
+                </el-alert>
             </el-form>
             <div slot="footer">
                 <el-button @click="setAsPayingWallet()" type="primary">{{ $t('common.submit') }}</el-button>

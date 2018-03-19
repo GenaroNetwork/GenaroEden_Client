@@ -1,6 +1,6 @@
 #!/bin/bash
 # Electron's version. which can be found at node_modules/electron/package.json my version is 1.7.11
-export npm_config_target=1.8.2
+export npm_config_target=1.8.4
 # The architecture of Electron, can be ia32 or x64.
 export npm_config_arch=x64
 export npm_config_target_arch=x64

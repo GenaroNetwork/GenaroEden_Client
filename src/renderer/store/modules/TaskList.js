@@ -130,7 +130,6 @@ let actions = {
                 DownloadTask.cancel(savedTask.state);
                 break;
         }
-        debugger;
         commit("taskListUpdate", {
             taskId,
             taskState: TASK_STATE.CANCEL,
