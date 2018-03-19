@@ -73,16 +73,18 @@
         <el-popover ref="popover" placement="bottom" width="250" trigger="click" @show="pulldownStep=0" v-model="pulldownShown">
             <div class="popover">
                 <div v-if="pulldownStep===0" @click="checkUpdate().then(() => {updateState && (pulldownStep = updateState)}) ">
-                    <div>{{ $t('common.currentversion') }}
-                        <span style="float: right;">{{ version }}</span>
-                    </div>
-                    <div class="new-version-check">{{ $t('common.checkupdate') }}
-                        <span v-if="updateState===0">{{ $t('common.nonewversion') }}</span>
-                        <span v-if="updateState===1">{{ $t('common.havenewversion') }}</span>
-                        <span v-else-if="updateState===2">{{ $t('common.downloading') }}</span>
-                        <span v-else-if="updateState===3">{{ $t('common.downloaded') }}</span>
-                        <span v-else-if="updateState===4">{{ $t('common.downloadfail') }}</span>
-                    </div>
+                    <template v-if="isMac">
+                        <div>{{ $t('common.currentversion') }}
+                            <span style="float: right;">{{ version }}</span>
+                        </div>
+                        <div class="new-version-check">{{ $t('common.checkupdate') }}
+                            <span v-if="updateState===0">{{ $t('common.nonewversion') }}</span>
+                            <span v-if="updateState===1">{{ $t('common.havenewversion') }}</span>
+                            <span v-else-if="updateState===2">{{ $t('common.downloading') }}</span>
+                            <span v-else-if="updateState===3">{{ $t('common.downloaded') }}</span>
+                            <span v-else-if="updateState===4">{{ $t('common.downloadfail') }}</span>
+                        </div>
+                    </template>
                     <div>
                         <el-button type="text" @click="logout">{{ $t('common.logout') }}</el-button>
                     </div>
@@ -159,6 +161,7 @@ export default {
             // 2: downloading
             // 3: downloaded
             // 4: error 
+            isMac: true,
             updateState: 0,
             pulldownShown: false,
             pulldownStep: 0,
@@ -167,6 +170,9 @@ export default {
                 notes: null,
             }
         };
+    },
+    created() {
+        if (require("os").platform() !== "darwin") this.isMac = false;
     },
     methods: {
         async logout() {
