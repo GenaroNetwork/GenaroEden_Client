@@ -17,7 +17,25 @@
         "dev": "node .electron-vue/dev-runner.js",
         "pack": "npm run pack:main && npm run pack:renderer",
         "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
-        "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js"
+        "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
+        "dist": "npm run pack && electron-builder"
+    },
+    "build": {
+        "linux": {
+            "target": [
+                {
+                    "target": "AppImage",
+                    "arch": [
+                        "x64",
+                        "ia32"
+                    ]
+                }
+            ],
+            "category": "Utility"
+        },
+        "directories": {
+            "output": "./build/installers"
+        }
     },
     "dependencies": {
         "@fortawesome/fontawesome": "^1.1.2",
@@ -68,6 +86,7 @@
         "del": "^3.0.0",
         "devtron": "^1.4.0",
         "electron": "^1.8.4",
+        "electron-builder": "^20.5.1",
         "electron-debug": "^1.4.0",
         "electron-devtools-installer": "^2.2.0",
         "electron-packager": "^11.0.0",
