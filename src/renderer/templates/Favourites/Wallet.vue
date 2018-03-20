@@ -592,7 +592,7 @@ export default {
             } catch (e) { }
         },
         async pay() {
-            this.payLoading = true;
+            this.payFormPop = false;
             try {
                 await this.$refs.payOption.validate();
                 await this.$store.dispatch("walletListPayByCurrent", this.payOption);
@@ -601,7 +601,6 @@ export default {
                 if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";
                 else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }));
             } finally {
-                this.payLoading = false;
             }
         },
         changeWallet(address) {
@@ -632,6 +631,7 @@ export default {
             this.payOption.gasPrice = parseInt(utils.fromWei(this.defaultGas.price.toString(), "Gwei"));
             this.payOption.gasLimit = this.defaultGas.limit;
             this.passwordError = null;
+            this.payLoading = false;
             this.$refs.payOption.clearValidate();
         },
         avatarUrl(id) {
