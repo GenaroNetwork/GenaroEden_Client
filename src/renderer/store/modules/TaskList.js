@@ -135,7 +135,6 @@ let actions = {
             taskState: TASK_STATE.CANCEL,
         });
         console.log(TASK_STATE.CANCEL);
-        debugger;
     }
 
 }
