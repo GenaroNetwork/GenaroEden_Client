@@ -47,7 +47,6 @@
         "clone": "^2.1.1",
         "crypto-js": "^3.1.9-1",
         "element-ui": "^2.2.0",
-        "eth-lightwallet": "^3.0.1",
         "ethereumjs-tx": "^1.3.3",
         "ethereumjs-wallet": "^0.6.0",
         "human-size": "^1.1.0",
