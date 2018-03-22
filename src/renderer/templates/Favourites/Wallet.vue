@@ -546,11 +546,6 @@ export default {
                 ],
                 password: [
                     { required: true, message: this.$t("common.inputpwd"), trigger: "blur" },
-                    {
-                        min: 6,
-                        message: this.$t("common.pwdlength"),
-                        trigger: "blur"
-                    }
                 ]
             }
         };
