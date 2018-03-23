@@ -531,31 +531,33 @@ export default {
             this.changePass.newPassword = "";
             this.changePass.newPasswordRepeat = "";
         },
-        submitChangePassword() {
-            this.$store
-                .dispatch("walletListChangePassword", {
+        async submitChangePassword() {
+            try {
+                let validated = await this.$refs.changePassFormRef.validate();
+                if (!validated) return;
+                await this.$store.dispatch("walletListChangePassword", {
                     address: this.changePass.address,
                     password: this.changePass.password,
                     newPassword: this.changePass.newPassword
                 })
-                .then(() => {
-                    this.$message.success("Password Changed");
-                    this.resetPasswordForm();
-                })
-                .catch(e => {
-                    this.$message.error(e.message);
-                });
+                this.$message.success("Password Changed");
+                this.resetPasswordForm();
+            } catch (e) {
+                this.$message.error(e.message);
+            }
         },
         copy(value, index) {
             clipboard.writeText(`0x${value}`);
             this.copiedIndex = index;
         },
-        exportWalletV3: async function (item) {
-            this.$prompt("Password:", "Export Wallet", {
-                confirmButtonText: "Export",
-                cancelButtonText: this.$t('el.messagebox.cancel'),
-                inputType: "password"
-            }).then(async ({ value }) => {
+        async exportWalletV3(item) {
+            try {
+                let { value } = await this.$prompt("Password:", "Export Wallet", {
+                    confirmButtonText: "Export",
+                    cancelButtonText: this.$t('el.messagebox.cancel'),
+                    inputType: "password"
+                });
+
                 const passwordOk = await walletManager.validateWalletPassword(
                     item.address,
                     value
@@ -580,9 +582,9 @@ export default {
                         }
                     );
                 }
-            }).catch(e => {
+            } catch (e) {
                 this.$message.error(e.message);
-            });
+            };
         },
         popSubmitPay: async function (item) {
             this.submitPay.show = true;
