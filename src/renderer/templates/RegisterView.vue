@@ -55,7 +55,8 @@ a {
                 </el-form-item>
                 <el-form-item>
                     <el-checkbox :checked="agree" @change="value => agree = value">
-                        {{ this.$t("common.agreeagreement") }}
+                        我同意
+                        <a href="javascript:void(0);" @click="openAgreement">《Genaro Eden 用户使用协议》</a>
                     </el-checkbox>
                 </el-form-item>
                 <div class='login-center clearfix'>

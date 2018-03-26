@@ -484,8 +484,7 @@ export default {
                 if (value.toString().trim() === "") {
                     callback(new Error(this.$t('dashboard.mywallet.gaspricemsg')));
                 }
-                price = utils.fromWei(price.toString(), "Gwei");
-                if (parseInt(value) < 1e9) {
+                if (parseInt(value) < 1) {
                     callback(new Error(this.$t('dashboard.mywallet.gaspriceerrmsg', { price })));
                 } else {
                     callback();
@@ -590,7 +589,7 @@ export default {
             try {
                 await this.$refs.payOption.validate();
                 let payOption = Object.assign({}, this.payOption);
-                payOption.gasPrice *= 10 * 9;
+                payOption.gasPrice *= 1e9;
                 await this.$store.dispatch("walletListPayByCurrent", payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
