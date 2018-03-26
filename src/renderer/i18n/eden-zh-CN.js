@@ -25,6 +25,8 @@ exports.default = {
     resetsuccess: '重置成功',
     pwdmismatch: '两次输入的密码不一致!',
     activateemail: '已向<{user}>发送了一封邮件,请根据邮件中的步骤激活您的账户，并重新登录.',
+    agreeagreement: '我同意\
+    <a href="javascript:void(0);" @click="openAgreement">《Genaro Eden 用户使用协议》</a>',
     registersuccess: '注册成功',
     registererr: '注册失败',
     userexist: '用户名已被占用',
@@ -196,7 +198,9 @@ exports.default = {
     },
     help: {
       help: '帮助',
-      learnmore: '更多'
+      learnmore: '更多',
+      using: '使用说明',
+      agreement: '用户协议',
     },
     language: {
       language: '语言'

@@ -31,12 +31,12 @@ Vue.filter("formatTime", time => {
 
 Vue.filter("formatSize", size => {
     if (size === null || size === void 0) return "--";
-    return humanSize(size);
+    return humanSize(size, 2);
 });
 
 Vue.filter("formatHourSize", size => {
     if (size === null || size === void 0) return "--";
-    return humanSize(size) + "·h";
+    return humanSize(size, 2) + "·h";
 });
 
 

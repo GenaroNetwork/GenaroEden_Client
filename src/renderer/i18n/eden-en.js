@@ -25,6 +25,8 @@ exports.default = {
     resetsuccess: 'Reset Success',
     pwdmismatch: 'The two input passwords do not match!',
     activateemail: 'A mail has been sent to <{user}>, please follow the instructions in the email to activate your account before login.',
+    agreeagreement: '我同意\
+    <a href="javascript:void(0);" @click="openAgreement">《Genaro Eden 用户使用协议》</a>',
     registersuccess: 'Register Success',
     registererr: 'Register Error',
     userexist: 'User already exists',
@@ -196,7 +198,9 @@ exports.default = {
     },
     help: {
       help: 'Help',
-      learnmore: 'Learn More'
+      using: '使用说明',
+      learnmore: 'Learn More',
+      agreement: 'agreement',
     },
     language: {
       language: 'Language'

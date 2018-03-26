@@ -28,6 +28,9 @@ h1 {
 .pulled-left {
   float: left;
 }
+a {
+  color: #409eff;
+}
 </style>
 
 <template>
@@ -50,9 +53,14 @@ h1 {
                     <el-input type="password" v-model="register.passwordCheck" :placeholder="$t('common.confirmholder')">
                     </el-input>
                 </el-form-item>
+                <el-form-item>
+                    <el-checkbox :checked="agree" @change="value => agree = value">
+                        {{ this.$t("common.agreeagreement") }}
+                    </el-checkbox>
+                </el-form-item>
                 <div class='login-center clearfix'>
                     <el-form-item>
-                        <el-button class="main-btn" type="primary" @click="submitSignup()" :loading="processing">{{ $t("common.signup") }}</el-button>
+                        <el-button :disabled="!agree" class="main-btn" type="primary" @click="submitSignup()" :loading="processing">{{ $t("common.signup") }}</el-button>
                     </el-form-item>
                     <router-link class="otherlink pulled-left" to="/">
                         <i class="el-icon-arrow-left"></i>{{ $t("common.signin") }}</router-link>
@@ -63,9 +71,11 @@ h1 {
 </template>
 
 <script> 
-import router from '../router'
-import store from '../store'
-import { register } from '../../bridge/users'
+import router from '../router';
+import store from '../store';
+import { register } from '../../bridge/users';
+import { shell } from "electron";
+
 
 export default {
     name: 'login-view',
@@ -74,6 +84,7 @@ export default {
     },
     data: function () {
         return {
+            agree: false,
             processing: false,
             register: {
                 username: '',
@@ -113,7 +124,7 @@ export default {
                     var bridgePass = this2.register.password
                     register(bridgeUser, bridgePass).then(result => {
                         this2.processing = false
-                        this.$alert(this.$t('common.activateemail', {user: bridgeUser}), this.$t('common.registersuccess'), {
+                        this.$alert(this.$t('common.activateemail', { user: bridgeUser }), this.$t('common.registersuccess'), {
                             type: 'success',
                             confirmButtonText: this.$t('el.messagebox.confirm'),
                             callback: action => {
@@ -129,6 +140,9 @@ export default {
                     })
                 }
             })
+        },
+        openAgreement() {
+            shell.openExternal("https://genaro.network/");
         },
     }
 }
