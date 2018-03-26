@@ -484,9 +484,8 @@ export default {
                 if (value.toString().trim() === "") {
                     callback(new Error(this.$t('dashboard.mywallet.gaspricemsg')));
                 }
-                let price = await getGasPrice();
                 price = utils.fromWei(price.toString(), "Gwei");
-                if (parseInt(value) < parseInt(price)) {
+                if (parseInt(value) < 1e9) {
                     callback(new Error(this.$t('dashboard.mywallet.gaspriceerrmsg', { price })));
                 } else {
                     callback();
@@ -590,7 +589,9 @@ export default {
             this.payFormPop = false;
             try {
                 await this.$refs.payOption.validate();
-                await this.$store.dispatch("walletListPayByCurrent", this.payOption);
+                let payOption = Object.assign({}, this.payOption);
+                payOption.gasPrice *= 10 * 9;
+                await this.$store.dispatch("walletListPayByCurrent", payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
                 if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";

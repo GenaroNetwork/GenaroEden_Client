@@ -62,7 +62,7 @@ function getBalanceGnx(address) {
 // _getPrice()
 // setInterval(_getPrice, 5000)
 function getGasPrice() {
-    return 40e9; // web3.eth.getGasPrice sometimes give very low value which will fail transaction. default to 40 now
+    return 3e9; // web3.eth.getGasPrice sometimes give very low value which will fail transaction. default to 40 now
 }
 
 async function getGasLimit() {
