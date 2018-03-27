@@ -15,7 +15,7 @@ if (isDev) {
     chainId = 0;
     GNXAddr = "0x6ec8a24cabdc339a06a172f8223ea557055adaa5";
     EtherscanURL = 'https://etherscan.io/tx/';
-    EMUAddr = ""
+    EMUAddr = "0x279022fcaac7aeb29cab86b215da670b7ec2c98a"
 }
 web3Instance = new Web3(new Web3.providers.HttpProvider(web3Provider));
 
