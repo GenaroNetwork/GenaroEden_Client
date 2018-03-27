@@ -2,6 +2,7 @@ import { app, BrowserWindow, Menu, shell, IpcMain } from 'electron'
 import registerProtocals from './customProtocol'
 const defaultMenu = require('./appMenu');
 import i18n, { writeLangJsonConfigFile } from '../renderer/i18n';
+import { GET_AGREEMENT, GET_TUTORIAL } from "../config";
 
 /**
  * Set `__static` path to static files in production
@@ -29,6 +30,10 @@ function setMenu() {
 
 function addMenu() {
     // Get template for default menu 
+    app.externalLink = {
+        agreement: GET_AGREEMENT,
+        tutorial: GET_TUTORIAL,
+    };
     const menu = defaultMenu(app, shell);
 
     // Set top-level application menu, using modified template 

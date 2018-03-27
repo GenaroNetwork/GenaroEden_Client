@@ -5,7 +5,6 @@
  * @param {Object} shell electron.shell
  * @returns {Object}  a menu object to be passed to electron.Menu
  */
-
 module.exports = function (app, shell) {
 
   const template = [
@@ -109,13 +108,13 @@ module.exports = function (app, shell) {
         {
           label: app.menuSetting.menu.help.agreement,
           click: function (menuItem, browserWindow, event) {
-            shell.openExternal("https://genaro.network/");
+            shell.openExternal(app.externalLink.agreement());
           }
         },
         {
-          label: app.menuSetting.menu.help.using,
+          label: app.menuSetting.menu.help.tutorial,
           click: function (menuItem, browserWindow, event) {
-            shell.openExternal("https://genaro.network/");
+            shell.openExternal(app.externalLink.tutorial());
           }
         },
         {

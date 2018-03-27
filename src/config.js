@@ -1,5 +1,7 @@
 
 
+import i18n from './renderer/i18n';
+
 // prod
 const BRIDGE_API_URL = 'http://47.100.33.60:8080';
 
@@ -16,6 +18,31 @@ const GNX_PER_GB_BANDWIDTH = 5.0;
 const GNX_PER_GB_HOUR_STORAGE = 0.002054795;
 
 const AUTO_UPLOAD_URL = "https://genaro-auto-update.oss-cn-shanghai.aliyuncs.com/eden-update.json";
+
+const GET_AGREEMENT = () => {
+    let l = i18n.locale;
+    switch (l) {
+        case "zh":
+        case "en":
+            break;
+        default:
+            l = "en"
+            break;
+    }
+    return `https://genaro.network/${l}/genaro-eden/user-agreement`;
+};
+const GET_TUTORIAL = () => {
+    let l = i18n.locale;
+    switch (l) {
+        case "zh":
+        case "en":
+            break;
+        default:
+            l = "en"
+            break;
+    }
+    return `https://genaro.network/${l}/genaro-eden/user-tutorial`;
+};
 
 const TASK_STATE = Object.freeze({
     INIT: 1,
@@ -41,4 +68,6 @@ export {
     GNX_PER_GB_BANDWIDTH,
     GNX_PER_GB_HOUR_STORAGE,
     AUTO_UPLOAD_URL,
+    GET_AGREEMENT,
+    GET_TUTORIAL,
 }

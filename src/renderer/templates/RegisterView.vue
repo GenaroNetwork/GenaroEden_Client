@@ -55,8 +55,8 @@ a {
                 </el-form-item>
                 <el-form-item>
                     <el-checkbox :checked="agree" @change="value => agree = value">
-                        我同意
-                        <a href="javascript:void(0);" @click="openAgreement">《Genaro Eden 用户使用协议》</a>
+                        {{ $t("common.agreeagreement1") }}
+                        <a href="javascript:void(0);" @click="openAgreement">{{ $t("common.agreeagreement2") }}</a>
                     </el-checkbox>
                 </el-form-item>
                 <div class='login-center clearfix'>
@@ -76,6 +76,7 @@ import router from '../router';
 import store from '../store';
 import { register } from '../../bridge/users';
 import { shell } from "electron";
+import { GET_AGREEMENT } from "../../config";
 
 
 export default {
@@ -143,7 +144,7 @@ export default {
             })
         },
         openAgreement() {
-            shell.openExternal("https://genaro.network/");
+            shell.openExternal(GET_AGREEMENT());
         },
     }
 }
