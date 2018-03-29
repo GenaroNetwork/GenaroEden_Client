@@ -1,0 +1,19 @@
+npm run build:win32
+asar e app.asar ./extrr
+
+
+find extrr/ -type f -name "*.pdb" -exec rm -r "{}" +
+find extrr/ -type f -name "*.map" -exec rm -r "{}" +
+find extrr/ -type f -name "*.tlog" -exec rm -r "{}" +
+find extrr/ -type f -name "*.lib" -exec rm -r "{}" +
+find extrr/ -type f -name "*.obj" -exec rm -r "{}" +
+find extrr/ -type d -name "obj" -exec rm -r "{}" +
+
+rm app.asar
+
+# copy storj here!
+
+asar p extrr/ app.asar
+# test here
+rm -r extrr
+./node_modules/.bin/electron-builder  --prepackaged ./build/Genaro\ Eden-win32-x64
