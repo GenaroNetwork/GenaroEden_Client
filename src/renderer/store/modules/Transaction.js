@@ -1,6 +1,5 @@
 import * as txManager from '../../../wallet/transactionManager';
 import { web3 } from "../../../wallet/web3Util";
-import { TASK_STATE } from "../../../config";
 
 const state = {
     transactions: []
@@ -51,13 +50,13 @@ const actions = {
             if (receipt) {
                 prop = {
                     transactionId,
-                    state: TASK_STATE.SUCCESS,
+                    state: txManager.TXSTATE.SUCCESS,
                     receipt,
                 }
             } else {
                 prop = {
                     transactionId,
-                    state: TASK_STATE.ERROR,
+                    state: txManager.TXSTATE.ERROR,
                 }
             }
             txManager.updateTransaction(transactionId, prop);
