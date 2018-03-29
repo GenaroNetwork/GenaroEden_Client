@@ -160,7 +160,7 @@ exports.default = {
       freestorage: 'Free storage: {free}/Year',
       bonusamount: 'New user bandwidth： {bonusAmount} GNX',
       updatetime: 'Last update',
-      pricemsg: '25GB free storage is available during the first year. Please see billing instructions here.',
+      pricemsg: '25GB free storage is available during the first year.',
       time: 'Time',
       storagetraffic: 'Storage/Traffic Used',
       wallet: 'Wallet',

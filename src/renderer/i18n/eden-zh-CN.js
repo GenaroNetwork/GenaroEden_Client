@@ -160,7 +160,7 @@ exports.default = {
       freestorage: '剩余免费存储空间: {free}/年',
       bonusamount: '新用户奖励： {bonusAmount} GNX',
       updatetime: '最新更新时间',
-      pricemsg: '用户首次使用将免费获得25 GB空间一年使用权.详情请阅读资费说明.',
+      pricemsg: '用户首次使用将免费获得25 GB空间一年使用权.',
       time: '时间',
       storagetraffic: '存储 / 带宽占用',
       wallet: '钱包',

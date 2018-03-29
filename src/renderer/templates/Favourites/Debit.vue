@@ -100,7 +100,7 @@
                 <span>{{ $t('dashboard.debits.usage') }}: {{ latest.storage | formatSize }}
                     <span class="free-storage"> / {{ $t('dashboard.debits.freestorage', {free: '25 GB'}) }}</span>
                 </span>
-                <span class="bonus">{{ $t('dashboard.debits.bonusamount', {bonusAmount: bonusAmount}) }}</span>
+                <!-- <span class="bonus">{{ $t('dashboard.debits.bonusamount', {bonusAmount: bonusAmount}) }}</span> -->
             </div>
             <div class="progress-bar">
                 <div class="usage" :style="{width: latest.usage + '%'}"></div>
@@ -190,7 +190,7 @@ export default {
     data() {
         return {
             usage: 0,
-            bonusAmount: 0,
+            bonusAmount: 25,
             latest: {
                 created: null,
                 storage: null,
@@ -212,7 +212,7 @@ export default {
         else payTransaction = {};
         this.latest.storage = payTransaction.storage;
         this.latest.created = payTransaction.created;
-        if (payTransaction.storage / Math.pow(1000, 3) <= 25) {
+        if (!payTransaction.storage || payTransaction.storage / Math.pow(1000, 3) <= 25) {
             this.latest.usage = payTransaction.storage / (25 * Math.pow(1000, 3));
             this.latest.overUsage = 0;
         } else {
