@@ -90,7 +90,9 @@ async function validateWalletPassword(address, password) {
 }
 
 async function exportV3Json(address) {
-    return JSON.stringify(db.get("wallet").find({ address }).value());
+    let wjson = db.get("wallet").find({ address }).value()
+    delete wjson.created // satisfy parity
+    return JSON.stringify(wjson, null, 4);
 }
 
 async function saveWallet(wa, name, pass) {
