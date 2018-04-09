@@ -382,16 +382,16 @@
                 <el-table-column prop="state" label="" width="60" class-name="no-wrap">
                     <template slot-scope="scope">
                         <div class="history-icon">
-                            <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TASK_STATE.INIT || scope.row.state === TASK_STATE.INPROGRESS">
+                            <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TXSTATE.INIT || scope.row.state === TXSTATE.INPROGRESS">
                                 remove_circle_outline
                             </i>
-                            <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TASK_STATE.ERROR">
+                            <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TXSTATE.ERROR">
                                 error_outline
                             </i>
                             <i class="material-icons state-icon" :state="scope.row.state" v-else>
                                 add_circle_outline
                             </i>
-                            <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TASK_STATE.ERROR">
+                            <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TXSTATE.ERROR">
                                 refresh
                             </i>
                         </div>
@@ -421,10 +421,9 @@
 </template>
 
 <script>
-import { getGasPrice, getGasLimit } from "../../../wallet/transactionManager";
+import { getGasPrice, getGasLimit, TXSTATE } from "../../../wallet/transactionManager";
 import { utils, EtherscanURL, web3 } from "../../../wallet/web3Util";
 import { clipboard, shell } from "electron";
-import { TASK_STATE } from "../../../config.js";
 
 const GNX_LIMIT = 120000;
 const GNX_SUGGEST = 150000;
@@ -504,7 +503,7 @@ export default {
             }
         };
         return {
-            TASK_STATE,
+            TXSTATE,
             payFormPop: false,
             depositPop: false,
             copiedPopup: false,
@@ -604,7 +603,7 @@ export default {
         refreshStatus(row) {
             this.$store.commit("updateSingleTransaction", {
                 transactionId: row.transactionId,
-                state: TASK_STATE.INPROGRESS,
+                state: TXSTATE.INPROGRESS,
             });
             this.$store.dispatch("updateSingleTransactionOnline", {
                 transactionId: row.transactionId,
