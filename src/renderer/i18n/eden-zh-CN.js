@@ -102,7 +102,8 @@ exports.default = {
       folder: '此文件所属文件夹',
       tip1: '无上传/下载记录',
       filenotexist: '文件不存在，可能已被删除或移动.',
-      foldernotexist: '文件夹{folderName}不存在.'
+      foldernotexist: '文件夹{folderName}不存在.',
+      confirmdelmsg: '确定要删除这条记录吗?'
     },
     mywallet: {
       mywallet: '我的钱包',

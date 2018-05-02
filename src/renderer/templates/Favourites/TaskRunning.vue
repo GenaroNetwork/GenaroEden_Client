@@ -76,9 +76,9 @@
                         </el-button>
                         <el-tooltip v-else placement="top" :manual="true" :value="scope.row.taskId === deleteTaskId">
                             <div slot="content">
-                                <p>Are you sure to delete?</p>
+                                <p>{{ $t("dashboard.recent.confirmdelmsg") }}</p>
                                 <div style="text-align: right; margin: 0">
-                                    <el-button size="mini" type="text" @click="deleteTaskId = null">{{ $t('el.messagebox.cancel') }}</el-button>
+                                    <el-button size="mini" type="primary" @click="deleteTaskId = null">{{ $t('el.messagebox.cancel') }}</el-button>
                                     <el-button type="primary" size="mini" @click="removeTask(scope.row)">{{ $t('el.messagebox.confirm') }}</el-button>
                                 </div>
                             </div>

@@ -102,7 +102,8 @@ exports.default = {
       folder: 'Folder',
       tip1: 'No Upload/Download History Yet',
       filenotexist: 'File no more exist. Maybe deleted or moved.',
-      foldernotexist: 'Folder {folderName} does not exist.'
+      foldernotexist: 'Folder {folderName} does not exist.',
+      confirmdelmsg: 'Are you sure to delete this record?'
     },
     mywallet: {
       mywallet: 'My Wallet',
