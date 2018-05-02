@@ -169,7 +169,11 @@ exports.default = {
       wallet: 'Wallet',
       storagefee: 'Storage Fee',
       trafficfee: 'Traffic Fee',
-      totalfee: 'Total Fee'
+      totalfee: 'Total Fee',
+      preparingTransaction: 'Preparing transaction',
+      pending: 'Pending',
+      transactionCompleted: 'Transaction completed',
+      transactionFailed: 'Transaction failed'
     },
     sharestorage: {
       sharestorage: 'Share My Storage',

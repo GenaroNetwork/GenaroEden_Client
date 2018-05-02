@@ -169,7 +169,11 @@ exports.default = {
       wallet: '钱包',
       storagefee: '存储费用',
       trafficfee: '带宽费用',
-      totalfee: '费用总计'
+      totalfee: '费用总计',
+      preparingTransaction: '账单明细',
+      pending: '进行中',
+      transactionCompleted: '成功交易',
+      transactionFailed: '失败交易'
     },
     sharestorage: {
       sharestorage: '分享我的存储空间',

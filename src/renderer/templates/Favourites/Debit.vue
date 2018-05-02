@@ -148,11 +148,11 @@
                 </el-table-column>
                 <el-table-column class-name="word-wrap">
                     <template slot-scope="data">
-                        <span v-if="data.row.state==='counting'" class="counting-color">Preparing transaction</span>
-                        <span v-else-if="data.row.state==='init'" class="pending-color">Pending</span>
-                        <span v-else-if="data.row.state==='pending'" class="pending-color">Pending</span>
-                        <span v-else-if="data.row.state==='success'" class="success-color">Transaction completed</span>
-                        <span v-else-if="data.row.state==='fail'" class="error-color">Transaction failed</span>
+                        <span v-if="data.row.state==='counting'" class="counting-color">{{ $t('dashboard.debits.preparingTransaction') }}</span>
+                        <span v-else-if="data.row.state==='init'" class="pending-color">{{ $t('dashboard.debits.pending') }}</span>
+                        <span v-else-if="data.row.state==='pending'" class="pending-color">{{ $t('dashboard.debits.pending') }}</span>
+                        <span v-else-if="data.row.state==='success'" class="success-color">{{ $t('dashboard.debits.transactionCompleted') }}</span>
+                        <span v-else-if="data.row.state==='fail'" class="error-color">{{ $t('dashboard.debits.transactionFailed') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="$t('dashboard.debits.time')" class-name="word-wrap">
