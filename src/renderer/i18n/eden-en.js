@@ -80,7 +80,7 @@ exports.default = {
         '<i class="el-icon-upload el-icon--right"></i>' +
         '</el-button> button or drag and drop file here to upload.',
       droptouploadfiles: 'drop to upload your files to {bucketName}',
-      defaultpaymsg: 'Please set default payment wallet first.',
+      defaultpaymsg: 'Please set default payment wallet first.You can find it in "My Wallet"--"Manage Wallet".Then click the point on your wallet and select "Set as Default Payment".',
       selectfile: 'Please select file first',
       confirmdelmsg1: 'Are you sure to delete selected files',
       confirmdelmsg2: 'Are you sure to delete file: {filename}',

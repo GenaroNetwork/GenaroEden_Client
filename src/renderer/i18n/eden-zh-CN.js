@@ -80,7 +80,7 @@ exports.default = {
         '<i class="el-icon-upload el-icon--right"></i>' +
         '</el-button> 按钮或拖拽文件到此处上传文件.',
       droptouploadfiles: '拖拽文件上传到{bucketName}',
-      defaultpaymsg: '请先设置默认的支付钱包.',
+      defaultpaymsg: '请在我的钱包——管理我的钱包菜单中，点击钱包右上角的点，设置默认支付钱包',
       selectfile: '请先选择文件',
       confirmdelmsg1: '确定删除选定的文件吗',
       confirmdelmsg2: '确定删除文件: {filename}',
