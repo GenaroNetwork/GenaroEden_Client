@@ -179,7 +179,7 @@ exports.default = {
       sharestorage: '分享我的存储空间',
       tip1: '欢迎使用Genaro sharer分享你的硬盘空间, 分享即可赚取奖励!',
       tip2: '如果你想要分享你的存储空间，请点击\
-        <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">此处</a>\
+        <a target="_blank" href="https://genaro.network/hk/genaro_eden/#down-top-box">此处</a>\
         获取安装文件和Genaro Sharer使用说明.'
     }
   },

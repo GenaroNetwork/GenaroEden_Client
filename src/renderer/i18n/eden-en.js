@@ -179,7 +179,7 @@ exports.default = {
       sharestorage: 'Share My Storage',
       tip1: 'Genaro Sharer is live! Join us and earn rewards!',
       tip2: 'If you want to share your storage space please click\
-        <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">this link</a>\
+        <a target="_blank" href="https://genaro.network/en/genaro_eden/#down-top-box">this link</a>\
         for a detailed explanation on how to install and run Genaro Sharer.'
     }
   },
