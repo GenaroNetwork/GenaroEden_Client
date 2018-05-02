@@ -218,7 +218,7 @@ exports.default = {
   encryption: {
     setkey: 'Set Encryption Key',
     nokey: "I'm a new user and I don't have an Encryption Key, generate now",
-    havekey: 'I already have an Encryption Key, go to input',
+    havekey: 'I already have a Genaro Eden Encryption Key, go to input',
     regenkey: 'ReGenarate Key',
     genkeystep1: "<h2>Step 1.\
                     <strong>Generate a new Encryption Key</strong>\

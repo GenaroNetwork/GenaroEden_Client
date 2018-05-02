@@ -218,7 +218,7 @@ exports.default = {
   encryption: {
     setkey: '设置密钥',
     nokey: "我是新用户，没有密钥.立即生成密钥.",
-    havekey: '我已有一个密钥，输入密钥',
+    havekey: '我已有Genaro Eden密钥，输入密钥',
     regenkey: '重新生成密钥',
     genkeystep1: "<h2>步骤1.\
                     <strong>生成新密钥</strong>\
