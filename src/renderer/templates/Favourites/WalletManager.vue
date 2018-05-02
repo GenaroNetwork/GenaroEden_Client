@@ -489,7 +489,7 @@ export default {
                                 this.importV3WalletDialog.step = 1;
                             })
                             .catch(e => {
-                                this.$message.error("Error: " + e.message);
+                                this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
                             });
                     }
                 },
@@ -510,7 +510,7 @@ export default {
             try {
                 await this.$store.dispatch("walletListDelete", { address: item.address, password: value.value });
             } catch (e) {
-                this.$message.error(e.message);
+                this.$message.error({message: e.message, showClose: true, duration: 0});
             }
         },
         saveName(index, event) {
@@ -543,7 +543,7 @@ export default {
                 this.$message.success("Password Changed");
                 this.resetPasswordForm();
             } catch (e) {
-                this.$message.error(e.message);
+                this.$message.error({message: e.message, showClose: true, duration: 0});
             }
         },
         copy(value, index) {
@@ -573,7 +573,7 @@ export default {
                             if (path != undefined && path.length > 0) {
                                 fs.writeFile(path, v3, err => {
                                     if (err) {
-                                        this.$message.error(err);
+                                        this.$message.error({message: err, showClose: true, duration: 0});
                                     } else {
                                         this.$message.success("Wallet exported");
                                     }
@@ -583,7 +583,7 @@ export default {
                     );
                 }
             } catch (e) {
-                this.$message.error(e.message);
+                this.$message.error({message: e.message, showClose: true, duration: 0});
             };
         },
         popSubmitPay: async function (item) {
@@ -618,7 +618,7 @@ export default {
                     loading.close()
                 })
                 .catch(e => {
-                    this.$message.error("Error: " + e)
+                    this.$message.error({message: "Error: " + e, showClose: true, duration: 0})
                     this.resetSubmitPayForm()
                     loading.close()
                 });

@@ -593,10 +593,10 @@ export default {
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
                 if (e.message === "Key derivation failed - possibly wrong passphrase") {
-                    this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", {error: this.$t("dashboard.mywallet.wrongpassword")}));
+                    this.$message.error({message: this.$t("dashboard.mywallet.createtransactionerr", {error: this.$t("dashboard.mywallet.wrongpassword")}), showClose: true, duration: 0});
                 }
                 else {
-                    this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }));
+                    this.$message.error({message: this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }), showClose: true, duration: 0});
                 }
             } finally {
             }

@@ -134,7 +134,7 @@ export default {
                     this.$store.dispatch("bucketListCreate", { bucketName });
                     this.$message.success(`Create Folder Success: ${bucketName}`);
                 } catch (error) {
-                    this.$message.error(`Create Folder Error: ${error}`);
+                    this.$message.error({message: `Create Folder Error: ${error}`, showClose: true, duration: 0});
                 }
             } catch (error) {
             }
@@ -155,7 +155,7 @@ export default {
                     await this.$store.dispatch("bucketListDelete", { bucketId: bucket.id });
                     this.$message.success('Folder Deleted');
                 } catch (error) {
-                    this.$message.error(`Folder Delete Error: ${error}`);
+                    this.$message.error({message: `Folder Delete Error: ${error}`, showClose: true, duration: 0});
                 }
 
             } catch (error) { }

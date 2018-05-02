@@ -325,7 +325,7 @@ export default {
                 await this.$store.dispatch('fileListDelete', { fileId });
                 this.$message.success(this.$t('dashboard.myfiles.filedeled'));
             } catch (error) {
-                this.$message.error(this.$t('dashboard.myfiles.filedelerr', { error: error }));
+                this.$message.error({message: this.$t('dashboard.myfiles.filedelerr', { error: error }), showClose: true, duration: 0});
             }
 
         },
@@ -348,7 +348,7 @@ export default {
                         });
                         this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: file.filename }));
                     } catch (err) {
-                        this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }));
+                        this.$message.error({message: this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }), showClose: true, duration: 0});
                     }
                 })
             })
@@ -373,7 +373,7 @@ export default {
                 }).then(() => {
                     this.$message.success(this.$t('dashboard.myfiles.downloadfilesucc', { filename: filename }));
                 }).catch((err) => {
-                    this.$message.error(this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }));
+                    this.$message.error({message: this.$t('dashboard.myfiles.downloadfileerr', { errmsg: err.message }), showClose: true, duration: 0});
                 });
             })
         },
@@ -461,7 +461,7 @@ export default {
                     });
                     this.$message.success(this.$t('dashboard.myfiles.fileuploaded', { filePath }));
                 } catch (error) {
-                    this.$message.error(this.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }));
+                    this.$message.error({message: this.$t('dashboard.myfiles.fileuploaderr', { errmsg: error.message }), showClose: true, duration: 0});
                 };
             });
         },

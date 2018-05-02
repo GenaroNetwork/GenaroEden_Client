@@ -168,7 +168,7 @@ export default {
                     return false;
                 });
                 if (bucketExist) this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } });
-                else this.$message.error(this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}));
+                else this.$message.error({message: this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}), showClose: true, duration: 0});
             }
         },
         cancelTask(item) {

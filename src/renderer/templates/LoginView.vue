@@ -155,7 +155,7 @@ export default {
                         })
                         .catch(err => {
                             console.log(err);
-                            this.$message.error(this.$t("common.loginerr"));
+                            this.$message.error({message: this.$t("common.loginerr"), showClose: true, duration: 0});
                         });
                     this.signing = false;
                 }

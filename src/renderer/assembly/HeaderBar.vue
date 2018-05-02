@@ -209,7 +209,7 @@ export default {
                 this.latest.version = data.version;
                 this.latest.notes = data.notes;
             } catch (error) {
-                this.$message.error(error.message);
+                this.$message.error({message: error.message, showClose: true, duration: 0});
             }
         },
         downloadNow() {
@@ -229,7 +229,7 @@ export default {
             remote.autoUpdater.on("error", error => {
                 this.pulldownShown = false;
                 this.updateState = 0;
-                this.$message.error(error.message);
+                this.$message.error({message: error.message, showClose: true, duration: 0});
             });
 
         },
