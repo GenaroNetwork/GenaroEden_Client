@@ -142,7 +142,8 @@ exports.default = {
       copyaddress: 'Copy the Address',
       notransactions: 'No Transactions Yet',
       addresscopied: 'Address Copied to Clipboard',
-      qrcode: 'QR code'
+      qrcode: 'QR code',
+      wrongpassword: 'Wrong Password'
     },
     walletmanage: {
       walletmanage: 'Manage Wallet',

@@ -592,8 +592,12 @@ export default {
                 await this.$store.dispatch("walletListPayByCurrent", payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
-                if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";
-                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }));
+                if (e.message === "Key derivation failed - possibly wrong passphrase") {
+                    this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", {error: this.$t("dashboard.mywallet.wrongpassword")}));
+                }
+                else {
+                    this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }));
+                }
             } finally {
             }
         },

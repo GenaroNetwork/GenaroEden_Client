@@ -142,7 +142,8 @@ exports.default = {
       copyaddress: '复制地址',
       notransactions: '尚无交易记录',
       addresscopied: '地址已复制到剪贴板.',
-      qrcode: '钱包二维码'
+      qrcode: '钱包二维码',
+      wrongpassword: '您的密码错误'
     },
     walletmanage: {
       walletmanage: '管理我的钱包',
