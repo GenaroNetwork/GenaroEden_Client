@@ -140,7 +140,8 @@ exports.default = {
       createtransactionerr: 'Transaction Error: {error}',
       copyaddress: 'Copy the Address',
       notransactions: 'No Transactions Yet',
-      addresscopied: 'Address Copied to Clipboard'
+      addresscopied: 'Address Copied to Clipboard',
+      qrcode: 'QR code'
     },
     walletmanage: {
       walletmanage: 'Manage Wallet',

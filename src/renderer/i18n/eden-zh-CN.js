@@ -140,7 +140,8 @@ exports.default = {
       createtransactionerr: '交易失败: {error}',
       copyaddress: '复制地址',
       notransactions: '尚无交易记录',
-      addresscopied: '地址已复制到剪贴板.'
+      addresscopied: '地址已复制到剪贴板.',
+      qrcode: '钱包二维码'
     },
     walletmanage: {
       walletmanage: '管理我的钱包',

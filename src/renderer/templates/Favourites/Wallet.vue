@@ -369,7 +369,7 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <el-button class="btn" v-popover:depositPop type="primary" size="small">{{ $t('dashboard.mywallet.deposit') }}</el-button>
+                    <el-button class="btn" v-popover:depositPop type="primary" size="small">{{ $t('dashboard.mywallet.qrcode') }}</el-button>
                     <el-button class="btn" v-popover:payFormPop type="primary" size="small">{{ $t('dashboard.mywallet.transfer') }}</el-button>
                 </div>
             </div>
