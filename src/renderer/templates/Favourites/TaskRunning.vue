@@ -54,7 +54,7 @@
                         <div>
                             <i v-if="scope.row.taskType === TASK_TYPE.DOWNLOAD" :class="['material-icons', {[`not-actived`]: scope.row.taskState !== TASK_STATE.INPROGRESS}]">file_download</i>
                             <i v-if="scope.row.taskType === TASK_TYPE.UPLOAD" :class="['material-icons', {[`not-actived`]: scope.row.taskState !== TASK_STATE.INPROGRESS}]">file_upload</i>
-                            <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress)}}/{{humanSize(scope.row.totalBytes)}}</span>
+                            <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress, 1)}}/{{humanSize(scope.row.totalBytes, 1)}}</span>
                             <span v-else-if="scope.row.taskState === TASK_STATE.INIT">waiting...</span>
                             <span v-else-if="scope.row.taskState === TASK_STATE.CANCEL">canceled</span>
                             <span v-else-if="scope.row.taskState === TASK_STATE.ERROR">error: {{ scope.row.errorMessage }}</span>
@@ -146,8 +146,8 @@ export default {
         getFileName(filePath) {
             return filePath.split('/').pop()
         },
-        humanSize(bytes) {
-            return humanSize(bytes)
+        humanSize(bytes, precision) {
+            return humanSize(bytes, precision)
         },
         getStatusStr(status) {
             switch (status) {
