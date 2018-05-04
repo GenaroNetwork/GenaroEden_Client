@@ -54,7 +54,7 @@
                         <div>
                             <i v-if="scope.row.taskType === TASK_TYPE.DOWNLOAD" :class="['material-icons', {[`not-actived`]: scope.row.taskState !== TASK_STATE.INPROGRESS}]">file_download</i>
                             <i v-if="scope.row.taskType === TASK_TYPE.UPLOAD" :class="['material-icons', {[`not-actived`]: scope.row.taskState !== TASK_STATE.INPROGRESS}]">file_upload</i>
-                            <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress)}}/{{humanSize(scope.row.totalBytes)}}</span>
+                            <span v-if="scope.row.taskState === TASK_STATE.INPROGRESS">{{humanSize(scope.row.totalBytes * scope.row.progress, 1)}}/{{humanSize(scope.row.totalBytes, 1)}}</span>
                             <span v-else-if="scope.row.taskState === TASK_STATE.INIT">waiting...</span>
                             <span v-else-if="scope.row.taskState === TASK_STATE.CANCEL">canceled</span>
                             <span v-else-if="scope.row.taskState === TASK_STATE.ERROR">error: {{ scope.row.errorMessage }}</span>
@@ -76,9 +76,9 @@
                         </el-button>
                         <el-tooltip v-else placement="top" :manual="true" :value="scope.row.taskId === deleteTaskId">
                             <div slot="content">
-                                <p>Are you sure to delete?</p>
+                                <p>{{ $t("dashboard.recent.confirmdelmsg") }}</p>
                                 <div style="text-align: right; margin: 0">
-                                    <el-button size="mini" type="text" @click="deleteTaskId = null">{{ $t('el.messagebox.cancel') }}</el-button>
+                                    <el-button size="mini" type="primary" @click="deleteTaskId = null">{{ $t('el.messagebox.cancel') }}</el-button>
                                     <el-button type="primary" size="mini" @click="removeTask(scope.row)">{{ $t('el.messagebox.confirm') }}</el-button>
                                 </div>
                             </div>
@@ -146,8 +146,8 @@ export default {
         getFileName(filePath) {
             return filePath.split('/').pop()
         },
-        humanSize(bytes) {
-            return humanSize(bytes)
+        humanSize(bytes, precision) {
+            return humanSize(bytes, precision)
         },
         getStatusStr(status) {
             switch (status) {
@@ -177,7 +177,7 @@ export default {
                     return false;
                 });
                 if (bucketExist) this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } });
-                else this.$message.error(this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}));
+                else this.$message.error({message: this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}), showClose: true, duration: 0});
             }
         },
         cancelTask(item) {

@@ -80,7 +80,7 @@ exports.default = {
         '<i class="el-icon-upload el-icon--right"></i>' +
         '</el-button> button or drag and drop file here to upload.',
       droptouploadfiles: 'drop to upload your files to {bucketName}',
-      defaultpaymsg: 'Please set default payment wallet first.',
+      defaultpaymsg: 'Please set default payment wallet first.You can find it in "My Wallet"--"Manage Wallet".Then click the point on your wallet and select "Set as Default Payment".',
       selectfile: 'Please select file first',
       confirmdelmsg1: 'Are you sure to delete selected files',
       confirmdelmsg2: 'Are you sure to delete file: {filename}',
@@ -102,7 +102,8 @@ exports.default = {
       folder: 'Folder',
       tip1: 'No Upload/Download History Yet',
       filenotexist: 'File no more exist. Maybe deleted or moved.',
-      foldernotexist: 'Folder {folderName} does not exist.'
+      foldernotexist: 'Folder {folderName} does not exist.',
+      confirmdelmsg: 'Are you sure to delete this record?'
     },
     mywallet: {
       mywallet: 'My Wallet',
@@ -140,7 +141,11 @@ exports.default = {
       createtransactionerr: 'Transaction Error: {error}',
       copyaddress: 'Copy the Address',
       notransactions: 'No Transactions Yet',
-      addresscopied: 'Address Copied to Clipboard'
+      addresscopied: 'Address Copied to Clipboard',
+      qrcode: 'QR code',
+      wrongpassword: 'Wrong Password',
+      transactionFailedTipsWithHash: 'The transaction is still being confirmed.<br/>If it lasts for a long time, it may be due to network congestion or gas less.<br/>You can click the hash value to view more information.',
+      transactionFailedTipsWithoutHash: 'The possible reasons for the failure of the transaction are as follows: <br/>1.The transaction has not been launched successfully due to network errors;<br/>2.Insufficient transaction balance;'
     },
     walletmanage: {
       walletmanage: 'Manage Wallet',
@@ -166,13 +171,17 @@ exports.default = {
       wallet: 'Wallet',
       storagefee: 'Storage Fee',
       trafficfee: 'Traffic Fee',
-      totalfee: 'Total Fee'
+      totalfee: 'Total Fee',
+      preparingTransaction: 'Preparing transaction',
+      pending: 'Pending',
+      transactionCompleted: 'Transaction completed',
+      transactionFailed: 'Transaction failed'
     },
     sharestorage: {
       sharestorage: 'Share My Storage',
       tip1: 'Genaro Sharer is live! Join us and earn rewards!',
       tip2: 'If you want to share your storage space please click\
-        <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">this link</a>\
+        <a target="_blank" href="https://genaro.network/en/genaro_eden/#down-top-box">this link</a>\
         for a detailed explanation on how to install and run Genaro Sharer.'
     }
   },
@@ -218,7 +227,7 @@ exports.default = {
   encryption: {
     setkey: 'Set Encryption Key',
     nokey: "I'm a new user and I don't have an Encryption Key, generate now",
-    havekey: 'I already have an Encryption Key, go to input',
+    havekey: 'I already have a Genaro Eden Encryption Key, go to input',
     regenkey: 'ReGenarate Key',
     genkeystep1: "<h2>Step 1.\
                     <strong>Generate a new Encryption Key</strong>\

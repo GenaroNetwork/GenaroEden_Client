@@ -203,4 +203,5 @@ export {
     getTransactions,
     addTransaction,
     updateTransaction,
+    TXSTATE
 }

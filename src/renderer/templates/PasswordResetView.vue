@@ -117,7 +117,7 @@ export default {
                         })
                     }).catch((e) => {
                         this.processing = false;
-                        this.$message.error(e.response.data.error);
+                        this.$message.error({message: e.response.data.error, showClose: true, duration: 0});
                     })
                 }
             })

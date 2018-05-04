@@ -369,7 +369,7 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <el-button class="btn" v-popover:depositPop type="primary" size="small">{{ $t('dashboard.mywallet.deposit') }}</el-button>
+                    <el-button class="btn" v-popover:depositPop type="primary" size="small">{{ $t('dashboard.mywallet.qrcode') }}</el-button>
                     <el-button class="btn" v-popover:payFormPop type="primary" size="small">{{ $t('dashboard.mywallet.transfer') }}</el-button>
                 </div>
             </div>
@@ -382,16 +382,20 @@
                 <el-table-column prop="state" label="" width="60" class-name="no-wrap">
                     <template slot-scope="scope">
                         <div class="history-icon">
-                            <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TASK_STATE.INIT || scope.row.state === TASK_STATE.INPROGRESS">
+                            <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TXSTATE.INIT || scope.row.state === TXSTATE.INPROGRESS">
                                 remove_circle_outline
                             </i>
-                            <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TASK_STATE.ERROR">
-                                error_outline
-                            </i>
+                            <el-tooltip class="item" effect="dark" placement="top" :state="scope.row.state" v-else-if="scope.row.state === TXSTATE.ERROR">
+                                <div slot="content" v-if="scope.row.hash" v-html="$t('dashboard.mywallet.transactionFailedTipsWithHash')"></div>
+                                <div slot="content" v-if="!scope.row.hash" v-html="$t('dashboard.mywallet.transactionFailedTipsWithoutHash')"></div>
+                                <i class="material-icons state-icon">
+                                    error_outline
+                                </i>
+                            </el-tooltip>
                             <i class="material-icons state-icon" :state="scope.row.state" v-else>
                                 add_circle_outline
                             </i>
-                            <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TASK_STATE.ERROR">
+                            <i class="material-icons state-icon common-link" @click="refreshStatus(scope.row)" v-if="scope.row.state === TXSTATE.ERROR">
                                 refresh
                             </i>
                         </div>
@@ -421,10 +425,9 @@
 </template>
 
 <script>
-import { getGasPrice, getGasLimit } from "../../../wallet/transactionManager";
+import { getGasPrice, getGasLimit, TXSTATE } from "../../../wallet/transactionManager";
 import { utils, EtherscanURL, web3 } from "../../../wallet/web3Util";
 import { clipboard, shell } from "electron";
-import { TASK_STATE } from "../../../config.js";
 
 const GNX_LIMIT = 120000;
 const GNX_SUGGEST = 150000;
@@ -504,7 +507,7 @@ export default {
             }
         };
         return {
-            TASK_STATE,
+            TXSTATE,
             payFormPop: false,
             depositPop: false,
             copiedPopup: false,
@@ -593,8 +596,12 @@ export default {
                 await this.$store.dispatch("walletListPayByCurrent", payOption);
                 this.$message(this.$t("dashboard.mywallet.transactionsubmitted"));
             } catch (e) {
-                if (e.messgae === "Key derivation failed - possibly wrong passphrase") this.passwordError = "Wrong Password.";
-                else this.$message.error(this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }));
+                if (e.message === "Key derivation failed - possibly wrong passphrase") {
+                    this.$message.error({message: this.$t("dashboard.mywallet.createtransactionerr", {error: this.$t("dashboard.mywallet.wrongpassword")}), showClose: true, duration: 0});
+                }
+                else {
+                    this.$message.error({message: this.$t("dashboard.mywallet.createtransactionerr", { error: e.message }), showClose: true, duration: 0});
+                }
             } finally {
             }
         },
@@ -604,7 +611,7 @@ export default {
         refreshStatus(row) {
             this.$store.commit("updateSingleTransaction", {
                 transactionId: row.transactionId,
-                state: TASK_STATE.INPROGRESS,
+                state: TXSTATE.INPROGRESS,
             });
             this.$store.dispatch("updateSingleTransactionOnline", {
                 transactionId: row.transactionId,

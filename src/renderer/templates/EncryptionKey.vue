@@ -171,7 +171,7 @@ export default {
                 if (e.code === 1) {
                     this.submitLogin()
                 } else {
-                    this.$message.error(this.$t('encryption.generrmsg', { errmsg: e.message || e }))
+                    this.$message.error({message: this.$t('encryption.generrmsg', { errmsg: e.message || e }), showClose: true, duration: 0})
                 }
             })
         },
@@ -182,7 +182,7 @@ export default {
                 this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
                 console.error('bad key')
-                this.$message.error(this.$t('encryption.invalidkey'))
+                this.$message.error({message: this.$t('encryption.invalidkey'), showClose: true, duration: 0})
             }
         },
         regenKey() {
@@ -209,7 +209,7 @@ export default {
                 const pwd = this.$store.state.User.password
                 this.generateWalletThenLogin(this.encryptionKey, pwd)
             } else {
-                this.$message.error(this.$t('encryption.keymismatch'));
+                this.$message.error({message: this.$t('encryption.keymismatch'), showClose: true, duration: 0});
             }
         },
         submitLogin() {

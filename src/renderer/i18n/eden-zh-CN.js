@@ -80,7 +80,7 @@ exports.default = {
         '<i class="el-icon-upload el-icon--right"></i>' +
         '</el-button> 按钮或拖拽文件到此处上传文件.',
       droptouploadfiles: '拖拽文件上传到{bucketName}',
-      defaultpaymsg: '请先设置默认的支付钱包.',
+      defaultpaymsg: '请在我的钱包——管理我的钱包菜单中，点击钱包右上角的点，设置默认支付钱包',
       selectfile: '请先选择文件',
       confirmdelmsg1: '确定删除选定的文件吗',
       confirmdelmsg2: '确定删除文件: {filename}',
@@ -102,7 +102,8 @@ exports.default = {
       folder: '此文件所属文件夹',
       tip1: '无上传/下载记录',
       filenotexist: '文件不存在，可能已被删除或移动.',
-      foldernotexist: '文件夹{folderName}不存在.'
+      foldernotexist: '文件夹{folderName}不存在.',
+      confirmdelmsg: '确定要删除这条记录吗?'
     },
     mywallet: {
       mywallet: '我的钱包',
@@ -140,7 +141,11 @@ exports.default = {
       createtransactionerr: '交易失败: {error}',
       copyaddress: '复制地址',
       notransactions: '尚无交易记录',
-      addresscopied: '地址已复制到剪贴板.'
+      addresscopied: '地址已复制到剪贴板.',
+      qrcode: '钱包二维码',
+      wrongpassword: '您的密码错误',
+      transactionFailedTipsWithHash: '交易仍在确认中，如果持续较长时间，可能是网络拥堵或者 gas 较少.<br/>可点击哈希值查看具体信息',
+      transactionFailedTipsWithoutHash: '交易失败可能原因：<br/>1.由于网络原因，交易未成功发起；<br/>2.交易余额不足；'
     },
     walletmanage: {
       walletmanage: '管理我的钱包',
@@ -166,13 +171,17 @@ exports.default = {
       wallet: '钱包',
       storagefee: '存储费用',
       trafficfee: '带宽费用',
-      totalfee: '费用总计'
+      totalfee: '费用总计',
+      preparingTransaction: '账单明细',
+      pending: '进行中',
+      transactionCompleted: '成功交易',
+      transactionFailed: '失败交易'
     },
     sharestorage: {
       sharestorage: '分享我的存储空间',
       tip1: '欢迎使用Genaro sharer分享你的硬盘空间, 分享即可赚取奖励!',
       tip2: '如果你想要分享你的存储空间，请点击\
-        <a target="_blank" href="https://www.npmjs.com/package/genaroshare-daemon">此处</a>\
+        <a target="_blank" href="https://genaro.network/hk/genaro_eden/#down-top-box">此处</a>\
         获取安装文件和Genaro Sharer使用说明.'
     }
   },
@@ -218,7 +227,7 @@ exports.default = {
   encryption: {
     setkey: '设置密钥',
     nokey: "我是新用户，没有密钥.立即生成密钥.",
-    havekey: '我已有一个密钥，输入密钥',
+    havekey: '我已有Genaro Eden密钥，输入密钥',
     regenkey: '重新生成密钥',
     genkeystep1: "<h2>步骤1.\
                     <strong>生成新密钥</strong>\
