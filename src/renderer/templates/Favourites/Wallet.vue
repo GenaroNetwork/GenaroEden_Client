@@ -385,9 +385,13 @@
                             <i class="material-icons state-icon" :state="scope.row.state" v-if="scope.row.state === TXSTATE.INIT || scope.row.state === TXSTATE.INPROGRESS">
                                 remove_circle_outline
                             </i>
-                            <i class="material-icons state-icon" :state="scope.row.state" v-else-if="scope.row.state === TXSTATE.ERROR">
-                                error_outline
-                            </i>
+                            <el-tooltip class="item" effect="dark" placement="top" :state="scope.row.state" v-else-if="scope.row.state === TXSTATE.ERROR">
+                                <div slot="content" v-if="scope.row.hash" v-html="$t('dashboard.mywallet.transactionFailedTipsWithHash')"></div>
+                                <div slot="content" v-if="!scope.row.hash" v-html="$t('dashboard.mywallet.transactionFailedTipsWithoutHash')"></div>
+                                <i class="material-icons state-icon">
+                                    error_outline
+                                </i>
+                            </el-tooltip>
                             <i class="material-icons state-icon" :state="scope.row.state" v-else>
                                 add_circle_outline
                             </i>

@@ -143,7 +143,9 @@ exports.default = {
       notransactions: 'No Transactions Yet',
       addresscopied: 'Address Copied to Clipboard',
       qrcode: 'QR code',
-      wrongpassword: 'Wrong Password'
+      wrongpassword: 'Wrong Password',
+      transactionFailedTipsWithHash: 'The transaction is still being confirmed.<br/>If it lasts for a long time, it may be due to network congestion or gas less.<br/>You can click the hash value to view more information.',
+      transactionFailedTipsWithoutHash: 'The possible reasons for the failure of the transaction are as follows: <br/>1.The transaction has not been launched successfully due to network errors;<br/>2.Insufficient transaction balance;'
     },
     walletmanage: {
       walletmanage: 'Manage Wallet',
