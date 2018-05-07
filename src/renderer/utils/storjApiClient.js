@@ -4,7 +4,7 @@ import events from "events";
 
 
 const UUID = require('uuid/v1');
-import { Environment, mnemonicGenerate, mnemonicCheck, listFiles } from 'storj';
+import { Environment, mnemonicGenerate, mnemonicCheck, listFiles } from 'libgenaro';
 
 
 let storj;
