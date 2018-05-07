@@ -158,6 +158,9 @@ exports.default = {
       setdefaultpayment: 'Set as Default Payment',
       placeholder1: 'Please Enter the Wallet Password',
       setDeafultCoast: 'Attention：This action will cost few ETH.',
+      emptyPrivateKey: 'Please input your Private Key.',
+      inputJson: 'By Json',
+      inputKey: 'By Private Key'
     },
     debits: {
       debits: 'Debits',
