@@ -169,7 +169,7 @@
 
 /* import wallet style */
 .choose-file {
-  min-height: 125px;
+  min-height: 119px;
   background: rgb(249, 249, 249);
   border: 1px dashed rgb(202, 202, 202);
   border-radius: 4px;
@@ -196,6 +196,13 @@
   line-height: 30px;
 }
 
+.choose-file textarea {
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
 .import-success i {
   color: rgb(122, 186, 58);
   display: block;
@@ -203,6 +210,15 @@
   line-height: 100px;
   font-size: 100px;
   text-align: center;
+}
+
+.input-wallet-buttons {
+  margin-bottom: 10px;
+  margin-left: 242px;
+}
+
+.input-wallet-buttons button {
+  width: 114px;
 }
 </style>
 <template>
@@ -258,9 +274,16 @@
         <!-- import wallet dialog -->
         <el-dialog :title="$t('dashboard.walletmanage.importwallet')" :visible.sync="importV3WalletDialog.shown" width="590px" center @close="clearDialog('importWallet')">
             <template v-if="importV3WalletDialog.step === 0">
-                <div class="choose-file" @click="importV3Wallet().selectFile($event)">
+                <el-button-group class="input-wallet-buttons">
+                    <el-button size="mini" :disabled='importV3WalletDialog.inputType === "json"' @click='importV3WalletDialog.inputType="json"'>{{ $t('dashboard.walletmanage.inputJson') }}</el-button>
+                    <el-button size="mini" :disabled='importV3WalletDialog.inputType === "key"' @click='importV3WalletDialog.inputType="key"'>{{ $t('dashboard.walletmanage.inputKey') }}</el-button>
+                </el-button-group>
+                <div v-if='importV3WalletDialog.inputType === "json"' class="choose-file" @click="importV3Wallet().selectFile($event)">
                     <i class="material-icons">{{ importV3WalletDialog.files ? "remove" : "add" }}</i>
                     <div>{{ importV3WalletDialog.files ? importV3WalletDialog.files[0] : $t('dashboard.walletmanage.uploadjson') }}</div>
+                </div>
+                <div v-if='importV3WalletDialog.inputType === "key"' class="choose-file">
+                    <el-input type="textarea" :rows="5" resize="none" :placeholder="$t('dashboard.walletmanage.emptyPrivateKey')" v-model="importV3WalletDialog.inputKey"></el-input>
                 </div>
                 <el-input type="password" v-model="importV3WalletDialog.password" :placeholder="$t('dashboard.walletmanage.placeholder1')" size="small"></el-input>
                 <div slot="footer">
@@ -280,7 +303,7 @@
 
         <div class="top-bar">
             <h2>{{ $t('dashboard.walletmanage.walletmanage') }}</h2>
-            <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">{{ $t('dashboard.walletmanage.import', {name: ' Json'}) }}
+            <el-button type="primary" @click="importV3WalletDialog.shown=true" size="small">{{ $t('dashboard.walletmanage.importwallet') }}
                 <i class="el-icon-upload el-icon--right"></i>
             </el-button>
         </div>
@@ -400,6 +423,8 @@ export default {
                 step: 0,
                 password: null,
                 files: null,
+                inputType: 'json',
+                inputKey: ''
             },
             ruleInline: {
                 password: [
@@ -481,16 +506,34 @@ export default {
                     this.importV3WalletDialog.files = dialog.showOpenDialog({ properties: ["openFile"] });
                 },
                 submit: () => {
-                    if (this.importV3WalletDialog.files && this.importV3WalletDialog.files.length > 0) {
-                        const filePath = this.importV3WalletDialog.files[0]
-                        this.$store
-                            .dispatch("walletListImportV3", { filePath, password: this.importV3WalletDialog.password })
-                            .then(() => {
-                                this.importV3WalletDialog.step = 1;
-                            })
-                            .catch(e => {
-                                this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
-                            });
+                    if (this.importV3WalletDialog.inputType === 'json') {
+                        if (this.importV3WalletDialog.files && this.importV3WalletDialog.files.length > 0) {
+                            const filePath = this.importV3WalletDialog.files[0]
+                            this.$store
+                                .dispatch("walletListImportV3", { filePath, password: this.importV3WalletDialog.password })
+                                .then(() => {
+                                    this.importV3WalletDialog.step = 1;
+                                })
+                                .catch(e => {
+                                    this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
+                                });
+                        }
+                    }
+                    else if(this.importV3WalletDialog.inputType === 'key') {
+                        if (this.importV3WalletDialog.inputKey) {
+                            this.$store
+                                .dispatch("walletListImportByPrivateKey", { key: this.importV3WalletDialog.inputKey, password: this.importV3WalletDialog.password })
+                                .then(() => {
+                                    this.importV3WalletDialog.step = 1;
+                                    this.importV3WalletDialog.inputKey = '';
+                                })
+                                .catch(e => {
+                                    this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
+                                });
+                        }
+                        else {
+                            this.$message.error({message: this.$t('dashboard.walletmanage.emptyPrivateKey'), showClose: true, duration: 0});
+                        }
                     }
                 },
                 cancel: () => {

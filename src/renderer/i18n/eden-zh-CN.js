@@ -158,6 +158,9 @@ exports.default = {
       setdefaultpayment: '设置为默认付款钱包',
       placeholder1: '请输入该钱包的密码.',
       setDeafultCoast: '注意：设置默认钱包需要花费一些ETH',
+      emptyPrivateKey: '请输入密钥',
+      inputJson: '通过文件导入',
+      inputKey: '通过密钥导入'
     },
     debits: {
       debits: '账单',

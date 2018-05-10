@@ -82,6 +82,10 @@ const actions = {
         await walletManager.importFromV3Json(content, password)
         await dispatch('walletListInit')
     },
+    async walletListImportByPrivateKey({ commit, dispatch }, { key, password }) {
+        await walletManager.importFromPrivateKey(new Buffer(key, 'hex'), password);
+        await dispatch('walletListInit');
+    },
     async walletListDelete({ commit, dispatch }, { address, password }) {
         const passwordOk = await walletManager.validateWalletPassword(address, password)
         if (passwordOk) {
