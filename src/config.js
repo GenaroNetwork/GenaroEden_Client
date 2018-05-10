@@ -3,10 +3,10 @@
 import i18n from './renderer/i18n';
 
 // prod
-const BRIDGE_API_URL = 'http://47.100.33.60:8080';
+// const BRIDGE_API_URL = 'http://47.100.33.60:8080';
 
 // develop
-// const BRIDGE_API_URL = 'http://101.132.159.197:8080';
+const BRIDGE_API_URL = 'http://101.132.159.197:8080';
 
 // local
 // const BRIDGE_API_URL = 'http://127.0.0.1:6382';

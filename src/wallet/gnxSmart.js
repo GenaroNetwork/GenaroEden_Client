@@ -4,15 +4,13 @@ const Contract = new web3.eth.Contract(abi, GNXAddr);
 
 async function getBalance(address) {
     if (web3.currentProvider.connected !== true) {
-        console.log('not ready')
     } else {
-        console.log('ready')
     }
 
     // total balance including POS
     const totalBalance = await new Promise((resolve, reject) => {
         Contract.methods.balanceOf(address).call(function (err, res) {
-            if(err) {
+            if (err) {
                 reject(err)
                 return
             }
