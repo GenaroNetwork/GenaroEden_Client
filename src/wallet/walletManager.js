@@ -2,7 +2,7 @@ import { web3, chainId, utils, GNXAddr, EMUAddr } from './web3Util'
 import * as gnx from './gnxSmart'
 import axios from 'axios'
 import { BRIDGE_API_URL } from '../config'
-import { getTransactions, TXSTATE } from "./transactionManager";
+import { getTransactions, TXSTATE, uncomfirmedTransactionCount } from "./transactionManager";
 
 const fs = require('fs')
 const path = require('path')
@@ -303,17 +303,19 @@ async function submitAddress(user, address, password) {
 }
 
 async function calcNonce(addr) {
-    var txc = await web3.eth.getTransactionCount(addr);
-    var localTransactions = await getTransactions() || [];
-    var localConfirmedNonce = localTransactions.filter((item) => {
-        if(item.state === TXSTATE.SUCCESS || item.state === TXSTATE.ERROR) {
-            return true;
-        }
-        return false;
-    }).length;
-    var confirmedNonce = Math.max(txc, localConfirmedNonce);
-    var localUnconfirmedNonce = localTransactions.length - localConfirmedNonce;
-    return confirmedNonce + localUnconfirmedNonce;
+    var txc = await web3.eth.getTransactionCount(addr),
+        addCount = uncomfirmedTransactionCount < 0 ? 0 : uncomfirmedTransactionCount;
+    return txc + addCount;
+    // var localTransactions = await getTransactions() || [];
+    // var localConfirmedNonce = localTransactions.filter((item) => {
+    //     if(item.state === TXSTATE.SUCCESS || item.state === TXSTATE.ERROR) {
+    //         return true;
+    //     }
+    //     return false;
+    // }).length;
+    // var confirmedNonce = Math.max(txc, localConfirmedNonce);
+    // var localUnconfirmedNonce = localTransactions.length - localConfirmedNonce;
+    // return confirmedNonce + localUnconfirmedNonce;
 }
 
 export default {

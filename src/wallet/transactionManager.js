@@ -28,6 +28,8 @@ const TXSTATE = Object.freeze({
     SUCCESS: 4
 })
 
+var uncomfirmedTransactionCount = 0;
+
 // logic begin:
 function getTransactions() {
     return clone(db.get('transaction').sortBy(item => -item.created).value())
@@ -134,8 +136,10 @@ function sendTransactionNoLog(rawTx) {
             // log hash here
             console.debug('transactionHash' + hash)
             thisHash = hash
+            uncomfirmedTransactionCount++
         }).once('error', async (error) => {
             console.debug('sendSignedTransaction error: ' + error)
+            uncomfirmedTransactionCount--
             if (thisHash) {
                 // recheck hash several times: 5 times, each 20 seconds
                 const state = await checkTxByHashNtimes(thisHash, 15, 20000)
@@ -151,6 +155,7 @@ function sendTransactionNoLog(rawTx) {
             }
         }).then(async (receipt) => {
             console.debug('sendSignedTransaction receipt: ' + receipt)
+            uncomfirmedTransactionCount--
             const result = await checkTxByHash(thisHash)
             if (result === RECEIPTSTATE.SUCCESS) {
                 resolve('receipt found and success')
@@ -178,17 +183,20 @@ function sendTransaction(payOption, rawTx, txUpdateCb) {
     // bad2: hash => error
     web3.eth.sendSignedTransaction(rawTx).once('transactionHash', function (hash) {
         console.log('1 hash: ' + hash)
+        uncomfirmedTransactionCount++
         //var receipt = web3.eth.getTransactionReceipt(hash).then(console.log)
         const tx = updateTransaction(txHistory.transactionId, { hash, state: TXSTATE.INPROGRESS })
         txUpdateCb(tx)
     }).on('error', function (error) {
         console.log('5 error: ' + error)
+        uncomfirmedTransactionCount--
         const tx = updateTransaction(txHistory.transactionId, { error, state: TXSTATE.ERROR })
         txUpdateCb(tx)
     }).then(function (receipt) {
         // will be fired once the receipt its mined
         console.log('6 receipt mined: ')
         console.log(receipt)
+        uncomfirmedTransactionCount--
         const tx = updateTransaction(txHistory.transactionId, { receipt, state: TXSTATE.SUCCESS })
         txUpdateCb(tx)
     })
@@ -203,5 +211,6 @@ export {
     getTransactions,
     addTransaction,
     updateTransaction,
-    TXSTATE
+    TXSTATE,
+    uncomfirmedTransactionCount
 }
