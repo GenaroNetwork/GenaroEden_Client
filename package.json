@@ -1,7 +1,7 @@
 {
     "name": "genaro-eden",
     "productName": "Genaro Eden",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "author": "Genaro Network",
     "description": "Genaro Eden - A Trustworthy Internet for Everyone",
     "license": "MIT",
@@ -74,7 +74,7 @@
         "jdenticon": "^1.8.0",
         "keccak": "^1.4.0",
         "keytar": "^4.1.0",
-        "libgenaro": "^1.0.4",
+        "libgenaro": "^1.0.5",
         "lowdb": "^1.0.0",
         "material-design-icons": "^3.0.1",
         "moment": "^2.20.1",
