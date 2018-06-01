@@ -145,7 +145,9 @@ exports.default = {
       qrcode: '钱包二维码',
       wrongpassword: '您的密码错误',
       transactionFailedTipsWithHash: '交易仍在确认中，如果持续较长时间，可能是网络拥堵或者 gas 较少.<br/>可点击哈希值查看具体信息',
-      transactionFailedTipsWithoutHash: '交易失败可能原因：<br/>1.由于网络原因，交易未成功发起；<br/>2.交易余额不足；'
+      transactionFailedTipsWithoutHash: '交易失败可能原因：<br/>1.由于网络原因，交易未成功发起；<br/>2.交易余额不足；',
+      gasprice: ' 燃料价格 (Gwei)',
+      gaspriceholder: '输入Gas'
     },
     walletmanage: {
       walletmanage: '管理我的钱包',

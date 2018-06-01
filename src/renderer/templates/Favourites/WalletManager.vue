@@ -259,6 +259,9 @@
                     <el-input type="password" v-model="submitPay.password" :placeholder="$t('dashboard.mywallet.walletpassword')" size="small">
                     </el-input>
                 </el-form-item>
+                <el-form-item :label="$t('dashboard.mywallet.gasprice')">  
+                    <el-input v-model="submitPay.gasPrice" type="number" min="4" :placeholder="$t('dashboard.mywallet.gaspriceholder')"></el-input>
+                </el-form-item>
                 <el-form-item :label="$t('dashboard.mywallet.paylimitGNX')" prop="amount">
                     <el-input type="number" v-model="submitPay.amount" :placeholder="$t('dashboard.mywallet.maxGNX')" size="small">
                     </el-input>
@@ -416,7 +419,8 @@ export default {
             submitPay: {
                 show: false,
                 password: "",
-                amount: 100
+                amount: 100,
+                gasPrice: 15
             },
             importV3WalletDialog: {
                 shown: false,
@@ -637,11 +641,12 @@ export default {
             this.submitPay.show = false
             this.submitPay.address = ""
             this.submitPay.password = ""
-            this.submitPay.amount = 0
+            this.submitPay.amount = 100
+            this.submitPay.gasPrice = 15
         },
         setAsPayingWallet: async function () {
             const password = this.submitPay.password
-            const gasPrice = getGasPrice()
+            const gasPrice = this.submitPay.gasPrice
             const amount = this.submitPay.amount
 
             const loading = this.$loading({
