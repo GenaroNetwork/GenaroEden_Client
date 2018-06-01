@@ -82,6 +82,10 @@
             </el-table-column>
             <span slot="empty">{{ $t('dashboard.recent.tip1') }}</span>
         </el-table>
+        <!--
+        <el-pagination @current-change="handleCurrentChange" :background="true" :current-page="currentPage" :page-size="20" layout="->, prev, pager, next, total" :total="totalSize">
+        </el-pagination>
+        -->
     </div>
 </template>
 
@@ -95,6 +99,8 @@ const humanSize = require('human-size');
 export default {
     data() {
         return {
+            totalSize: 200,
+            currentPage: 1,
             TASK_STATE,
             TASK_TYPE,
             deleteTaskId: null,
@@ -168,7 +174,7 @@ export default {
                     return false;
                 });
                 if (bucketExist) this.$router.push({ path: '/folder/' + item.bucketId, query: { folderName: item.folderName } });
-                else this.$message.error({message: this.$t('dashboard.recent.foldernotexist', {folderName: item.folderName}), showClose: true, duration: 0});
+                else this.$message.error({ message: this.$t('dashboard.recent.foldernotexist', { folderName: item.folderName }), showClose: true, duration: 0 });
             }
         },
         cancelTask(item) {
@@ -176,7 +182,10 @@ export default {
         },
         removeTask(item) {
             this.$store.commit('taskListRemove', { taskId: item.taskId })
-        }
+        },
+        handleCurrentChange(page) {
+            console.log(page)
+        },
     },
     components: {
         FontAwesomeIcon

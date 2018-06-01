@@ -1,8 +1,19 @@
-import { web3, chainId, utils, GNXAddr, EMUAddr } from './web3Util'
+import {
+    web3,
+    chainId,
+    utils,
+    GNXAddr,
+    EMUAddr
+} from './web3Util'
 import * as gnx from './gnxSmart'
 import axios from 'axios'
-import { BRIDGE_API_URL } from '../config'
-import { getTransactions, TXSTATE, uncomfirmedTransactionCount } from "./transactionManager";
+import {
+    BRIDGE_API_URL
+} from '../config'
+import {
+    TXSTATE,
+    uncomfirmedTransactionCount
+} from "./transactionManager";
 
 const fs = require('fs')
 const path = require('path')
@@ -27,7 +38,10 @@ const dbPath = path.join(dbFolder, "wallets.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ wallet: [], payment: null }).write()
+db.defaults({
+    wallet: [],
+    payment: null
+}).write()
 
 function generateWalletName() {
     const names = new Set();
@@ -51,10 +65,17 @@ function generateWalletName() {
     source: 'imported' // derieved
   }
 */
-async function updateWalletName({ address, name }) {
+async function updateWalletName({
+    address,
+    name
+}) {
     db.get("wallet")
-        .find({ address })
-        .assign({ name })
+        .find({
+            address
+        })
+        .assign({
+            name
+        })
         .write();
 }
 
@@ -72,13 +93,17 @@ function loadFirstWallet() {
 }
 
 function loadWalletFromAddr(address) {
-    const wallet = db.get('wallet').find({ address: address }).cloneDeep().value()
+    const wallet = db.get('wallet').find({
+        address: address
+    }).cloneDeep().value()
     if (wallet) return wallet
     return null;
 }
 
 async function loadRawWallet(address, password) {
-    let v3str = JSON.stringify(db.get("wallet").find({ address }).value());
+    let v3str = JSON.stringify(db.get("wallet").find({
+        address
+    }).value());
     return Wallet.fromV3(v3str, password);
 }
 
@@ -92,7 +117,9 @@ async function validateWalletPassword(address, password) {
 }
 
 async function exportV3Json(address) {
-    let wjson = db.get("wallet").find({ address }).value()
+    let wjson = db.get("wallet").find({
+        address
+    }).value()
     delete wjson.created // satisfy parity
     return JSON.stringify(wjson, null, 4);
 }
@@ -100,8 +127,13 @@ async function exportV3Json(address) {
 async function saveWallet(wa, name, pass) {
     let v3 = wa.toV3(pass);
     const address = v3.address;
-    const found = db.get('wallet').find({ address: address }).value();
-    if (found) throw ({ code: 1, message: `address ${address} already exists. Please delete it first.` });
+    const found = db.get('wallet').find({
+        address: address
+    }).value();
+    if (found) throw ({
+        code: 1,
+        message: `address ${address} already exists. Please delete it first.`
+    });
     v3.name = name;
     v3.created = Date.now();
     db.get('wallet').push(v3).write();
@@ -110,7 +142,9 @@ async function saveWallet(wa, name, pass) {
 async function updateWalletPassword(wa, newPass) {
     const v3 = wa.toV3(newPass);
     const address = v3.address;
-    const found = db.get('wallet').find({ address: address }).assign(v3).write();
+    const found = db.get('wallet').find({
+        address: address
+    }).assign(v3).write();
 }
 
 async function importFromV3Json(json, password, name) {
@@ -137,7 +171,9 @@ async function importFromPrivateKey(key, password, name) {
 }
 
 async function deleteWallet(address) {
-    db.get('wallet').remove({ address }).write();
+    db.get('wallet').remove({
+        address
+    }).write();
 }
 
 async function clearWallets() {
@@ -150,11 +186,11 @@ async function changePassword(address, passoword, newPassword) {
     await updateWalletPassword(w, newPassword)
 }
 
-function setPaymentWallet(address){
+function setPaymentWallet(address) {
     db.set('payment', address).write();
 }
 
-function getPaymentWallet(address){
+function getPaymentWallet(address) {
     return db.get('payment').value();
 }
 
@@ -163,7 +199,9 @@ function initRawWallet(v3, pass) {
 }
 
 async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
-    const myWallet = db.get('wallet').find({ address: myAddr }).value()
+    const myWallet = db.get('wallet').find({
+        address: myAddr
+    }).value()
     if (!myWallet) throw ('wallet not found');
     const rawWallet = await loadRawWallet(myAddr, password)
     const prikBuf = rawWallet.getPrivateKey()
@@ -197,7 +235,9 @@ async function generateSignedTx(myAddr, password, receiveAddr, amount, gas, gasL
 }
 
 async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, gasLimit) {
-    const myWallet = db.get('wallet').find({ address: myAddr }).value()
+    const myWallet = db.get('wallet').find({
+        address: myAddr
+    }).value()
     if (!myWallet) throw ('wallet not found')
     const rawWallet = await loadRawWallet(myAddr, password)
     const prikBuf = rawWallet.getPrivateKey()
@@ -230,7 +270,9 @@ async function generateSignedGnxTx(myAddr, password, receiveAddr, amount, gas, g
 }
 
 async function generateSignedApproveTx(myAddr, password, amount, gas, gasLimit) {
-    const myWallet = db.get('wallet').find({ address: myAddr }).value()
+    const myWallet = db.get('wallet').find({
+        address: myAddr
+    }).value()
     if (!myWallet) throw ('wallet not found');
     const rawWallet = await loadRawWallet(myAddr, password)
     const prikBuf = rawWallet.getPrivateKey()
@@ -265,7 +307,8 @@ async function submitAddress(user, address, password) {
     const pubkString = rawWallet.getPublicKeyString()
 
     let content = {
-        user, address
+        user,
+        address
     }
     const message = JSON.stringify(content)
     const msgHash = createKeccakHash('keccak256').update(message).digest()

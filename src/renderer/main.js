@@ -19,12 +19,14 @@ import store from './store'
 import VueAnalytics from 'vue-analytics'
 
 import i18n from './i18n'
-Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
+Vue.use(ElementUI, {
+    i18n: (key, value) => i18n.t(key, value)
+})
 require('electron').ipcRenderer.on('locale-language', (event, lang) => {
     i18n.locale = lang
 });
 Vue.use(VueAnalytics, {
-    id: 'UA-119026505-1',
+    id: 'UA-109201029-2',
     router,
 });
 Vue.prototype.$http = axios
@@ -39,7 +41,9 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-    components: { App },
+    components: {
+        App
+    },
     router,
     store,
     i18n,

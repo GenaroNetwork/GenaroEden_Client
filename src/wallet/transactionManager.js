@@ -1,25 +1,34 @@
-import { web3, chainId } from './web3Util'
-import * as gnx from './gnxSmart'
-const fs = require('fs')
-const path = require('path')
-const clone = require('clone')
-const uuidV1 = require('uuid/v1')
-const os = require('os')
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
+import {
+    web3,
+    chainId
+} from './web3Util';
+import {
+    addTransaction,
+    updateTransaction,
+} from "../renderer/utils/sqlite";
+import * as gnx from './gnxSmart';
+const fs = require('fs');
+const path = require('path');
+const clone = require('clone');
+const uuidV1 = require('uuid/v1');
+const os = require('os');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
 
-var isFirstTime = false
-const dbFolder = path.join(os.homedir(), ".eden")
+var isFirstTime = false;
+const dbFolder = path.join(os.homedir(), ".eden");
 if (!fs.existsSync(dbFolder)) {
-    fs.mkdirSync(dbFolder)
-    isFirstTime = true
+    fs.mkdirSync(dbFolder);
+    isFirstTime = true;
 }
 
-const dbPath = path.join(dbFolder, "transaction.json")
-const adapter = new FileSync(dbPath)
-const db = low(adapter)
+const dbPath = path.join(dbFolder, "transaction.json");
+const adapter = new FileSync(dbPath);
+const db = low(adapter);
 
-db.defaults({ transaction: [] }).write()
+db.defaults({
+    transaction: []
+}).write();
 
 const TXSTATE = Object.freeze({
     INIT: 1,
@@ -35,16 +44,21 @@ function getTransactions() {
     return clone(db.get('transaction').sortBy(item => -item.created).value())
 }
 
-function addTransaction(data) {
-    db.get('transaction').push(data).write()
-}
+/*function addTransaction(data) {
+    db.get('transaction').push(data).write();
+    addTx(data);
+}*/
 
-function updateTransaction(transactionId, props) {
-    db.get('transaction').find({ transactionId }).assign(props).write()
-    return clone(db.get('transaction').find({ transactionId }).value())
-}
+/* function updateTransaction(transactionId, props) {
+    db.get('transaction').find({
+        transactionId
+    }).assign(props).write()
+    return clone(db.get('transaction').find({
+        transactionId
+    }).value())
+} */
 
-function removeTransaction(id) { }
+function removeTransaction(id) {}
 
 
 function getBalanceEth(address) {
@@ -185,19 +199,28 @@ function sendTransaction(payOption, rawTx, txUpdateCb) {
         console.log('1 hash: ' + hash)
         uncomfirmedTransactionCount++
         //var receipt = web3.eth.getTransactionReceipt(hash).then(console.log)
-        const tx = updateTransaction(txHistory.transactionId, { hash, state: TXSTATE.INPROGRESS })
+        const tx = updateTransaction(txHistory.transactionId, {
+            hash,
+            state: TXSTATE.INPROGRESS
+        })
         txUpdateCb(tx)
     }).on('error', function (error) {
         console.log('5 error: ' + error)
         uncomfirmedTransactionCount--
-        const tx = updateTransaction(txHistory.transactionId, { error, state: TXSTATE.ERROR })
+        const tx = updateTransaction(txHistory.transactionId, {
+            error,
+            state: TXSTATE.ERROR
+        })
         txUpdateCb(tx)
     }).then(function (receipt) {
         // will be fired once the receipt its mined
         console.log('6 receipt mined: ')
         console.log(receipt)
         uncomfirmedTransactionCount--
-        const tx = updateTransaction(txHistory.transactionId, { receipt, state: TXSTATE.SUCCESS })
+        const tx = updateTransaction(txHistory.transactionId, {
+            receipt,
+            state: TXSTATE.SUCCESS
+        })
         txUpdateCb(tx)
     })
 }
@@ -209,7 +232,6 @@ export {
     sendTransaction,
     sendTransactionNoLog,
     getTransactions,
-    addTransaction,
     updateTransaction,
     TXSTATE,
     uncomfirmedTransactionCount

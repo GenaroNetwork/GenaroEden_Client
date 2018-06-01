@@ -1,5 +1,13 @@
 import * as txManager from '../../../wallet/transactionManager';
-import { web3 } from "../../../wallet/web3Util";
+
+import {
+    getTransactions,
+    updateTransaction,
+    addTransaction
+} from "../../utils/sqlite";
+import {
+    web3
+} from "../../../wallet/web3Util";
 
 const state = {
     transactions: []
@@ -28,18 +36,34 @@ const mutations = {
 }
 
 const actions = {
-    submitTransaction({ commit, state, getters, rootState, dispatch }, { payOption, rawTransaction }) {
+    submitTransaction({
+        commit,
+        state,
+        getters,
+        rootState,
+        dispatch
+    }, {
+        payOption,
+        rawTransaction
+    }) {
         txManager.sendTransaction(payOption, rawTransaction, tx => {
             commit('updateSingleTransaction', tx)
-        })
-        dispatch('loadTransactions')
+        });
+        dispatch('loadTransactions');
         // TODO: observe transaction change and commit to state here, in order to update ui
     },
-    loadTransactions({ commit }) {
-        const txs = txManager.getTransactions()
-        commit('setTransactions', txs)
+    loadTransactions({
+        commit
+    }) {
+        const txs = getTransactions();
+        commit('setTransactions', txs);
     },
-    async updateSingleTransactionOnline({ state, commit }, { transactionId }) {
+    async updateSingleTransactionOnline({
+        state,
+        commit
+    }, {
+        transactionId
+    }) {
         let existTx = state.transactions.find((ele) => {
             return ele.transactionId === transactionId
         });
@@ -59,7 +83,7 @@ const actions = {
                     state: txManager.TXSTATE.ERROR,
                 }
             }
-            txManager.updateTransaction(transactionId, prop);
+            updateTransaction(transactionId, prop);
             commit("updateSingleTransaction", prop);
         }
     }

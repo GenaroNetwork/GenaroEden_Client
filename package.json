@@ -19,7 +19,9 @@
         "pack": "npm run pack:main && npm run pack:renderer",
         "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
         "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-        "dist": "npm run pack && electron-builder"
+        "dist": "npm run pack && electron-builder",
+        "sqlite-mac": "export PATH=/usr/bin:$PATH && cd node_modules/sqlite3 && node-gyp configure --module_name=node_sqlite3 --module_path=../lib/binding/electron-v1.8-darwin-x64 && node-gyp rebuild --target=1.8.4 --arch=x64 --target_platform=darwin --dist-url=https://atom.io/download/electron --module_name=node_sqlite3 --module_path=../lib/binding/electron-v1.8-darwin-x64",
+        "sqlite-win": "export PATH=/usr/bin:$PATH && cd node_modules/sqlite3 && node-gyp configure --module_name=node_sqlite3 --module_path=../lib/binding/electron-v1.8-win32-x64 && node-gyp rebuild --target=1.8.4 --arch=x64 --target_platform=darwin --dist-url=https://atom.io/download/electron --module_name=node_sqlite3 --module_path=../lib/binding/electron-v1.8-win32-x64"
     },
     "build": {
         "productName": "Genaro Eden",
@@ -61,6 +63,7 @@
         "@fortawesome/fontawesome-free-solid": "^5.0.4",
         "@fortawesome/vue-fontawesome": "0.0.22",
         "axios": "^0.17.1",
+        "better-sqlite3": "^4.1.1",
         "bip39": "^2.5.0",
         "clone": "^2.1.1",
         "crypto-js": "^3.1.9-1",
@@ -71,7 +74,7 @@
         "jdenticon": "^1.8.0",
         "keccak": "^1.4.0",
         "keytar": "^4.1.0",
-        "libgenaro": "github:GenaroNetwork/node-libgenaro",
+        "libgenaro": "^1.0.4",
         "lowdb": "^1.0.0",
         "material-design-icons": "^3.0.1",
         "moment": "^2.20.1",

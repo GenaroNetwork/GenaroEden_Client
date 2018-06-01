@@ -1,23 +1,24 @@
 <template>
-    <div id="app" class="fullheight" @dragover.prevent @dragleave.prevent @drop.prevent>
-        <router-view></router-view>
-    </div>
+  <div id="app" class="fullheight" @dragover.prevent @dragleave.prevent @drop.prevent>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
 
 import css from 'tether-shepherd/dist/css/shepherd-theme-arrows.css';
 import { Storj } from "./utils/storjApiClient";
+import { getWallet } from "./utils/sqlite";
 
 export default {
-    name: 'Genaro-Eden',
-    created() {
-        if (process.env.NODE_ENV === 'development') {
-            this.$store.commit("updateUsername", localStorage.bridgeUser);
-            this.$store.commit("updatePassword", localStorage.bridgePass);
-            this.$store.commit("setEncryptionKey", localStorage.bridgeKey);
-        }
+  name: 'Genaro-Eden',
+  created() {
+    if (process.env.NODE_ENV === 'development') {
+      this.$store.commit("updateUsername", localStorage.bridgeUser);
+      this.$store.commit("updatePassword", localStorage.bridgePass);
+      this.$store.commit("setEncryptionKey", localStorage.bridgeKey);
     }
+  }
 }
 </script>
 

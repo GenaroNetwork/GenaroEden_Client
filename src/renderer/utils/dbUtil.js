@@ -4,7 +4,10 @@ const os = require('os')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const keytar = require('keytar')
-const { encryptText2Json, decryptJson2Text } = require('./encryptUtil')
+const {
+    encryptText2Json,
+    decryptJson2Text
+} = require('./encryptUtil')
 
 var isFirstTime = false
 const dbFolder = path.join(os.homedir(), ".eden")
@@ -16,7 +19,12 @@ const dbPath = path.join(os.homedir(), ".eden", "db.json")
 const adapter = new FileSync(dbPath)
 const db = low(adapter)
 
-db.defaults({ username: null, uploadSize: 0, tasks: [], encryptionKey: null }).write()
+db.defaults({
+    username: null,
+    uploadSize: 0,
+    tasks: [],
+    encryptionKey: null
+}).write()
 
 const KEYCHAIN_LOGIN = 'network.genaro.eden.login';
 const KEYCHAIN_ENCRYPTIONKEY = 'network.genaro.eden.encryptionkey';
@@ -30,22 +38,16 @@ function getUploadSize() {
     return db.get('uploadSize').value()
 }
 
-// use task list instead
-function getHistory() {
-    return db.get('history').sortBy(item => -item.created).value()
-}
-
-// use task list instead
-function addHistory(data) {
-    db.get('history').push(data).write()
-}
-
-// use task list instaed
-function removeHistoryById(id) {
-    db.get('history').remove({ historyId: id }).write()
-}
-
+import {
+    taskListAppend,
+    taskListClear,
+    taskListGet,
+    taskListList,
+    taskListRemove,
+    taskListUpdate
+} from "./sqlite";
 // instead history
+/*
 function taskListList({
     sort = item => -item.created,
 } = {}) {
@@ -68,7 +70,9 @@ function taskListGet(commitTask) {
 
 function taskListUpdate(commitTask) {
     db.get("tasks")
-        .find({ taskId: commitTask.taskId })
+        .find({
+            taskId: commitTask.taskId
+        })
         .assign(commitTask).write();
 }
 
@@ -82,6 +86,7 @@ function taskListClear() {
     db.set("tasks", [])
         .write();
 }
+*/
 
 function saveCredentials(username, password) {
     db.set('username', username).write()
@@ -95,7 +100,10 @@ function getCredentials() {
         const account = db.get('username').value()
         if (account) {
             keytar.getPassword(KEYCHAIN_LOGIN, account).then((password) => {
-                resolve({ account, password })
+                resolve({
+                    account,
+                    password
+                })
             }).catch(() => {
                 console.error('getCredentials from keyChain error!')
                 resolve(null)
@@ -141,9 +149,6 @@ export {
     addUploadSize,
     getUploadSize,
     isFirstTime,
-    getHistory,
-    addHistory,
-    removeHistoryById,
     saveCredentials,
     getCredentials,
     deleteCredentials,
