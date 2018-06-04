@@ -132,11 +132,21 @@ async function saveWallet(wa, name, pass) {
     }).value();
     if (found) throw ({
         code: 1,
-        message: `address ${address} already exists. Please delete it first.`
+        message: `address ${address} already exists. Please delete it first.`,
+        continueFunc: coverExistedWallet.bind(null, v3, name) 
     });
     v3.name = name;
     v3.created = Date.now();
     db.get('wallet').push(v3).write();
+}
+
+function coverExistedWallet(v3, name) {
+    const address = v3.address;
+    db.get('wallet').remove({ address }).write();
+    v3.name = name;
+    v3.created = Date.now();
+    db.get('wallet').push(v3).write();
+    return v3;
 }
 
 async function updateWalletPassword(wa, newPass) {

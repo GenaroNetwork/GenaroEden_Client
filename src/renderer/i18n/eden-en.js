@@ -53,8 +53,8 @@ exports.default = {
     choose: 'Please choose',
     close: 'Close',
     error: 'Error',
-    confirm: '确认',
-    cancel: '取消',
+    confirm: 'confirm',
+    cancel: 'cancel',
   },
   dashboard: {
     myfiles: {
@@ -162,7 +162,8 @@ exports.default = {
       setDeafultCoast: 'Attention：This action will cost few ETH.',
       emptyPrivateKey: 'Please input your Private Key.',
       inputJson: 'By Json',
-      inputKey: 'By Private Key'
+      inputKey: 'By Private Key',
+      coverExistedWalletTip: 'Wallet address has already existed. Do you want to cover it?'
     },
     debits: {
       debits: 'Debits',

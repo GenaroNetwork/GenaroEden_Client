@@ -519,7 +519,22 @@ export default {
                                     this.importV3WalletDialog.step = 1;
                                 })
                                 .catch(e => {
-                                    this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
+                                    if(e.code === 1 && e.continueFunc) {
+                                        dialog.showMessageBox({
+                                            type: 'question',
+                                            buttons: [this.$t('common.confirm'), this.$t('common.cancel')],
+                                            message: this.$t('dashboard.walletmanage.coverExistedWalletTip')
+                                        }, (response) => {
+                                            if(response === 0) {
+                                                e.continueFunc();
+                                                this.importV3WalletDialog.step = 1;
+                                                this.importV3WalletDialog.inputKey = '';
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
+                                    }
                                 });
                         }
                     }
@@ -532,7 +547,22 @@ export default {
                                     this.importV3WalletDialog.inputKey = '';
                                 })
                                 .catch(e => {
-                                    this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
+                                    if(e.code === 1 && e.continueFunc) {
+                                        dialog.showMessageBox({
+                                            type: 'question',
+                                            buttons: [this.$t('common.confirm'), this.$t('common.cancel')],
+                                            message: this.$t('dashboard.walletmanage.coverExistedWalletTip')
+                                        }, (response) => {
+                                            if(response === 0) {
+                                                e.continueFunc();
+                                                this.importV3WalletDialog.step = 1;
+                                                this.importV3WalletDialog.inputKey = '';
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        this.$message.error({message: "Error: " + e.message, showClose: true, duration: 0});
+                                    }
                                 });
                         }
                         else {
