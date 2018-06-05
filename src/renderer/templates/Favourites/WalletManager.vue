@@ -676,7 +676,7 @@ export default {
         },
         setAsPayingWallet: async function () {
             const password = this.submitPay.password
-            const gasPrice = this.submitPay.gasPrice
+            const gasPrice = this.submitPay.gasPrice * 1e9
             const amount = this.submitPay.amount
 
             const loading = this.$loading({
